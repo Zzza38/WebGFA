@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page for unblocker</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+    authDomain: "webgfa-games.firebaseapp.com",
+    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com",
+    projectId: "webgfa-games",
+    storageBucket: "webgfa-games.appspot.com",
+    messagingSenderId: "553239008504",
+    appId: "1:553239008504:web:b91fba77cf0f131849170d",
+    measurementId: "G-5W79NYJZ11"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+    <h2>Login</h2>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
+    <script>
+        // Define an array to store usernames and passwords (for demonstration purposes only)
+        const users = [
+            { username: 'zion', password: '7979' },
+            { username: 'william', password: '11221122' },
+            { username: 'james', password: 'james2012' },
+            { username: 'jacob', password: '1025' },
+            { username: 'luca', password: 'luca1234' },
+        ];
+
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get input values
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            // Check if the entered username and password match any user in the array
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                alert("Login successful!");
+                document.cookie = "loggedInPP=true; path=/"; // Set loggedInRBLX cookie
+                window.location.href = "chooseunblock.html"; // Redirect to the chooserblx.html page
+            } else {
+                alert("Invalid username or password");
+            }
+        });
+    </script>
+</body>
+</html>

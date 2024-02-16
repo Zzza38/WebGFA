@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Unblocker</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000; /* Set background color to black */
+            color: #FFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+        .game-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: outline 0.3s; /* Add transition for smoother hover effect */
+        }
+        .game-link:hover {
+            outline: 2px solid white; /* Add white outline when hovering */
+        }
+        .dark-mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .dark-mode-switch input {
+            display: none;
+        }
+        .slider {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+        .slider:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+        .slider input:checked + .slider-label .slider:before {
+            background-color: #007bff;
+        }
+        .slider-label {
+            display: block;
+            position: relative;
+            cursor: pointer;
+            width: 60px;
+            height: 34px;
+        }
+        .slider-label:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #fff;
+            transition: 0.4s;
+        }
+        .slider input:checked + .slider-label:after {
+            background-color: #007bff;
+            right: 30px;
+        }
+        .game-links {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+    authDomain: "webgfa-games.firebaseapp.com",
+    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com",
+    projectId: "webgfa-games",
+    storageBucket: "webgfa-games.appspot.com",
+    messagingSenderId: "553239008504",
+    appId: "1:553239008504:web:b91fba77cf0f131849170d",
+    measurementId: "G-5W79NYJZ11"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+    <script>
+    // Function to check if the user is logged in
+    function checkLoggedIn() {
+        // Get the value of the loggedIn cookie
+        var loggedIn = document.cookie.replace(/(?:(?:^|.*;\s*)loggedIn\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        // If the loggedIn cookie is not set to "true", redirect to webgfa.com
+        if (loggedIn !== "true") {
+            window.location.href = "https://webgfa.com";
+        }
+    }
+
+    // Call the function to check if the user is logged in when the page loads
+    checkLoggedIn();
+</script>
+<script>
+    // Function to check if the user is logged in
+    function checkLoggedIn() {
+        // Get the value of the loggedInRBLX cookie
+        var loggedInPP = document.cookie.replace(/(?:(?:^|.*;\s*)loggedInPP\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+        // If the loggedInRBLX cookie is not set to "true", redirect to webgfa.com/rblx/login.html
+        if (loggedInPP !== "true") {
+            window.location.href = "https://webgfa.com/unblocker/index.html";
+        }
+    }
+
+    // Call the function to check if the user is logged in when the page loads
+    checkLoggedIn();
+</script>
+    <div class="container">
+        <h1>Choose a Unblocker link </h1>
+        <div class="game-links">
+            <!-- Add links/buttons for each game -->
+            
+            <a href="nebula/subto.html" class="game-link">Nebula</a>
+          
+            <!-- Add more game links/buttons as needed -->
+        </div>
+    </div>
+
+    <!-- Dark Mode Switch -->
+    <!-- Dark mode is kept as the default -->
+</body>
+</html>
