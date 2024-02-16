@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Navigation</title>
+    <link rel="stylesheet" href="code/gameselect/style.css">
+    <link rel="icon" href="code/img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+   <!-- Google tag (gtag.js) -->
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+    authDomain: "webgfa-games.firebaseapp.com",
+    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com",
+    projectId: "webgfa-games",
+    storageBucket: "webgfa-games.appspot.com",
+    messagingSenderId: "553239008504",
+    appId: "1:553239008504:web:b91fba77cf0f131849170d",
+    measurementId: "G-5W79NYJZ11"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+
+<button id="tinyButton" onclick="window.location.href='https://webgfa.com/psa.html'">PSA</button>
+
+    <script src="code/gameselect/main.js"></script>
+    <div class="container">
+        <h1>Welcome to WEBGFA</h1>
+        <p>Please select a game to play:</p>
+        <div class="game-links">
+            <!-- Add links/buttons for each game -->
+            <a href="games/cc/index.html" class="game-link">Cookie Clicker</a>
+            <a href="games/slope/index.html" class="game-link">Slope</a>
+            <a href="games/run03/index.html" class="game-link">Run 03</a>
+            <a href="games/retrobowl/index.html" class="game-link">Retro Bowl</a>
+            <a href="games/ftb/index.html" class="game-link">Fantasy Tank Builder</a>
+            <a href="games/ltf3/index.html" class="game-link">Learn to fly 3</a>
+            <a href="games/flappybird/index.html" class="game-link">Flappy Bird</a>
+            <a href="games/basketballstars/index.html" class="game-link">Basketball Stars</a>
+            <a href="games/tunnelrush/index.html" class="game-link">Tunnel Rush</a>
+            <a href="games/vex8/index.html" class="game-link">Vex 8</a>
+            <h3>Premium Games</h3>
+            <a href="games/rblx/login.html" class="game-link">Roblox</a>
+            <a href="games/unblocker/index.html" class="game-link">Unblockers</a>
+            <h3>Request things</h3>
+            <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
+            <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
+            <a href="https://forms.gle/XFzTnrQPuziy826t8" class="game-link">Report something broken</a>
+            <!-- Add more game links/buttons as needed -->
+        </div>
+        <p>Log out is CTRL+SHIFT+Q once</p>
+    </div>
+
+
+</body>
+</html>

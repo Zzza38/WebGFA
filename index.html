@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="icon" href="code/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="code/index/style.css">
+</head>
+<body>
+    <div id="headerLogin">
+        <h2>Login</h2>
+    </div>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+    authDomain: "webgfa-games.firebaseapp.com",
+    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com",
+    projectId: "webgfa-games",
+    storageBucket: "webgfa-games.appspot.com",
+    messagingSenderId: "553239008504",
+    appId: "1:553239008504:web:b91fba77cf0f131849170d",
+    measurementId: "G-5W79NYJZ11"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
+    <script>
+    // Function to check if a cookie exists
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
+
+    // Check if the "loggedIn" cookie is set to true
+    const loggedInCookie = getCookie("loggedIn");
+    if (loggedInCookie === "true") {
+        // Redirect to gameselect.html
+        window.location.href = "gameselect.html";
+    }
+</script>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <script src="code/index/main.js"></script>
+
+</body>
+</html>
