@@ -14,6 +14,7 @@
                 { username: 'logan', password: '1234' },
                 { username: 'luca', password: 'luca1234' },
                 { username: 'adam', password: 'adamisrailov1234' },
+				{ username: '1', password: '1' },
         ];
 
         document.getElementById("loginForm").addEventListener("submit", function(event) {
