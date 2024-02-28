@@ -100,6 +100,9 @@ ad
 
     function autoclick() {
         var autoclicker = setInterval(function(){ 
+		if (event.ctrlKey) {
+   clearInterval(autoclicker);
+}
             try { 
                 Game.lastClick -= 1000; 
                 document.getElementById('bigCookie').click(); 
@@ -107,9 +110,7 @@ ad
                 console.error('Stopping auto clicker'); 
                 clearInterval(autoclicker); 
             } 
-		if (event.ctrlKey) {
-   clearInterval(autoclicker);
-}
+		
         }, 100);
     }
 	
