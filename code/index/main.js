@@ -9,12 +9,12 @@
             { username: 'rebecca', password: '3981' },
             { username: 'nathaniel', password: 'big' },
             { username: 'rafael', password: 'rafaeln1' },
-         { username: 'owen', password: '1234' },
+            { username: 'owen', password: '1234' },
             { username: 'jacob', password: '1025' },
-                { username: 'logan', password: '1234' },
-                { username: 'luca', password: 'luca1234' },
-                { username: 'adam', password: 'adamisrailov1234' },
-				{ username: '1', password: '1' },
+            { username: 'logan', password: '1234' },
+            { username: 'luca', password: 'luca1234' },
+            { username: 'adam', password: 'adamisrailov1234' },
+	    { username: 'guest', password: '' },
         ];
 
         document.getElementById("loginForm").addEventListener("submit", function(event) {
