@@ -32,7 +32,7 @@ document.addEventListener('keydown', function(event) {
     // Event listener for keydown event
     document.addEventListener('keydown', function(event) {
         // Check if Ctrl+Shift+Q is pressed
-        if (event.ctrlKey && event.shiftKey && event.key === 'Q') {
+        if (event.ctrlKey && event.shiftKey && event.key === 'L') {
             // Delete cookies
             deleteCookie('loggedIn');
             deleteCookie('pass');
