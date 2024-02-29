@@ -91,6 +91,7 @@ ad
 		<div><a href="https://orteil42.tumblr.com" target="_blank" id="topbarTumblr">tumblr</a></div>
            <div> <button onclick="loadMod()" id="topbarLoadMod">Load CM</button></div>
           <div>  <button onclick="autoclick()" id="topbarAutoclick">Autoclick</button></div>
+		<div>  <button onclick="calculateCookies()" id="topbarAutoclick">Calculate</button></div>
 
 <script>
     function loadMod() {
@@ -110,7 +111,9 @@ ad
 		
         }, 50);
     }
-	
+	function calculateCookies() {
+	alert(Beautify(Game.cookies + (new Date(prompt("Enter the future time (in minutes) to calculate:") - new Date().getTime()) / 1000 * Game.cookiesPs, 1));
+	}
 </script>
 		<div style="position:relative;"><div style="width:22px;height:32px;background:url(img/discord.png);position:absolute;left:0px;top:0px;pointer-events:none;"></div><a href="https://discordapp.com/invite/cookie" target="_blank" style="padding-left:16px;" id="topbarDiscord">Discord</a></div>
 		<div style="position:relative;"><div style="width:25px;height:32px;background:url(img/weeHoodie.png);position:absolute;left:-2px;top:0px;pointer-events:none;"></div><a class="blueLink" href="http://www.redbubble.com/people/dashnet" target="_blank" style="padding-left:12px;" id="topbarMerch">Merch!</a></div>
