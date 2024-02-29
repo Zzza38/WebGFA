@@ -90,7 +90,7 @@ ad
 		<div><a href="https://twitter.com/orteil42" target="_blank" id="topbarTwitter">twitter</a></div>
 		<div><a href="https://orteil42.tumblr.com" target="_blank" id="topbarTumblr">tumblr</a></div>
            <div> <button onclick="loadMod()" id="topbarLoadMod">Load CM</button></div>
-          <div>  <button onclick="autoclick()" id="topbarAutoclick">Autoclick CTRL=stop</button></div>
+          <div>  <button onclick="autoclick()" id="topbarAutoclick">Autoclick S=stop</button></div>
 
 <script>
     function loadMod() {
@@ -100,9 +100,7 @@ ad
 
     function autoclick() {
         var autoclicker = setInterval(function(){ 
-		if (event.ctrlKey) {
-   clearInterval(autoclicker);
-}
+		if (event.key !== 'S'){
             try { 
                 Game.lastClick -= 1000; 
                 document.getElementById('bigCookie').click(); 
@@ -110,7 +108,8 @@ ad
                 console.error('Stopping auto clicker'); 
                 clearInterval(autoclicker); 
             } 
-		
+		}
+		else { clearInterval(autoclicker);}
         }, 100);
     }
 	
