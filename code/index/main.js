@@ -15,7 +15,7 @@
             { username: 'luca', password: 'luca1234' },
             { username: 'adam', password: 'adamisrailov1234' },
 	    { username: 'daniel', password: 'marvel-dc-fan' },
-	    { username: 'guest', password: '' },
+	    { username: 'guest', password: 'guest' },
         ];
 
         document.getElementById("loginForm").addEventListener("submit", function(event) {
