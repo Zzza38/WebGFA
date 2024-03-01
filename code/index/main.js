@@ -22,6 +22,13 @@ const firestore = getFirestore(app);
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
+// Check if the loggedIn cookie is set to 'true'
+const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().startsWith('loggedIn=true'));
+
+// If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
+if (loggedInCookie) {
+    window.location.href = 'https://webgfa.com/gameselect.html';
+}
 
 form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
@@ -49,7 +56,12 @@ form.addEventListener('submit', async function(event) {
             const storedPassword = usernamesData[username];
             if (password === storedPassword) {
               console.log('Login successful for user:', username);
-              // Redirect the user to another page or perform other actions
+					document.cookie = "loggedIn=true; path=/";
+                    document.cookie = `user=${username}; path=/`;
+                    document.cookie = `pass=${password}; path=/`;
+
+                    // Redirect to the gameselect.html page
+                    window.location.href = "gameselect.html"; 
           } else {
                     alertText.textContent = 'Incorrect password for user: ' + username;
                 }
