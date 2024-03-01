@@ -8,9 +8,6 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
     console.log('Attempting login with username:', username, 'and password:', password);
 
     try {
-        // Initialize Firestore
-        const firestore = firebase.firestore();
-
         // Reference to the document containing usernames
         const usernamesRef = firestore.collection('users').doc('usernames');
 

@@ -21,15 +21,12 @@
     </form>
     <p>IF YOU WANT TO LOG IN AS A GUEST USE USERNAME AND PASSWORD "guest". PLEASE READ THE PSA IN THE CORNER.</p>
 	<p id="alertText"></p>
+
     <script type="module">
-        // Firebase App (the core Firebase SDK)
+        // Firebase App (the core Firebase SDK) and Firebase Firestore
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-
-        // Firebase Analytics
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-
-        // Firebase Firestore
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -44,7 +41,11 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
         const analytics = getAnalytics(app);
-		</script>
+    </script>
+
+    <!-- Import for the main JavaScript file -->
+    <script src="code/index/main.js" defer></script>
 </body>
 </html>
