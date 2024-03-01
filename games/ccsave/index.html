@@ -53,6 +53,7 @@
             console.log('Save data for user', username, 'is:', userSaveData);
             // Display the save data
             saveDataContainer.innerHTML = `<p>Save data for ${username}: ${userSaveData}</p>`;
+			localStorageSet(CookieClickerGame, userSaveData)
           } else {
             console.log('User not found:', username);
             saveDataContainer.innerHTML = `<p>No save data found for ${username}</p>`;
