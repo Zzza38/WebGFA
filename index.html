@@ -22,7 +22,7 @@
     <p>IF YOU WANT TO LOG IN AS A GUEST USE USERNAME AND PASSWORD "guest". PLEASE READ THE PSA IN THE CORNER.</p>
     <p id="alertText"></p>
 
-  <!--  <script type="module">
+  <script type="module">
         // Import Firebase
         import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -42,8 +42,8 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
-        const firestore = getFirestore();
-    </script>-->
+        const firestore = getFirestore(app);
+    </script>
 
     <!-- Import for the main JavaScript file -->
     <script src="code/index/main.js" defer type="module"></script>
