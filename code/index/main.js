@@ -1,58 +1,48 @@
-// Import Firestore module
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Initialize Firestore
-const firestore = getFirestore();
 
-document.getElementById("loginForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Prevent form submission
+const form = document.getElementById('loginForm');
+const alertText = document.getElementById('alertText');
 
-    // Get input values
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
 
-    console.log('Attempting login with username:', username, 'and password:', password);
+form.addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent the form from submitting
 
-    try {
+      // Get the username and password values from the form
+      const username = form.username.value;
+      const password = form.password.value;
+
+      console.log('Attempting login with username:', username, 'and password:', password);
+
+      try {
         // Reference to the document containing usernames
-        const usernamesRef = firestore.collection('users').doc('usernames');
+        const usernamesRef = doc(firestore, 'users', 'usernames');
 
         // Get the document snapshot
-        const usernamesDoc = await usernamesRef.get();
+        const usernamesDoc = await getDoc(usernamesRef);
 
         console.log('Retrieved usernames document:', usernamesDoc.data());
 
-        if (usernamesDoc.exists) {
-            const usernamesData = usernamesDoc.data();
+        if (usernamesDoc.exists()) {
+          const usernamesData = usernamesDoc.data();
 
-            // Check if the entered username exists and retrieve the associated password
-            if (usernamesData.hasOwnProperty(username)) {
-                const storedPassword = usernamesData[username];
-                if (password === storedPassword) {
-                    console.log('Login successful for user:', username);
-                    // Set cookies with variable values
-                    document.cookie = "loggedIn=true; path=/";
-                    document.cookie = `user=${username}; path=/`;
-                    document.cookie = `pass=${password}; path=/`;
-
-                    // Redirect to the gameselect.html page
-                    window.location.href = "gameselect.html"; 
-                } else {
-                    // Display invalid password message
-                    document.getElementById("alertText").textContent = "Invalid password for user: " + username;
+          // Check if the entered username exists and retrieve the associated password
+          if (usernamesData.hasOwnProperty(username)) {
+            const storedPassword = usernamesData[username];
+            if (password === storedPassword) {
+              console.log('Login successful for user:', username);
+              // Redirect the user to another page or perform other actions
+          } else {
+                    alertText.textContent = 'Incorrect password for user: ' + username;
                 }
             } else {
-                // Display user not found message
-                document.getElementById("alertText").textContent = "User not found: " + username;
+                alertText.textContent = 'User not found: ' + username;
             }
         } else {
-            console.log('Usernames document does not exist');
-            // Display error message
-            document.getElementById("alertText").textContent = "Usernames document does not exist";
+            alertText.textContent = 'Usernames document does not exist';
         }
     } catch (error) {
-        console.error('Error:', error);
-        // Display error message with error code
-        document.getElementById("alertText").textContent = "An error occurred while attempting to login. If you wish to report this error, here is the error code: " + error;
+        console.error('Error fetching usernames document:', error);
+        // Display error message
+        alertText.textContent = 'An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error;
     }
-});
+    });
