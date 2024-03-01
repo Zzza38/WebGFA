@@ -41,3 +41,7 @@ button[type="submit"] {
     color: white;
     cursor: pointer;
 }
+#alertText {
+    color: red;
+}
+
