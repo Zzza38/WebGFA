@@ -1,3 +1,9 @@
+// Import Firestore module
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+// Initialize Firestore
+const firestore = getFirestore();
+
 document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault(); // Prevent form submission
 
@@ -46,7 +52,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         }
     } catch (error) {
         console.error('Error:', error);
-        // Display error message
-        document.getElementById("alertText").textContent = "An error occurred while attempting to login";
+        // Display error message with error code
+        document.getElementById("alertText").textContent = "An error occurred while attempting to login. If you wish to report this error, here is the error code: " + error;
     }
 });
