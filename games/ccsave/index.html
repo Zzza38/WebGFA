@@ -37,7 +37,7 @@
     async function getSaveData(username) {
       try {
         // Reference to the document containing save data
-        const saveDataRef = doc(firestore, 'data', 'gameSaveData');
+        const saveDataRef = doc(firestore, 'data', 'cookieClicker');
 
         // Get the document snapshot
         const saveDataDoc = await getDoc(saveDataRef);
