@@ -40,28 +40,101 @@ ad
 </head>
 <body>
 	<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-    authDomain: "webgfa-games.firebaseapp.com",
-    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com",
-    projectId: "webgfa-games",
-    storageBucket: "webgfa-games.appspot.com",
-    messagingSenderId: "553239008504",
-    appId: "1:553239008504:web:b91fba77cf0f131849170d",
-    measurementId: "G-5W79NYJZ11"
-  };
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "webgfa-games.firebaseapp.com",
+      projectId: "webgfa-games",
+      storageBucket: "webgfa-games.appspot.com",
+      messagingSenderId: "553239008504",
+      appId: "1:553239008504:web:b91fba77cf0f131849170d",
+      measurementId: "G-5W79NYJZ11"
+    };
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore
+    const firestore = getFirestore(app);
+
+    function removeField(jsonObj, fieldName) {
+        if (!jsonObj || typeof jsonObj !== 'object') {
+            console.error("Invalid JSON object");
+            return jsonObj;
+        }
+
+        // Create a copy of the original object to avoid mutating it
+        const newObj = { ...jsonObj };
+
+        // Check if the field exists in the object
+        if (fieldName in newObj) {
+            delete newObj[fieldName];
+        } else {
+            console.error("Field does not exist in JSON object");
+        }
+
+        return newObj;
+    }
+
+    function getCookie(cookieName) {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Check if this cookie is the one we're looking for
+            if (cookie.startsWith(cookieName + '=')) {
+                return cookie.substring(cookieName.length + 1);
+            }
+        }
+        // Cookie not found
+        return null;
+    }
+
+    async function saveFB() {
+        const alertText = document.getElementById('alertText');
+
+        // Get the new username and password values from the form
+        const username = getCookie("user");
+        const saveFile = localStorage.getItem("CookieClickerGame");
+
+        console.log('Saving savefile for user:', username, ' with savefile:', saveFile);
+
+        try {
+            // Reference to the document containing the usernames
+            const usernamesRef = doc(firestore, 'data', 'cookieclicker');
+
+            // Get the current data of the document
+            const docSnapshot = await getDoc(usernamesRef);
+            const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+            console.log("JSON before: ", existingData);
+            let updatedJsonObj;
+            if (existingData[username]) {
+                updatedJsonObj = removeField(existingData, username);
+            } else {
+                updatedJsonObj = existingData;
+            }
+            console.log("Updated JSON: ", updatedJsonObj);
+
+            // Update the Firestore document with the savefile
+            const newData = { ...updatedJsonObj, [username]: saveFile };
+            await setDoc(usernamesRef, newData);
+
+            console.log('User registered successfully:', username);
+            console.log('Savefile registered successfully:', saveFile);
+            alertText.textContent = "Savefile registered successfully!";
+        } catch (error) {
+            console.error('Error:', error);
+            alertText.textContent = "An error occurred while registering the savefile.";
+        }
+    }
+
+    // Attach saveFB function to the window object
+    window.saveFB = saveFB;
 </script>
 <script>
     // Function to check if the user is logged in

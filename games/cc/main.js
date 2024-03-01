@@ -2857,6 +2857,7 @@ Game.Launch=function()
 						}
 						else if (document.hasFocus())
 						{
+							window.saveFB();
 							Game.Notify(loc("Game saved"),'','',1,1);
 						}
 					}
