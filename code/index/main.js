@@ -1,41 +1,55 @@
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent form submission
 
-        const users = [
-            { username: 'zion', password: '7979' },
-            { username: 'william', password: '11221122' },
-            { username: 'james', password: 'james2012' },
-            { username: 'sammy', password: 'jaguar1234' },
-            { username: 'lerone', password: 'b0ngu$verb' },
-            { username: 'gio', password: '1234' },
-            { username: 'rebecca', password: '3981' },
-            { username: 'nathaniel', password: 'big' },
-            { username: 'rafael', password: 'rafaeln1' },
-            { username: 'owen', password: '1234' },
-            { username: 'jacob', password: '1025' },
-            { username: 'logan', password: '1234' },
-            { username: 'luca', password: 'luca1234' },
-            { username: 'adam', password: 'adamisrailov1234' },
-	    { username: 'daniel', password: 'marvel-dc-fan' },
-	    { username: 'guest', password: 'guest' },
-        ];
+    // Get input values
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Prevent form submission
+    console.log('Attempting login with username:', username, 'and password:', password);
 
-            // Get input values
-            var username = document.getElementById("username").value;
-            var password = document.getElementById("password").value;
+    try {
+        // Initialize Firestore
+        const firestore = firebase.firestore();
 
-            // Check if the entered username and password match any user in the array
-            const user = users.find(u => u.username === username && u.password === password);
-            if (user) {
-                // Set cookies with variable values
-                document.cookie = "loggedIn=true; path=/";
-                document.cookie = `user=${username}; path=/`;
-                document.cookie = `pass=${password}; path=/`;
+        // Reference to the document containing usernames
+        const usernamesRef = firestore.collection('users').doc('usernames');
 
-                // Redirect to the gameselect.html page
-                window.location.href = "gameselect.html"; 
+        // Get the document snapshot
+        const usernamesDoc = await usernamesRef.get();
+
+        console.log('Retrieved usernames document:', usernamesDoc.data());
+
+        if (usernamesDoc.exists) {
+            const usernamesData = usernamesDoc.data();
+
+            // Check if the entered username exists and retrieve the associated password
+            if (usernamesData.hasOwnProperty(username)) {
+                const storedPassword = usernamesData[username];
+                if (password === storedPassword) {
+                    console.log('Login successful for user:', username);
+                    // Set cookies with variable values
+                    document.cookie = "loggedIn=true; path=/";
+                    document.cookie = `user=${username}; path=/`;
+                    document.cookie = `pass=${password}; path=/`;
+
+                    // Redirect to the gameselect.html page
+                    window.location.href = "gameselect.html"; 
+                } else {
+                    // Display invalid password message
+                    document.getElementById("alertText").textContent = "Invalid password for user: " + username;
+                }
             } else {
-                alert("Invalid username or password");
+                // Display user not found message
+                document.getElementById("alertText").textContent = "User not found: " + username;
             }
-        });
+        } else {
+            console.log('Usernames document does not exist');
+            // Display error message
+            document.getElementById("alertText").textContent = "Usernames document does not exist";
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        // Display error message
+        document.getElementById("alertText").textContent = "An error occurred while attempting to login";
+    }
+});
