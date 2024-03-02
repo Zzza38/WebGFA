@@ -8,7 +8,7 @@
 <body>
   <h2>Game Save Data Retrieval</h2>
   <div id="saveDataContainer"></div> <!-- Container for displaying save data -->
-  <button onclick="saveData()">Send data to cookie clicker</button>
+  <button onclick="saveData()">Push data to cookie clicker</button>
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -80,6 +80,7 @@
     }
 	function saveData(){
 		localStorageSet(CookieClickerGame, window.savefile)  
+		saveDataContainer.innerHTML = '<p>Data pushed to cookie clicker!</p>'
 	}
 		// Get username from cookie and retrieve save data
     const usernameFromCookie = getUsernameFromCookie('user');
