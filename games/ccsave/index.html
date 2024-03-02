@@ -55,7 +55,7 @@
             console.log('Save data for user', username, 'is:', userSaveData);
             // Display the save data
             saveDataContainer.innerHTML = `<p>Save data for ${username}: ${userSaveData}</p>`;
-		  window.savefile = userSaveData
+		  window.savefile = userSaveData;
 			
           } else {
             console.log('User not found:', username);
@@ -81,8 +81,8 @@
       return null;
     }
 	function saveData(){
-		localStorageSet(CookieClickerGame, window.savefile)  
-		saveDataContainer.innerHTML = '<p>Data pushed to cookie clicker!</p>'
+		localStorageSet(CookieClickerGame, window.savefile);  
+		saveDataContainer.innerHTML = '<p>Data pushed to cookie clicker!</p>';
 	}
 		// Get username from cookie and retrieve save data
     const usernameFromCookie = getUsernameFromCookie('user');
