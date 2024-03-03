@@ -2859,6 +2859,7 @@ Game.Launch=function()
 						{
 							window.saveFB();
 							Game.Notify(loc("Game saved"),'','',1,1);
+							Game.Notify(loc("Game saved to FB"),'','',1,1);
 						}
 					}
 				}

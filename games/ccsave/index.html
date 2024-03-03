@@ -34,7 +34,12 @@
     const firestore = getFirestore(app);
 
     const saveDataContainer = document.getElementById('saveDataContainer');
-
+localStorageSet=function(key,str)
+{
+	var local=0;
+	try {local=window.localStorage.setItem(key,str);} catch (exception) {}
+	return local;
+}
     // Function to get save data from Firestore based on username
     async function getSaveData(username) {
       try {

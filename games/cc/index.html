@@ -95,7 +95,6 @@ ad
     }
 
     async function saveFB() {
-        const alertText = document.getElementById('alertText');
 
         // Get the new username and password values from the form
         const username = getCookie("user");
@@ -126,10 +125,10 @@ ad
 
             console.log('User registered successfully:', username);
             console.log('Savefile registered successfully:', saveFile);
-            alertText.textContent = "Savefile registered successfully!";
+            
         } catch (error) {
             console.error('Error:', error);
-            alertText.textContent = "An error occurred while registering the savefile.";
+            
         }
     }
 
