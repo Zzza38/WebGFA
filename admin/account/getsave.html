@@ -9,8 +9,11 @@
 </head>
 <body>
   <h2>Game Save Data Retrieval</h2>
+  <label for="username">Enter username:</label><br>
+  <input type="text" id="username" name="username"><br>
+  <button onclick="getAndDisplaySaveData()">Get Save Data</button>
   <div id="saveDataContainer"></div> <!-- Container for displaying save data -->
-  <button onclick="saveData()">Push data to cookie clicker</button>
+
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -34,12 +37,7 @@
     const firestore = getFirestore(app);
 
     const saveDataContainer = document.getElementById('saveDataContainer');
-function localStorageSet(key,str)
-{
-	var local=0;
-	try {local=window.localStorage.setItem(key,str);} catch (exception) {}
-	return local;
-}
+
     // Function to get save data from Firestore based on username
     async function getSaveData(username) {
       try {
@@ -60,8 +58,6 @@ function localStorageSet(key,str)
             console.log('Save data for user', username, 'is:', userSaveData);
             // Display the save data
             saveDataContainer.innerHTML = `<p>Save data for ${username}: ${userSaveData}</p>`;
-		  window.savefile = userSaveData;
-			
           } else {
             console.log('User not found:', username);
             saveDataContainer.innerHTML = `<p>No save data found for ${username}</p>`;
@@ -74,29 +70,17 @@ function localStorageSet(key,str)
       }
     }
 
-    // Get username from cookie
-    function getUsernameFromCookie(cookieName) {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(cookieName + '=')) {
-          return cookie.substring(cookieName.length + 1);
-        }
+
+    window.saveData = saveData;
+
+    function getAndDisplaySaveData() {
+      const username = document.getElementById('username').value;
+      if (username) {
+        getSaveData(username);
+      } else {
+        saveDataContainer.innerHTML = `<p>Please enter a username first.</p>`;
       }
-      return null;
     }
-	function saveData(){
-		localStorageSet(CookieClickerGame, window.savefile);  
-		saveDataContainer.innerHTML = '<p>Data pushed to cookie clicker!</p>';
-	}
-		// Get username from cookie and retrieve save data
-    const usernameFromCookie = getUsernameFromCookie('user');
-    if (usernameFromCookie) {
-      getSaveData(usernameFromCookie);
-    } else {
-      saveDataContainer.innerHTML = `<p>No username found in cookie</p>`;
-    }
-	  window.saveData = saveData;
   </script>
 </body>
 </html>

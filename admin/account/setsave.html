@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="https://webgfa.com/code/img/favicon.ico" type="image/x-icon">
+  <title>Game Save Data Management</title>
+</head>
+<body>
+  <h2>Game Save Data Management</h2>
+  <label for="username">Enter username:</label><br>
+  <input type="text" id="username" name="username"><br>
+  <label for="saveData">Enter save data:</label><br>
+  <input type="text" id="saveData" name="saveData"><br>
+  <button onclick="saveData()">Save Data</button>
+  <div id="saveDataContainer"></div> <!-- Container for displaying save data -->
+  
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "webgfa-games.firebaseapp.com",
+      projectId: "webgfa-games",
+      storageBucket: "webgfa-games.appspot.com",
+      messagingSenderId: "553239008504",
+      appId: "1:553239008504:web:b91fba77cf0f131849170d",
+      measurementId: "G-5W79NYJZ11"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore
+    const firestore = getFirestore(app);
+
+    const saveDataContainer = document.getElementById('saveDataContainer');
+
+    // Function to save data to Firestore for a specified username
+    async function saveData() {
+      const username = document.getElementById('username').value;
+      const saveData = document.getElementById('saveData').value;
+
+      if (username && saveData) {
+        try {
+          // Reference to the document containing save data
+          const saveDataRef = doc(firestore, 'data', 'cookieclicker');
+
+          // Set the document with the username and save data
+          await setDoc(saveDataRef, { [username]: saveData }, { merge: true });
+
+          saveDataContainer.innerHTML = `<p>Save data saved successfully for ${username}.</p>`;
+        } catch (error) {
+          console.error('Error saving data to Firestore:', error);
+          saveDataContainer.innerHTML = `<p>An error occurred while saving data for ${username}.</p>`;
+        }
+      } else {
+        saveDataContainer.innerHTML = `<p>Please enter both a username and save data.</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
