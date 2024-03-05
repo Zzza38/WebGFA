@@ -1,19 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Roblox</title>
-<style>
-    body{
-        margin: 0; /* Remove default margin */
-    }
-    iframe{      
-        display: block;  /* iframes are inline by default */   
-        height: 100vh;  /* Set height to 100% of the viewport height */   
-        width: 100vw;  /* Set width to 100% of the viewport width */     
-        border: none; /* Remove default border */
-        background: black; /* Just for styling */
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page for rblx</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <script type="module">
@@ -40,36 +76,41 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
+    <h2>Login</h2>
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <button type="submit">Login</button>
+    </form>
+
     <script>
-    // Function to check if the user is logged in
-    function checkLoggedIn() {
-        // Get the value of the loggedIn cookie
-        var loggedIn = document.cookie.replace(/(?:(?:^|.*;\s*)loggedIn\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+        // Define an array to store usernames and passwords (for demonstration purposes only)
+        const users = [
+            { username: 'zion', password: '7979' },
+            { username: 'william', password: '11221122' },
+            { username: 'james', password: 'james2012' },
+            { username: 'nathaniel', password: 'big' },
+        ];
 
-        // If the loggedIn cookie is not set to "true", redirect to webgfa.com
-        if (loggedIn !== "true") {
-            window.location.href = "https://webgfa.com";
-        }
-    }
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form submission
 
-    // Call the function to check if the user is logged in when the page loads
-    checkLoggedIn();
-</script>
-<script>
-    // Function to check if the user is logged in
-    function checkLoggedIn() {
-        // Get the value of the loggedInRBLX cookie
-        var loggedInRBLX = document.cookie.replace(/(?:(?:^|.*;\s*)loggedInRBLX\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+            // Get input values
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
 
-        // If the loggedInRBLX cookie is not set to "true", redirect to webgfa.com/rblx/login.html
-        if (loggedInRBLX !== "true") {
-            window.location.href = "https://webgfa.com/rblx/login.html";
-        }
-    }
-
-    // Call the function to check if the user is logged in when the page loads
-    checkLoggedIn();
-</script>
-    <iframe src="https://thebritishempire.gaoxineducation.com/~/uv/hvtrs8%2F-wgbqiveqbcln.aoo%2F"></iframe>
+            // Check if the entered username and password match any user in the array
+            const user = users.find(u => u.username === username && u.password === password);
+            if (user) {
+                alert("Login successful!");
+                document.cookie = "loggedInRBLX=true; path=/"; // Set loggedInRBLX cookie
+                window.location.href = "chooserblx.html"; // Redirect to the chooserblx.html page
+            } else {
+                alert("Invalid username or password");
+            }
+        });
+    </script>
 </body>
 </html>
