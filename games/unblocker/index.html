@@ -105,8 +105,7 @@
             // Check if the entered username and password match any user in the array
             const user = users.find(u => u.username === username && u.password === password);
             if (user) {
-                alert("Login successful!");
-                document.cookie = "loggedInPP=true; path=/"; // Set loggedInRBLX cookie
+                document.cookie = "loggedInUnb=true; path=/"; // Set loggedInRBLX cookie
                 window.location.href = "chooseunblock.html"; // Redirect to the chooserblx.html page
             } else {
                 alert("Invalid username or password");

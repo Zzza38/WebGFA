@@ -40,36 +40,8 @@
   const app = initializeApp(firebaseConfig);
   const analytics = getAnalytics(app);
 </script>
-    <script>
-    // Function to check if the user is logged in
-    function checkLoggedIn() {
-        // Get the value of the loggedIn cookie
-        var loggedIn = document.cookie.replace(/(?:(?:^|.*;\s*)loggedIn\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-        // If the loggedIn cookie is not set to "true", redirect to webgfa.com
-        if (loggedIn !== "true") {
-            window.location.href = "https://webgfa.com";
-        }
-    }
-
-    // Call the function to check if the user is logged in when the page loads
-    checkLoggedIn();
-</script>
-<script>
-    // Function to check if the user is logged in
-    function checkLoggedIn() {
-        // Get the value of the loggedInRBLX cookie
-        var loggedInRBLX = document.cookie.replace(/(?:(?:^|.*;\s*)loggedInRBLX\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-
-        // If the loggedInRBLX cookie is not set to "true", redirect to webgfa.com/rblx/login.html
-        if (loggedInRBLX !== "true") {
-            window.location.href = "https://webgfa.com/games/rblx/index.html";
-        }
-    }
-
-    // Call the function to check if the user is logged in when the page loads
-    checkLoggedIn();
-</script>
+    <script src="https://webgfa.com/code/loginchecks/maincheck.js"></script>
+	<script src="https://webgfa.com/code/loginchecks/rblxcheck.js"></script>
     <iframe src="https://subtohumanhen-vytelite.koyeb.app/service/go/hvtr%3A-%2Fue%60sktgs%60anl%2Ccmm" style="position: fixed; inset: 0px; outline: none; border: none; height: 100%; width: 100%;"></iframe>
 </body>
 </html>
