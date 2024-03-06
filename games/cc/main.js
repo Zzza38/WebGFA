@@ -992,6 +992,8 @@ Timer.say=function(label)
 GAME INITIALIZATION
 =======================================================================================*/
 var Game={};
+ // Inside main.js
+
 
 (function(){
 	/*=====================================================================================
@@ -2857,7 +2859,7 @@ Game.Launch=function()
 						}
 						else if (document.hasFocus())
 						{
-							window.saveFB();
+							saveFB();
 							Game.Notify(loc("Game saved"),'','',1,1);
 							Game.Notify(loc("Game saved to FB"),'','',1,1);
 						}
@@ -16912,3 +16914,4 @@ window.onload=function()
 		else loadLangAndLaunch(lang);
 	}
 };
+ // Inside main.js
