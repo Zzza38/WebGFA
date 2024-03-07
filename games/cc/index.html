@@ -40,7 +40,7 @@ ad
 </head>
 <body>
 	
-<!--<script src="https://webgfa.com/code/loginchecks/maincheck.js"></script>-->
+<!--<script src="https://webgfa.com/code/universalCode/maincheck.js"></script></script>-->
 <div id="wrapper">
 
 	<div id="topBar">
@@ -193,7 +193,17 @@ ad
 		
 			// Initialize Firestore
 			const firestore = getFirestore(app);
-		
+
+			// Initialize Analytics
+			const analytics = getAnalytics(app);
+
+			// Make these avaible to other scripts through window.
+			window.app = app;
+			window.firestore = firestore;
+			window.doc = doc;
+			window.setDoc = setDoc;
+			window.getDoc = getDoc;
+
 			// Function to write a field to Firestore
 			async function writeFieldToFirestore(collectionName, documentId, fieldData) {
 				try {
@@ -206,7 +216,6 @@ ad
 			}
 			
 			function getCookie(name) {
-				return "zion";
 					const value = `; ${document.cookie}`;
 				   const parts = value.split(`; ${name}=`);
 					if (parts.length === 2) return parts.pop().split(';').shift();
