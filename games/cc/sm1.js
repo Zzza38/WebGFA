@@ -1,5 +1,5 @@
 if(IdleTrading === undefined) var IdleTrading = {};
-if(typeof CCSE == 'undefined') Game.LoadMod('https://webgfa.com/games/cc/sm2.js');
+if(typeof CCSE == 'undefined') Game.LoadMod('https://webgfa.com/games/cc/ccse.js');
 IdleTrading.name = 'Idle Trading';
 IdleTrading.version = '1.10';
 IdleTrading.GameVersion = '2.052';
