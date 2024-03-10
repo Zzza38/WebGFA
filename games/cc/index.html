@@ -50,7 +50,8 @@ ad
            <div> <button onclick="loadCM()" id="topbarLoadCM">Load CM</button></div>
 		<div> <button onclick="loadSM()" id="topbarLoadSM">Load SM</button></div>
 		<div> <button onclick="loadGD()" id="topbarLoadGD">Load Garden</button></div>
-          <div>  <button onclick="autoclick()" id="topbarAutoclick">Autoclick</button></div>
+		<div> <button onclick="loadMultiplayer()" id="topbarLoadMultiplayer">Load MP</button></div>
+          <div>  <button onclick="autoclick()" id="topbarAutoclick">AC</button></div>
 
 <script>
     function loadCM() {
@@ -63,6 +64,12 @@ ad
     }
 	function loadGD() {
         Game.LoadMod('https://webgfa.com/games/cc/horticookie.js');
+        return false;
+    }
+	function loadMultiplayer() {
+        var script = document.createElement('script');
+    script.src = "https://www.lschaefer.xyz/cookieClicker/index.js";
+    script.id = "hostname"; document.head.appendChild(script);
         return false;
     }
 
