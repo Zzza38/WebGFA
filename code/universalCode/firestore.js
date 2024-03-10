@@ -80,19 +80,16 @@
 		}
 	}
 
-    	// Make these avaible to other scripts through window
-        if (typeof Firebase === 'undefined') {
-            window.Firebase = {};
-        }
+
         
-        Firebase.app = app;
-        Firebase.analytics = analytics;
-        Firebase.firestore = firestore;
-        Firebase.doc = doc;
-        Firebase.setDoc = setDoc;
-        Firebase.getDoc = getDoc;
-        Firebase.writeFieldToFirestore = writeFieldToFirestore;
-        Firebase.removeFieldFromFirestore = removeFieldFromFirestore;
-        Firebase.getFieldFromFirestore = getFieldFromFirestore;
+        window.app = app;
+        window.analytics = analytics;
+        window.firestore = firestore;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.writeFieldToFirestore = writeFieldToFirestore;
+        window.removeFieldFromFirestore = removeFieldFromFirestore;
+        window.getFieldFromFirestore = getFieldFromFirestore;
         window.getCookie = getCookie;
         
