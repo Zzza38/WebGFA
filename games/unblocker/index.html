@@ -52,7 +52,7 @@
     </style>
 </head>
 <body>
-    <script src="https://webgfa.com/code/universalCode/maincheck.js"></script>
+    
       <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
     <h2>Login</h2>
     <form id="loginForm">
@@ -65,55 +65,55 @@
 
     <script>
 
-        const form = document.getElementById('loginForm');
-form.addEventListener('submit', async function(event) {
-    event.preventDefault(); // Prevent the form from submitting
+const form = document.getElementById('loginForm');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the form from submitting
 
-    // Get the username and password values from the form
-    const username = form.username.value;
-    const password = form.password.value;
-    console.log('Attempting login with username:', username, 'and password:', password);
+            // Get the username and password values from the form
+            const username = form.username.value;
+            const password = form.password.value;
+            console.log('Attempting login with username:', username, 'and password:', password);
 
-    try {
-        // Reference to the document containing user permissions
-        const permissionsRef = doc(firestore, 'users', 'permissions');
-        const usernamesRef = doc(firestore, 'users', 'usernames');
+            try {
+                // Reference to the document containing user permissions
+                const permissionsRef = doc(firestore, 'users', 'permissions');
+                const usernamesRef = doc(firestore, 'users', 'usernames');
 
-        // Get the document snapshot
-        const permissionsDoc = await getDoc(permissionsRef);
-        const usernamesDoc = await getDoc(usernamesRef);
+                // Get the document snapshot
+                const permissionsDoc = await getDoc(permissionsRef);
+                const usernamesDoc = await getDoc(usernamesRef);
 
-        console.log('Retrieved usernames document:', usernamesDoc.data());
-        console.log('Retrieved permissions document:', permissionsDoc.data());
+                console.log('Retrieved usernames document:', usernamesDoc.data());
+                console.log('Retrieved permissions document:', permissionsDoc.data());
 
-        if (permissionsDoc.exists() && usernamesDoc.exists()) {
-            const permissionsData = permissionsDoc.data();
-            const usernamesData = usernamesDoc.data();
+                if (permissionsDoc.exists() && usernamesDoc.exists()) {
+                    const permissionsData = permissionsDoc.data();
+                    const usernamesData = usernamesDoc.data();
 
-            // Check if the username exists and the password matches
-            if (usernamesData.hasOwnProperty(username) && usernamesData[username] === password) {
-                // Check if the user has the necessary permissions
-                if (permissionsData.hasOwnProperty(username) && permissionsData[username].includes('prem')) {
-                    console.log('Login successful for user:', username);
-                    document.cookie = "loggedInUnb=true; path=/";
+                    // Check if the username exists and the password matches
+                    if (usernamesData.hasOwnProperty(username) && usernamesData[username] === password) {
+                        // Check if the user has the necessary permissions
+                        if (permissionsData.hasOwnProperty(username) && permissionsData[username].includes('prem')) {
+                            console.log('Login successful for user:', username);
+                            document.cookie = "loggedInUnb=true; path=/";
 
-                    // Redirect to the gameselect.html page
-                    window.location.href = "chooseunblock.html"; 
+                            // Redirect to the gameselect.html page
+                            window.location.href = "chooseunblock.html"; 
+                        } else {
+                            alert('User does not have the necessary permissions: ' + username);
+                        }
+                    } else {
+                        alert('Invalid username or password');
+                    }
                 } else {
-                    alert('User does not have the necessary permissions: ' + username);
+                    alert('User permissions document does not exist');
                 }
-            } else {
-                alert('Invalid username or password');
+            } catch (error) {
+                console.error('Error fetching permissions document:', error);
+                // Display error message
+                alert('An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error);
             }
-        } else {
-            alert('User permissions document does not exist');
-        }
-    } catch (error) {
-        console.error('Error fetching permissions document:', error);
-        // Display error message
-        alert('An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error);
-    }
-});
+        });
 
     </script>
 </body>
