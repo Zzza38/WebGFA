@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register Form</title>
+  <title>Change Password Form</title>
   <style>
         @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
 
@@ -55,15 +55,17 @@
     </style>
 </head>
 <body>
-  <h2>Register Form</h2>
-  <form id="registerForm">
-    <label for="newUsername">New Username:</label><br>
-    <input type="text" id="newUsername" name="newUsername"><br>
+  <h2>Change Password Form</h2>
+  <form id="changePasswordForm">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username"><br>
+    <label for="oldPassword">Old Password:</label><br>
+    <input type="password" id="oldPassword" name="oldPassword"><br>
     <label for="newPassword">New Password:</label><br>
-    <input type="text" id="newPassword" name="newPassword"><br>
+    <input type="password" id="newPassword" name="newPassword"><br>
     <input type="checkbox" id="premiumCheckbox" name="premiumCheckbox">
     <label for="premiumCheckbox">Premium</label><br><br>
-    <button type="submit">Register</button>
+    <button type="submit">Change Password</button>
   </form>
   <p id="alertText"></p>
 
@@ -89,18 +91,19 @@
     // Initialize Firestore
     const firestore = getFirestore(app);
 
-    const form = document.getElementById('registerForm');
+    const form = document.getElementById('changePasswordForm');
     const alertText = document.getElementById('alertText');
 
     form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
 
-      // Get the new username and password values from the form
-      const newUsername = form.newUsername.value;
+      // Get the username, old password, new password, and premium status values from the form
+      const username = form.username.value;
+      const oldPassword = form.oldPassword.value;
       const newPassword = form.newPassword.value;
       const isPremium = form.premiumCheckbox.checked;
 
-      console.log('Registering new user with username:', newUsername, 'and password:', newPassword);
+      console.log('Changing password for user:', username);
 
       try {
         // Reference to the document containing the usernames
@@ -111,30 +114,32 @@
         const docSnapshot = await getDoc(usernamesRef);
         const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
 
-        // Check if the username already exists
-        if (existingData[newUsername]) {
-          alertText.textContent = "Username already exists. Please choose a different one.";
+        // Check if the old password matches
+        if (existingData[username] !== oldPassword) {
+          alertText.textContent = "Old password is incorrect.";
           return;
         }
 
-        // Update the Firestore document with the new username and password
-        const newData = { ...existingData, [newUsername]: newPassword };
+        // Update the password in Firestore
+        const newData = { ...existingData, [username]: newPassword };
         await setDoc(usernamesRef, newData);
 
-        // Update permissions if user has premium
+        // Update permissions if user's premium status changed
+        const permissionsSnapshot = await getDoc(permissionsRef);
+        const permissionsData = permissionsSnapshot.exists() ? permissionsSnapshot.data() : {};
+        const updatedPermissions = { ...permissionsData };
         if (isPremium) {
-          const permissionsSnapshot = await getDoc(permissionsRef);
-          const permissionsData = permissionsSnapshot.exists() ? permissionsSnapshot.data() : {};
-          const updatedPermissions = { ...permissionsData, [newUsername]: "prem" };
-          await setDoc(permissionsRef, updatedPermissions);
+          updatedPermissions[username] = "prem";
+        } else {
+          updatedPermissions[username] = null; // Set to null if premium is removed
         }
+        await setDoc(permissionsRef, updatedPermissions);
 
-        console.log('User registered successfully:', newUsername);
-        console.log('Password registered successfully:', newPassword);
-        alertText.textContent = "User registered successfully!";
+        console.log('Password changed successfully for user:', username);
+        alertText.textContent = "Password changed successfully!";
       } catch (error) {
         console.error('Error:', error);
-        alertText.textContent = "An error occurred while registering the user.";
+        alertText.textContent = "An error occurred while changing the password.";
       }
     });
   </script>
