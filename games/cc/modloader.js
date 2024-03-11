@@ -10,11 +10,11 @@ var multiplayer = {
     startMenu: function() {
         this.clear();
         $("#multiplayer").append(`<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
-        <div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="topbarLoadCM">Load Cookie Monster</button></div>
-        <div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="topbarLoadSM">Load Idle Trading</button></div>
-        <div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="topbarLoadGD">Load Horticookie</button></div>
-        <div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="topbarLoadMultiplayer">Load Multiplayer</button></div>
-        <div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="topbarAutoclick">Autoclick</button></div>`);
+        <div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
+        <div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
+        <div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
+        <div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
+        <div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>`);
      
           function loadCM() {
               Game.LoadMod('https://webgfa.com/games/cc/cm.js');
@@ -55,11 +55,11 @@ var multiplayer = {
     gameMenu: function() {
         this.clear();
         $("#multiplayer").append(`<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
-        <div> <button onclick="loadCM()" id="topbarLoadCM">Load Cookie Monster</button></div>
-		<div> <button onclick="loadSM()" id="topbarLoadSM">Load Idle Trading</button></div>
-		<div> <button onclick="loadGD()" id="topbarLoadGD">Load Horticookie</button></div>
-		<div> <button onclick="loadMultiplayer()" id="topbarLoadMultiplayer">Load Multiplayer</button></div>
-          <div>  <button onclick="autoclick()" id="topbarAutoclick">Autoclick</button></div>`);
+        <div> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
+		<div> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
+		<div> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
+		<div> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
+          <div>  <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>`);
      
           
     },

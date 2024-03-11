@@ -29,7 +29,14 @@ const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().s
 if (loggedInCookie) {
     window.location.href = 'https://webgfa.com/gameselect.html';
 }
+function guestLogin(){
+    document.cookie = "loggedIn=true; path=/";
+    document.cookie = `user=guest; path=/`;
+    document.cookie = `pass=guest; path=/`;
 
+    // Redirect to the gameselect.html page
+    window.location.href = "gameselect.html"; 
+}
 form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
 
