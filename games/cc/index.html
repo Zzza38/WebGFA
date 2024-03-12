@@ -28,6 +28,131 @@ var App=typeof App==='undefined'?0:App;
 
 <link href="style.css?v=9" rel="stylesheet" type="text/css">
 <script  src="main.js?v=10"></script>
+<script type="module">
+	// Import the functions you need from the SDKs you need
+	import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+	import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+	import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+
+	// Your web app's Firebase configuration
+	const firebaseConfig = {
+		apiKey: "YOUR_API_KEY",
+		authDomain: "webgfa-games.firebaseapp.com",
+		projectId: "webgfa-games",
+		storageBucket: "webgfa-games.appspot.com",
+		messagingSenderId: "553239008504",
+		appId: "1:553239008504:web:b91fba77cf0f131849170d",
+		measurementId: "G-5W79NYJZ11"
+	};
+
+	// Initialize Firebase
+	const app = initializeApp(firebaseConfig);
+
+	// Initialize Firestore
+	const firestore = getFirestore(app);
+
+	// Initialize Analytics
+	const analytics = getAnalytics(app);
+
+	// Make these avaible to other scripts through window.
+	window.app = app;
+	window.firestore = firestore;
+	window.doc = doc;
+	window.setDoc = setDoc;
+	window.getDoc = getDoc;
+
+	// Function to write a field to Firestore
+	async function writeFieldToFirestore(collectionName, documentId, fieldData) {
+		try {
+			const docRef = doc(firestore, collectionName, documentId);
+			await setDoc(docRef, fieldData, { merge: true });
+			console.log('Field written successfully to document:', documentId);
+		} catch (error) {
+			console.error('Error writing field to Firestore:', error);
+		}
+	}
+	
+	function getCookie(name) {
+			const value = `; ${document.cookie}`;
+		   const parts = value.split(`; ${name}=`);
+			if (parts.length === 2) return parts.pop().split(';').shift();
+}
+	// Function to remove a field from Firestore
+	async function removeFieldFromFirestore(collectionName, documentId, fieldName) {
+		try {
+			const docRef = doc(firestore, collectionName, documentId);
+			const docSnapshot = await getDoc(docRef);
+			const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+			if (fieldName in existingData) {
+				const updatedData = { ...existingData };
+				delete updatedData[fieldName];
+				await setDoc(docRef, updatedData, { merge: true });
+				console.log('Field removed successfully from document:', documentId);
+			} else {
+				console.log('Field does not exist in document:', documentId);
+			}
+		} catch (error) {
+			console.error('Error removing field from Firestore:', error);
+		}
+	}
+	async function getFieldFromFirestore(collectionName, documentId, fieldName) {
+try {
+	// Reference to the document
+	const docRef = doc(firestore, collectionName, documentId);
+
+	// Get the document
+	const docSnapshot = await getDoc(docRef);
+
+	// Check if the document exists and if the field exists within the document
+	if (docSnapshot.exists() && docSnapshot.data().hasOwnProperty(fieldName)) {
+		// Return the field value
+		return docSnapshot.data()[fieldName];
+	} else {
+		console.log('Field does not exist in document:', documentId);
+		return null;
+	}
+} catch (error) {
+	console.error('Error getting field from Firestore:', error);
+	return null;
+}
+}
+
+
+	 function checkForcedSave(){
+		const username = getCookie("user");
+		const forcedSave = getFieldFromFirestore('data','ccfs',username);
+		const saveFile = getFieldFromFirestore('data','cookieclicker',username);
+		console.log("Data, is save forced: ", forcedSave)
+		console.log("Checking for forced save load");
+		if(forcedSave){
+			Game.LoadSave(saveFile);
+			console.log("Save is forced, loading.");
+		} else{
+			console.log("Save is not forced.");
+		}
+	}
+	async function saveFB() {
+		const username = getCookie("user");
+		const saveFile = localStorage.getItem("CookieClickerGame");
+
+		console.log('Saving savefile for user:', username, ' with savefile:', saveFile);
+
+		try {
+			await writeFieldToFirestore('data', 'cookieclicker', { [username]: saveFile });
+
+			console.log('User registered successfully:', username);
+			console.log('Savefile registered successfully:', saveFile);
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
+	
+
+// Delay the execution of delayedFunction by 5 seconds (5000 milliseconds)
+setTimeout(checkForcedSave, 5000);
+	window.saveFB = saveFB;
+</script>
 ad
 
 <!--[if IE]>
@@ -137,191 +262,69 @@ ad
 				<div class="separatorBottom"></div>
 			</div>
 			<div id="centerArea">
-				<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
-<div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
-<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
-<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
-<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
-<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>
-				<script>
-					function loadCM() {
-							  Game.LoadMod('https://webgfa.com/games/cc/cm.js');
-							  return false;
-						  }
-						  function loadSM() {
-							  Game.LoadMod('https://webgfa.com/games/cc/sm1.js');
-							  return false;
-						  }
-						  function loadGD() {
-							  Game.LoadMod('https://webgfa.com/games/cc/horticookie.js');
-							  return false;
-						  }
-						  function loadMultiplayer() {
-							  var script = document.createElement('script');
-						  script.src = "https://www.lschaefer.xyz/cookieClicker/index.js";
-						  script.id = "hostname"; document.head.appendChild(script);
-							  return false;
-						  }
-					  
-						  function autoclick() {
-						if (!multiplayer.autoclickInterval) {
-							var cpsInput = prompt("Enter CPS (Clicks Per Second):", multiplayer.defaultCPS);
-							var cps = parseFloat(cpsInput);
-							if (!isNaN(cps) && cps > 0) {
-								multiplayer.autoclickInterval = setInterval(function() {
-									try {
-										Game.lastClick -= 1000;
-										document.getElementById("bigCookie").click();
-									} catch (e) {
-										console.error("Stopping auto clicker");
-										stopAC();
-									}
-								}, 1000 / cps);
-							} else {
-								alert("Invalid CPS. Auto-clicker not started.");
-							}
-						} else {
-							stopAC();
-						}
-					}
-				
-					function stopAC() {
-						clearInterval(multiplayer.autoclickInterval);
-						multiplayer.autoclickInterval = null;
-						alert("Autoclick stopped.");
-					}
-				</script>
 				<div id="buildingsTitle" class="inset title zoneTitle">Buildings</div>
 				<div id="buildingsMaster"></div>
+				<div style="text-align:center;background:rgba(0,0,0,1);position:relative;z-index:100;padding-top:20px;padding-bottom:20px">
+					<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
+	<div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>
+					<script>
+						function loadCM() {
+								  Game.LoadMod('https://webgfa.com/games/cc/cm.js');
+								  return false;
+							  }
+							  function loadSM() {
+								  Game.LoadMod('https://webgfa.com/games/cc/sm1.js');
+								  return false;
+							  }
+							  function loadGD() {
+								  Game.LoadMod('https://webgfa.com/games/cc/horticookie.js');
+								  return false;
+							  }
+							  function loadMultiplayer() {
+								  var script = document.createElement('script');
+							  script.src = "https://www.lschaefer.xyz/cookieClicker/index.js";
+							  script.id = "hostname"; document.head.appendChild(script);
+								  return false;
+							  }
+						  var autoclickInterval  = null;
+						  var defaultCPS = 20;
+							  function autoclick() {
+							if (!autoclickInterval) {
+								var cpsInput = prompt("Enter CPS (Clicks Per Second):", defaultCPS);
+								var cps = parseFloat(cpsInput);
+								if (!isNaN(cps) && cps > 0) {
+									autoclickInterval = setInterval(function() {
+										try {
+											Game.lastClick -= 1000;
+											document.getElementById("bigCookie").click();
+										} catch (e) {
+											console.error("Stopping auto clicker");
+											stopAC();
+										}
+									}, 1000 / cps);
+								} else {
+									alert("Invalid CPS. Auto-clicker not started.");
+								}
+							} else {
+								stopAC();
+							}
+						}
+					
+						function stopAC() {
+							clearInterval(autoclickInterval);
+							autoclickInterval = null;
+							alert("Autoclick stopped.");
+						}
+					</script>
+					</div>
 				<div id="rows"></div>
 				<div id="menu"></div>
 			</div>
 		</div>
-		<script type="module">
-			// Import the functions you need from the SDKs you need
-			import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-			import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-			import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-		
-			// Your web app's Firebase configuration
-			const firebaseConfig = {
-				apiKey: "YOUR_API_KEY",
-				authDomain: "webgfa-games.firebaseapp.com",
-				projectId: "webgfa-games",
-				storageBucket: "webgfa-games.appspot.com",
-				messagingSenderId: "553239008504",
-				appId: "1:553239008504:web:b91fba77cf0f131849170d",
-				measurementId: "G-5W79NYJZ11"
-			};
-		
-			// Initialize Firebase
-			const app = initializeApp(firebaseConfig);
-		
-			// Initialize Firestore
-			const firestore = getFirestore(app);
-
-			// Initialize Analytics
-			const analytics = getAnalytics(app);
-
-			// Make these avaible to other scripts through window.
-			window.app = app;
-			window.firestore = firestore;
-			window.doc = doc;
-			window.setDoc = setDoc;
-			window.getDoc = getDoc;
-
-			// Function to write a field to Firestore
-			async function writeFieldToFirestore(collectionName, documentId, fieldData) {
-				try {
-					const docRef = doc(firestore, collectionName, documentId);
-					await setDoc(docRef, fieldData, { merge: true });
-					console.log('Field written successfully to document:', documentId);
-				} catch (error) {
-					console.error('Error writing field to Firestore:', error);
-				}
-			}
-			
-			function getCookie(name) {
-					const value = `; ${document.cookie}`;
-				   const parts = value.split(`; ${name}=`);
-					if (parts.length === 2) return parts.pop().split(';').shift();
-	}
-			// Function to remove a field from Firestore
-			async function removeFieldFromFirestore(collectionName, documentId, fieldName) {
-				try {
-					const docRef = doc(firestore, collectionName, documentId);
-					const docSnapshot = await getDoc(docRef);
-					const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-		
-					if (fieldName in existingData) {
-						const updatedData = { ...existingData };
-						delete updatedData[fieldName];
-						await setDoc(docRef, updatedData, { merge: true });
-						console.log('Field removed successfully from document:', documentId);
-					} else {
-						console.log('Field does not exist in document:', documentId);
-					}
-				} catch (error) {
-					console.error('Error removing field from Firestore:', error);
-				}
-			}
-			async function getFieldFromFirestore(collectionName, documentId, fieldName) {
-		try {
-			// Reference to the document
-			const docRef = doc(firestore, collectionName, documentId);
-	
-			// Get the document
-			const docSnapshot = await getDoc(docRef);
-	
-			// Check if the document exists and if the field exists within the document
-			if (docSnapshot.exists() && docSnapshot.data().hasOwnProperty(fieldName)) {
-				// Return the field value
-				return docSnapshot.data()[fieldName];
-			} else {
-				console.log('Field does not exist in document:', documentId);
-				return null;
-			}
-		} catch (error) {
-			console.error('Error getting field from Firestore:', error);
-			return null;
-		}
-	}
-	
-	
-			 function checkForcedSave(){
-				const username = getCookie("user");
-				const forcedSave = getFieldFromFirestore('data','ccfs',username);
-				const saveFile = getFieldFromFirestore('data','cookieclicker',username);
-				console.log("Data, is save forced: ", forcedSave)
-				console.log("Checking for forced save load");
-				if(forcedSave){
-					Game.LoadSave(saveFile);
-					console.log("Save is forced, loading.");
-				} else{
-					console.log("Save is not forced.");
-				}
-			}
-			async function saveFB() {
-				const username = getCookie("user");
-				const saveFile = localStorage.getItem("CookieClickerGame");
-		
-				console.log('Saving savefile for user:', username, ' with savefile:', saveFile);
-		
-				try {
-					await writeFieldToFirestore('data', 'cookieclicker', { [username]: saveFile });
-		
-					console.log('User registered successfully:', username);
-					console.log('Savefile registered successfully:', saveFile);
-				} catch (error) {
-					console.error('Error:', error);
-				}
-			}
-			
-
-// Delay the execution of delayedFunction by 5 seconds (5000 milliseconds)
-setTimeout(checkForcedSave, 5000);
-			window.saveFB = saveFB;
-		</script>
 		<div id="sectionRight" class="inset">
 			<!-- ad -->
 			<div class="ifNoAds" style="width:300px;text-align:center;padding:8px 0px;background:rgba(0,0,0,0.95);font-size:10px;opacity:0.5;text-shadow:0px 0px 2px #000,0px 1px 0px #000;text-align:center;">
