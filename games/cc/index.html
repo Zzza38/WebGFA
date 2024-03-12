@@ -47,64 +47,6 @@ ad
 		<div><b style="font-weight:bold;">Cookie Clicker</b>&trade; &copy; <a href="//orteil.dashnet.org" target="_blank" id="topbarOrteil">Orteil</a>, 2023 - <a href="//dashnet.org" target="_blank" id="topbarDashnet">DashNet</a></div>
 		<div><a href="https://twitter.com/orteil42" target="_blank" id="topbarTwitter">a</a></div>
 		<div><a href="https://orteil42.tumblr.com" target="_blank" id="topbarTumblr">a</a></div>
-		  <div> <button onclick="modloader()">Mod Manager</button></div>
-		  
-
-<script>
-	function modloader() {
-        var script = document.createElement('script');
-    script.src = "./modloader.js";
-    script.id = "hostname"; document.head.appendChild(script);
-	console.log("modloader loading...");
-        return false;
-    }
-	function loadCM() {
-              Game.LoadMod('https://webgfa.com/games/cc/cm.js');
-              return false;
-          }
-          function loadSM() {
-              Game.LoadMod('https://webgfa.com/games/cc/sm1.js');
-              return false;
-          }
-          function loadGD() {
-              Game.LoadMod('https://webgfa.com/games/cc/horticookie.js');
-              return false;
-          }
-          function loadMultiplayer() {
-              var script = document.createElement('script');
-          script.src = "https://www.lschaefer.xyz/cookieClicker/index.js";
-          script.id = "hostname"; document.head.appendChild(script);
-              return false;
-          }
-      
-          function autoclick() {
-        if (!multiplayer.autoclickInterval) {
-            var cpsInput = prompt("Enter CPS (Clicks Per Second):", multiplayer.defaultCPS);
-            var cps = parseFloat(cpsInput);
-            if (!isNaN(cps) && cps > 0) {
-                multiplayer.autoclickInterval = setInterval(function() {
-                    try {
-                        Game.lastClick -= 1000;
-                        document.getElementById("bigCookie").click();
-                    } catch (e) {
-                        console.error("Stopping auto clicker");
-                        stopAC();
-                    }
-                }, 1000 / cps);
-            } else {
-                alert("Invalid CPS. Auto-clicker not started.");
-            }
-        } else {
-            stopAC();
-        }
-    }
-
-    function stopAC() {
-        clearInterval(multiplayer.autoclickInterval);
-        multiplayer.autoclickInterval = null;
-        alert("Autoclick stopped.");
-    }
-</script>
 		<div style="position:relative;"><div style="width:22px;height:32px;background:url(img/discord.png);position:absolute;left:0px;top:0px;pointer-events:none;"></div><a href="https://discordapp.com/invite/cookie" target="_blank" style="padding-left:16px;" id="topbarDiscord">Discord</a></div>
 		<div style="position:relative;"><div style="width:25px;height:32px;background:url(img/weeHoodie.png);position:absolute;left:-2px;top:0px;pointer-events:none;"></div><a class="blueLink" href="http://www.redbubble.com/people/dashnet" target="_blank" style="padding-left:12px;" id="topbarMerch">Merch!</a></div>
 		<div style="position:relative;"><div style="width:22px;height:32px;background:url(img/patreon.png);position:absolute;left:0px;top:0px;pointer-events:none;"></div><a class="orangeLink" href="https://www.patreon.com/dashnet" target="_blank" style="padding-left:16px;" id="topbarPatreon">Patreon</a></div>
@@ -195,6 +137,60 @@ ad
 				<div class="separatorBottom"></div>
 			</div>
 			<div id="centerArea">
+				<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
+<div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
+<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
+<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
+<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
+<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>
+				<script>
+					function loadCM() {
+							  Game.LoadMod('https://webgfa.com/games/cc/cm.js');
+							  return false;
+						  }
+						  function loadSM() {
+							  Game.LoadMod('https://webgfa.com/games/cc/sm1.js');
+							  return false;
+						  }
+						  function loadGD() {
+							  Game.LoadMod('https://webgfa.com/games/cc/horticookie.js');
+							  return false;
+						  }
+						  function loadMultiplayer() {
+							  var script = document.createElement('script');
+						  script.src = "https://www.lschaefer.xyz/cookieClicker/index.js";
+						  script.id = "hostname"; document.head.appendChild(script);
+							  return false;
+						  }
+					  
+						  function autoclick() {
+						if (!multiplayer.autoclickInterval) {
+							var cpsInput = prompt("Enter CPS (Clicks Per Second):", multiplayer.defaultCPS);
+							var cps = parseFloat(cpsInput);
+							if (!isNaN(cps) && cps > 0) {
+								multiplayer.autoclickInterval = setInterval(function() {
+									try {
+										Game.lastClick -= 1000;
+										document.getElementById("bigCookie").click();
+									} catch (e) {
+										console.error("Stopping auto clicker");
+										stopAC();
+									}
+								}, 1000 / cps);
+							} else {
+								alert("Invalid CPS. Auto-clicker not started.");
+							}
+						} else {
+							stopAC();
+						}
+					}
+				
+					function stopAC() {
+						clearInterval(multiplayer.autoclickInterval);
+						multiplayer.autoclickInterval = null;
+						alert("Autoclick stopped.");
+					}
+				</script>
 				<div id="buildingsTitle" class="inset title zoneTitle">Buildings</div>
 				<div id="buildingsMaster"></div>
 				<div id="rows"></div>
