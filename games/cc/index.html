@@ -251,8 +251,9 @@ ad
 		<div class="separatorLeft" id="leftBeam"></div>
 		<div class="separatorRight" id="rightBeam"></div>
 <script>
-	let modMenuShown = false;
 	function showModMenu(){
+		let modMenuShown = document.getElementById("modMenu");
+
 		if (!modMenuShown){
 		let div = document.createElement("div");
 		let centerArea = document.getElementById("centerArea");
@@ -266,15 +267,17 @@ ad
 	<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
 	<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
 	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>`);
-	modMenuShown = true;
 	}
 }
 function closeModMenu(){
- 	modMenuShown = false;
 	let modMenu = document.getElementById("modMenu");
-	if (!modMenu == null){
-	modMenu.remove();
+	while (modMenu) {
+		modMenu = document.getElementById("modMenu");
+		modMenu.remove();
 	}
+//	if (!modMenu == null){
+//	modMenu.remove();
+//	}
 }
 window.showModMenu = showModMenu;
 window.closeModMenu = closeModMenu;
@@ -296,8 +299,6 @@ window.closeModMenu = closeModMenu;
 				<div id="buildingsMaster"></div>
 				<div id="rows"></div>
 				<div id="menu"></div>
-				<div style="text-align:center;background:rgba(0,0,0,1);position:relative;z-index:100;padding-top:20px;padding-bottom:20px">
-					
 					<script>
 						function loadCM() {
 								  Game.LoadMod('https://webgfa.com/games/cc/cm.js');
