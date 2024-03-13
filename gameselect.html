@@ -12,6 +12,21 @@
     <script src="https://webgfa.com/code/gameselect/main.js"></script>
     <script src="https://webgfa.com/code/universalCode/maincheck.js"></script>
     <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
+    <script>
+        	function checkForcedSave(){
+		const username = getCookie("user");
+		const forcedSave = getFieldFromFirestore('data','ccfs',username);
+		const saveFile = getFieldFromFirestore('data','cookieclicker',username);
+		console.log("Data, is save forced: ", forcedSave)
+		console.log("Checking for forced save load");
+		if(forcedSave){
+			localStorage.setItem("CookieClickerGame",saveFile);
+			console.log("Save is forced, loading.");
+		} else{
+			console.log("Save is not forced.");
+		}
+	}
+    </script>
     <div class="container">
         <h1>Welcome to WEBGFA</h1>
         <p>Please select a game to play:</p>

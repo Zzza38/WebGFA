@@ -30,19 +30,6 @@ var App=typeof App==='undefined'?0:App;
 <script  src="main.js?v=10"></script>
 <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
 	<script>
-	function checkForcedSave(){
-		const username = getCookie("user");
-		const forcedSave = getFieldFromFirestore('data','ccfs',username);
-		const saveFile = getFieldFromFirestore('data','cookieclicker',username);
-		console.log("Data, is save forced: ", forcedSave)
-		console.log("Checking for forced save load");
-		if(forcedSave){
-			Game.LoadSave(saveFile);
-			console.log("Save is forced, loading.");
-		} else{
-			console.log("Save is not forced.");
-		}
-	}
 	async function saveFB() {
 		const username = getCookie("user");
 		const saveFile = localStorage.getItem("CookieClickerGame");
@@ -122,7 +109,6 @@ ad
         console.log("Game assets are loaded!");
         clearTimeout(repeatUntilNull);
 		showModMenu();
-		checkForcedSave();
 	    }
 } catch {
 	console.log("game.loader doesnt exist, trying again");
