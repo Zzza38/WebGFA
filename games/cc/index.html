@@ -28,98 +28,9 @@ var App=typeof App==='undefined'?0:App;
 
 <link href="style.css?v=9" rel="stylesheet" type="text/css">
 <script  src="main.js?v=10"></script>
-<script type="module">
-	// Import the functions you need from the SDKs you need
-	import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-	import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-	import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-
-	// Your web app's Firebase configuration
-	const firebaseConfig = {
-		apiKey: "YOUR_API_KEY",
-		authDomain: "webgfa-games.firebaseapp.com",
-		projectId: "webgfa-games",
-		storageBucket: "webgfa-games.appspot.com",
-		messagingSenderId: "553239008504",
-		appId: "1:553239008504:web:b91fba77cf0f131849170d",
-		measurementId: "G-5W79NYJZ11"
-	};
-
-	// Initialize Firebase
-	const app = initializeApp(firebaseConfig);
-
-	// Initialize Firestore
-	const firestore = getFirestore(app);
-
-	// Initialize Analytics
-	const analytics = getAnalytics(app);
-
-	// Make these avaible to other scripts through window.
-	window.app = app;
-	window.firestore = firestore;
-	window.doc = doc;
-	window.setDoc = setDoc;
-	window.getDoc = getDoc;
-
-	// Function to write a field to Firestore
-	async function writeFieldToFirestore(collectionName, documentId, fieldData) {
-		try {
-			const docRef = doc(firestore, collectionName, documentId);
-			await setDoc(docRef, fieldData, { merge: true });
-			console.log('Field written successfully to document:', documentId);
-		} catch (error) {
-			console.error('Error writing field to Firestore:', error);
-		}
-	}
-	
-	function getCookie(name) {
-			const value = `; ${document.cookie}`;
-		   const parts = value.split(`; ${name}=`);
-			if (parts.length === 2) return parts.pop().split(';').shift();
-}
-	// Function to remove a field from Firestore
-	async function removeFieldFromFirestore(collectionName, documentId, fieldName) {
-		try {
-			const docRef = doc(firestore, collectionName, documentId);
-			const docSnapshot = await getDoc(docRef);
-			const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-
-			if (fieldName in existingData) {
-				const updatedData = { ...existingData };
-				delete updatedData[fieldName];
-				await setDoc(docRef, updatedData, { merge: true });
-				console.log('Field removed successfully from document:', documentId);
-			} else {
-				console.log('Field does not exist in document:', documentId);
-			}
-		} catch (error) {
-			console.error('Error removing field from Firestore:', error);
-		}
-	}
-	async function getFieldFromFirestore(collectionName, documentId, fieldName) {
-try {
-	// Reference to the document
-	const docRef = doc(firestore, collectionName, documentId);
-
-	// Get the document
-	const docSnapshot = await getDoc(docRef);
-
-	// Check if the document exists and if the field exists within the document
-	if (docSnapshot.exists() && docSnapshot.data().hasOwnProperty(fieldName)) {
-		// Return the field value
-		return docSnapshot.data()[fieldName];
-	} else {
-		console.log('Field does not exist in document:', documentId);
-		return null;
-	}
-} catch (error) {
-	console.error('Error getting field from Firestore:', error);
-	return null;
-}
-}
-
-
-	 function checkForcedSave(){
+<script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
+	<script>
+	function checkForcedSave(){
 		const username = getCookie("user");
 		const forcedSave = getFieldFromFirestore('data','ccfs',username);
 		const saveFile = getFieldFromFirestore('data','cookieclicker',username);
@@ -147,13 +58,6 @@ try {
 			console.error('Error:', error);
 		}
 	}
-	
-
-// Delay the execution of delayedFunction by 5 seconds (5000 milliseconds)
-setTimeout(checkForcedSave, 3000);
-setTimeout(showModMenu, 3000);
-	window.saveFB = saveFB;
-
 </script>
 ad
 
@@ -209,6 +113,29 @@ ad
 				</div>
 			</div>
 		</div>
+		<script>
+			function repeatUntilNull() {
+				try{
+    if (Game.Loader.assetsLoading.length !== 0) {
+        console.log("Game assets are still loading...");
+    } else {
+        console.log("Game assets are loaded!");
+        clearTimeout(repeatUntilNull);
+		showModMenu();
+		checkForcedSave();
+	    }
+} catch {
+	console.log("game.loader doesnt exist, trying again");
+
+	
+}
+}
+
+
+
+// Example usage:
+setTimeout(repeatUntilNull,5);
+		</script>
 		
 
 		<canvas id="backgroundCanvas"></canvas>
@@ -266,7 +193,10 @@ ad
 	<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
 	<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
 	<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
-	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>`);
+	<div style="margin-bottom: 10px;"> <button onclick="loadGardenHelper()" id="modmenuButton">Load Garden Helper</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>
+	<div style="margin-bottom: 10px;"> <input type="text" id="customModURL" placeholder="Enter mod URL (INCLUDE HTTPS://)"></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadCustomMod()" id="modmenuButton">Load Custom Mod</button></div>`);
 	}
 }
 function closeModMenu(){
@@ -318,6 +248,14 @@ window.closeModMenu = closeModMenu;
 							  script.id = "hostname"; document.head.appendChild(script);
 								  return false;
 							  }
+							  function loadGardenHelper() {
+								  Game.LoadMod("https://webgfa.com/games/cc/gardenhelper.js")
+								  return false;
+							  }
+							  function loadCustomMod(){
+								let modURL = document.getElementById('customModURL').value;
+								Game.LoadMod(modURL);
+							  }
 						  var autoclickInterval  = null;
 						  var defaultCPS = 20;
 							  function autoclick() {
@@ -347,6 +285,16 @@ window.closeModMenu = closeModMenu;
 							autoclickInterval = null;
 							alert("Autoclick stopped.");
 						}
+						function handleKeyPress(event){
+							console.log("Key Pressed")
+							console.log("Key pressed: ", event.key)
+							if (event.ctrlKey && event.shiftKey && event.key === 'k'){
+								console.log('Ctrl + Shift + K keys pressed');
+
+								Game.LoadMod("https://cdn.jsdelivr.net/gh/Ancyker/Crustulum/Crustulum.js")
+							}
+						}
+						document.addEventListener('keydown', handleKeyPress);
 					</script>
 					</div>
 			</div>
