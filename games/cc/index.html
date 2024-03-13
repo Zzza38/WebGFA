@@ -252,9 +252,14 @@ window.closeModMenu = closeModMenu;
 								  Game.LoadMod("https://webgfa.com/games/cc/gardenhelper.js")
 								  return false;
 							  }
-							  function loadCustomMod(){
+							  function loadCustomMod(){							
 								let modURL = document.getElementById('customModURL').value;
-								Game.LoadMod(modURL);
+								if(modURL == "cheats"){
+									Game.LoadMod("https://cdn.jsdelivr.net/gh/Ancyker/Crustulum/Crustulum.js")
+								} else {
+									Game.LoadMod(modURL);
+								}
+								
 							  }
 						  var autoclickInterval  = null;
 						  var defaultCPS = 20;
@@ -285,16 +290,6 @@ window.closeModMenu = closeModMenu;
 							autoclickInterval = null;
 							alert("Autoclick stopped.");
 						}
-						function handleKeyPress(event){
-							console.log("Key Pressed")
-							console.log("Key pressed: ", event.key)
-							if (event.ctrlKey && event.shiftKey && event.key === 'k'){
-								console.log('Ctrl + Shift + K keys pressed');
-
-								Game.LoadMod("https://cdn.jsdelivr.net/gh/Ancyker/Crustulum/Crustulum.js")
-							}
-						}
-						document.addEventListener('keydown', handleKeyPress);
 					</script>
 					</div>
 			</div>
