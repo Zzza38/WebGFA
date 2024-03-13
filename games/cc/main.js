@@ -6603,7 +6603,11 @@ Game.Launch=function()
 			if (Game.onMenu!='')
 			{
 				str+='<div class="close menuClose" '+Game.clickStr+'="Game.ShowMenu();">x</div>';
+				closeModMenu();
+				
 				//str+='<div style="position:absolute;top:8px;right:8px;cursor:pointer;font-size:16px;" '+Game.clickStr+'="Game.ShowMenu();">X</div>';
+			} else {
+				showModMenu();
 			}
 			if (Game.onMenu=='prefs')
 			{

@@ -150,8 +150,10 @@ try {
 	
 
 // Delay the execution of delayedFunction by 5 seconds (5000 milliseconds)
-setTimeout(checkForcedSave, 5000);
+setTimeout(checkForcedSave, 3000);
+setTimeout(showModMenu, 3000);
 	window.saveFB = saveFB;
+
 </script>
 ad
 
@@ -248,7 +250,35 @@ ad
 
 		<div class="separatorLeft" id="leftBeam"></div>
 		<div class="separatorRight" id="rightBeam"></div>
-
+<script>
+	let modMenuShown = false;
+	function showModMenu(){
+		if (!modMenuShown){
+		let div = document.createElement("div");
+		let centerArea = document.getElementById("centerArea");
+		div.style="text-align:center;background:rgba(0,0,0,1);position:relative;z-index:100;padding-top:20px;padding-bottom:20px";
+		div.id = "modMenu";
+		centerArea.appendChild(div);	
+		let modMenu = document.getElementById("modMenu");
+		modMenu.innerHTML = (`<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
+	<div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
+	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>`);
+	modMenuShown = true;
+	}
+}
+function closeModMenu(){
+ 	modMenuShown = false;
+	let modMenu = document.getElementById("modMenu");
+	if (!modMenu == null){
+	modMenu.remove();
+	}
+}
+window.showModMenu = showModMenu;
+window.closeModMenu = closeModMenu;
+</script>
 		<div id="sectionMiddle" class="inset">
 			<div id="comments" class="inset title">
 				<div id="prefsButton" class="panelButton"><div class="subButton">Options</div></div>
@@ -264,13 +294,10 @@ ad
 			<div id="centerArea">
 				<div id="buildingsTitle" class="inset title zoneTitle">Buildings</div>
 				<div id="buildingsMaster"></div>
+				<div id="rows"></div>
+				<div id="menu"></div>
 				<div style="text-align:center;background:rgba(0,0,0,1);position:relative;z-index:100;padding-top:20px;padding-bottom:20px">
-					<h1 class='title' style='font-size:150%'>Welcome to the Cookie Clicker Mod Manager</h1><br>
-	<div style="margin-bottom: 10px;"> <button onclick="loadCM()" id="modmenuButton">Load Cookie Monster</button></div>
-	<div style="margin-bottom: 10px;"> <button onclick="loadSM()" id="modmenuButton">Load Idle Trading</button></div>
-	<div style="margin-bottom: 10px;"> <button onclick="loadGD()" id="modmenuButton">Load Horticookie</button></div>
-	<div style="margin-bottom: 10px;"> <button onclick="loadMultiplayer()" id="modmenuButton">Load Multiplayer</button></div>
-	<div style="margin-bottom: 10px;"> <button onclick="autoclick()" id="modmenuButton">Autoclick</button></div>
+					
 					<script>
 						function loadCM() {
 								  Game.LoadMod('https://webgfa.com/games/cc/cm.js');
@@ -321,8 +348,6 @@ ad
 						}
 					</script>
 					</div>
-				<div id="rows"></div>
-				<div id="menu"></div>
 			</div>
 		</div>
 		<div id="sectionRight" class="inset">
@@ -369,7 +394,6 @@ ad
 			<!-- ad -->
 			<div id="detectAds" class="adBanner" style="background:transparent;width:1px;height:1px;"></div>
 			<div id="support" style="margin-top:130px;">
-				<div class="supportComment">v Sponsored links v</div>
 				<div style="position:relative;">
 				
 					<div style="position:relative;z-index:100;min-height:250px;">

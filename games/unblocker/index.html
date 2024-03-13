@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page for Unblockers</title>
+    <title>Login Page for unblocker</title>
     <style>
         body {
             background-color: black;
@@ -52,8 +52,74 @@
     </style>
 </head>
 <body>
-    
-      <!--<script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>-->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+            authDomain: "webgfa-games.firebaseapp.com",
+            projectId: "webgfa-games",
+            storageBucket: "webgfa-games.appspot.com",
+            messagingSenderId: "553239008504",
+            appId: "1:553239008504:web:b91fba77cf0f131849170d",
+            measurementId: "G-5W79NYJZ11"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
+
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Get input values
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Reference to the document containing usernames and passwords in Firestore
+                const usernamesRef = doc(firestore, 'users', 'usernames');
+                const permissionRef = doc(firestore, 'users', 'permissions');
+                const usernamesDoc = await getDoc(usernamesRef);
+                const permissionDoc = await getDoc(permissionRef);
+                
+
+                if (usernamesDoc.exists()) {
+                    const usernamesData = usernamesDoc.data();
+                    const permissionsData = permissionDoc.data();
+                    console.log(usernamesData);
+                    console.log(permissionsData);
+
+                    // Check if the entered username exists and retrieve the associated password
+                    if (usernamesData.hasOwnProperty(username)) {
+                        let storedPassword = usernamesData[username];
+                        let permission = permissionsData[username];
+                        console.log(typeof permission);
+                       // let permissionsArray = permission.split(',');
+
+                        if (password === storedPassword && permission.includes("prem")) {
+                            document.cookie = "loggedInUnb=true; path=/"; // Set loggedInUnb cookie
+                            window.location.href = "chooseunblock.html"; // Redirect to the chooseunblock.html page
+                        } else {
+                            alert("Invalid password");
+                        }
+                    } else {
+                        alert("User not found");
+                    }
+                } else {
+                    alert("The document(s) does not exist");
+                }
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        });
+        function includes(str, substr) {
+    return str.indexOf(substr) !== -1;
+}
+    </script>
     <h2>Login</h2>
     <form id="loginForm">
         <label for="username">Username:</label>
@@ -62,145 +128,5 @@
         <input type="password" id="password" name="password" required><br>
         <button type="submit">Login</button>
     </form>
-
-    <script type="module">
-			// Import the functions you need from the SDKs you need
-			import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-			import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-			import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-		
-			// Your web app's Firebase configuration
-			const firebaseConfig = {
-				apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-				authDomain: "webgfa-Firebases.firebaseapp.com",
-				projectId: "webgfa-Firebases",
-				storageBucket: "webgfa-Firebases.appspot.com",
-				messagingSenderId: "553239008504",
-				appId: "1:553239008504:web:b91fba77cf0f131849170d",
-				measurementId: "G-5W79NYJZ11"
-			};
-		
-			// Initialize Firebase
-			const app = initializeApp(firebaseConfig);
-		
-			// Initialize Firestore
-			const firestore = getFirestore(app);
-
-			// Initialize Analytics
-			const analytics = getAnalytics(app);
-
-			// Function to write a field to Firestore
-			async function writeFieldToFirestore(collectionName, documentId, fieldData) {
-				try {
-					const docRef = doc(firestore, collectionName, documentId);
-					await setDoc(docRef, fieldData, { merge: true });
-					console.log('Field written successfully to document:', documentId);
-				} catch (error) {
-					console.error('Error writing field to Firestore:', error);
-				}
-			}
-			
-			function getCookie(name) {
-					const value = `; ${document.cookie}`;
-				   const parts = value.split(`; ${name}=`);
-					if (parts.length === 2) return parts.pop().split(';').shift();
-	}
-			// Function to remove a field from Firestore
-			async function removeFieldFromFirestore(collectionName, documentId, fieldName) {
-				try {
-					const docRef = doc(firestore, collectionName, documentId);
-					const docSnapshot = await getDoc(docRef);
-					const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-		
-					if (fieldName in existingData) {
-						const updatedData = { ...existingData };
-						delete updatedData[fieldName];
-						await setDoc(docRef, updatedData, { merge: true });
-						console.log('Field removed successfully from document:', documentId);
-					} else {
-						console.log('Field does not exist in document:', documentId);
-					}
-				} catch (error) {
-					console.error('Error removing field from Firestore:', error);
-				}
-			}
-			async function getFieldFromFirestore(collectionName, documentId, fieldName) {
-		try {
-			// Reference to the document
-			const docRef = doc(firestore, collectionName, documentId);
-	
-			// Get the document
-			const docSnapshot = await getDoc(docRef);
-	
-			// Check if the document exists and if the field exists within the document
-			if (docSnapshot.exists() && docSnapshot.data().hasOwnProperty(fieldName)) {
-				// Return the field value
-				return docSnapshot.data()[fieldName];
-			} else {
-				console.log('Field does not exist in document:', documentId);
-				return null;
-			}
-		} catch (error) {
-			console.error('Error getting field from Firestore:', error);
-			return null;
-		}
-	}
-
-
-        
-        
-        
-const form = document.getElementById('loginForm');
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the form from submitting
-
-            // Get the username and password values from the form
-            const username = form.username.value;
-            const password = form.password.value;
-            console.log('Attempting login with username:', username, 'and password:', password);
-
-            try {
-                const qwerew = getCookie('user');
-                // Reference to the document containing user permissions
-                const permissionsRef = doc(firestore, 'users', 'permissions');
-                const usernamesRef = doc(firestore, 'users', 'usernames');
-
-                // Get the document snapshot
-                const permissionsDoc = await getDoc(permissionsRef);
-                const usernamesDoc = await getDoc(usernamesRef);
-
-                console.log('Retrieved usernames document:', usernamesDoc.data());
-                console.log('Retrieved permissions document:', permissionsDoc.data());
-
-                if (permissionsDoc.exists() && usernamesDoc.exists()) {
-                    const permissionsData = permissionsDoc.data();
-                    const usernamesData = usernamesDoc.data();
-
-                    // Check if the username exists and the password matches
-                    if (usernamesData.hasOwnProperty(username) && usernamesData[username] === password) {
-                        // Check if the user has the necessary permissions
-                        if (permissionsData.hasOwnProperty(username) && permissionsData[username].includes('prem')) {
-                            console.log('Login successful for user:', username);
-                            document.cookie = "loggedInUnb=true; path=/";
-
-                            // Redirect to the gameselect.html page
-                            window.location.href = "chooseunblock.html"; 
-                        } else {
-                            alert('User does not have the necessary permissions: ' + username);
-                        }
-                    } else {
-                        alert('Invalid username or password');
-                    }
-                } else {
-                    alert('User permissions document does not exist');
-                }
-            } catch (error) {
-                console.error('Error fetching permissions document:', error);
-                // Display error message
-                alert('An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error);
-            }
-        });
-
-    </script>
 </body>
 </html>
