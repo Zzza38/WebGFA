@@ -16870,6 +16870,7 @@ window.onload=function()
 				locStringsFallback=locStrings;
 				LoadLang('loc/'+lang+'.js?v='+Game.version,function(){
 					var launch=function(){
+						if(true){
 						Game.Launch();
 						
 							console.log('[=== '+choose([
