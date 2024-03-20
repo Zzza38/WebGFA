@@ -32,3 +32,4 @@ function AB() {
       }
     }
   }
+AB();
