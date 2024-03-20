@@ -21,7 +21,7 @@ const firestore = getFirestore(app);
 // Reference the form and the alertText
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
-AB();
+
 // Check if the loggedIn cookie is set to 'true'
 const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().startsWith('loggedIn=true'));
 
@@ -37,6 +37,7 @@ function guestLogin(){
     // Redirect to the gameselect.html page
     window.location.href = "gameselect.html"; 
 }
+window.guestLogin=guestLogin;
 form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
 
