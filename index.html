@@ -7,10 +7,21 @@
     <title>Login Page</title>
     <link rel="icon" href="code/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="code/index/style.css">
-    <script src="code/index/main.js" defer type="module"></script>
-    <script src="code/universalCode/aboutblankcloak.js" defer type="module"></script>
+    <script src="./code/index/main.js" defer type="module"></script>
+    <script src="./code/universalCode/aboutblankcloak.js" defer type="module"></script>
 </head>
 <body>
+    <script>
+        window.addEventListener('load', function() {
+            var scripts = document.getElementsByTagName('script');
+            for (var i = 0; i < scripts.length; i++) {
+                if (scripts[i].src.includes('urlFilter.js')) {
+                    scripts[i].parentNode.removeChild(scripts[i]);
+                    alert("urlFilter.js blocked from loading! means no dyno blocking");
+                }
+            }
+        });
+        </script>
     <div id="headerLogin">
         <h2>Login</h2>
     </div>
