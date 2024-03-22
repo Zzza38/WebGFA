@@ -6,22 +6,22 @@
     <title>Link Checker</title>
     <style>
         body {
-    background-color: black;
-    color: white;
-    font-family: 'Ubuntu', sans-serif;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-}
-button {
-    margin: 5px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    border: none;
-    background-color: blue;
-    color: white;
-    cursor: pointer;
-}
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -29,42 +29,38 @@ button {
     <button id="checkLinks">Check Links</button>
     <div id="output"></div>
     <script>
-    const text = document.getElementById('textTester');
-    const output = document.getElementById('output');
-    const checkLinksButton = document.getElementById('checkLinks'); // Reference to the button
+        const text = document.getElementById('textTester');
+        const output = document.getElementById('output');
+        const checkLinksButton = document.getElementById('checkLinks'); // Reference to the button
 
-    checkLinksButton.addEventListener('click', function() {
-        const lines = text.value.split('\n');
-        let workingLinks = []; // Initialize workingLinks as an array
-        let finishedFetching = false; // Variable to track whether fetching is finished
-        let i = 0; // Index variable for while loop
+        checkLinksButton.addEventListener('click', function() {
+            const lines = text.value.split('\n');
+            let workingLinks = []; // Initialize workingLinks as an array
+            let i = 0; // Index variable for while loop
 
-        // Function to check if fetching is finished and update the output
-        function updateOutput() {
-            output.innerHTML = '<pre>' + workingLinks.join('\n') + '</pre>';
-        }
-
-        // Start fetching links
-        while (i < lines.length) {
-            const line = lines[i];
-            if (line.startsWith('http')) {
-                fetch(line, { mode: 'no-cors' })
-                .then(response => response.text())
-                .then(data => {
-                    workingLinks.push(line); // Assuming you want to add the fetched data to the array
-
-                    // Check if all lines have been processed
-                    if (i === lines.length) {
-                        updateOutput();
-                    }
-                })
-                .catch(error => console.error('Error fetching unblocker links:', error));
+            // Function to check if fetching is finished and update the output
+            function updateOutput() {
+                output.innerHTML = '<pre>' + workingLinks.join('\n') + '</pre>';
             }
-            i++;
-        }
 
-        // Update the output when fetching is finished
-    });
+            // Start fetching links
+            while (i < lines.length) {
+                const line = lines[i];
+                if (line.startsWith('http')) {
+                    fetch(line, { mode: 'no-cors' })
+                        .then(response => {
+                            if (response.redirected && response.url.startsWith("https://cn1759619306-16-7vnsr40002.ibosscloud.com/")) {
+                                workingLinks.push(line); // Assuming you want to add the original URL to the array if redirected to the specific domain
+                            }
+                        })
+                        .catch(error => console.error('Error fetching links:', error));
+                }
+                i++;
+            }
+
+            // Update the output when fetching is finished
+            updateOutput();
+        });
     </script>
 </body>
 </html>
