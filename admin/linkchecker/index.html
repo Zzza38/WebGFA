@@ -49,11 +49,10 @@
                 const line = lines[i];
                 console.log("Link " + i + " is " + lines[i]);
                 if (line.startsWith('http')) {
-                    fetch(line)
+                    fetch(line, { mode: 'no-cors' })
                         .then(response => {
                             console.log("Is response redirected? " + response.redirected);
-                            console.log("Response URL: " + response.url);
-                            if (!response.url.startsWith("https://cn1759619306-16-7vnsr40002.ibosscloud.com/")) {
+                            if (!response.redirected) {
                                 workingLinks.push(line); // Assuming you want to add the original URL to the array if not redirected to the specific domain
                                 console.log("Added to list");
                             }
