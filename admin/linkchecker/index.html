@@ -32,25 +32,30 @@
         const text = document.getElementById('textTester');
         const output = document.getElementById('output');
         const checkLinksButton = document.getElementById('checkLinks'); // Reference to the button
+        let workingLinks = []; // Initialize workingLinks as an array
+        let i = 0; // Index variable for while loop
 
-        checkLinksButton.addEventListener('click', function() {
-            const lines = text.value.split('\n');
-            let workingLinks = []; // Initialize workingLinks as an array
-            let i = 0; // Index variable for while loop
-
-            // Function to check if fetching is finished and update the output
-            function updateOutput() {
-                output.innerHTML = '<pre>' + workingLinks.join('\n') + '</pre>';
+        // Function to check if fetching is finished and update the output
+        function updateOutput(withLinks) {
+                console.log("Output will be updated with this text: " + '<pre>' + withLinks.join('\n') + '</pre>')
+                output.innerHTML = '<pre>' + withLinks.join('\n') + '</pre>';
             }
+        checkLinksButton.addEventListener('click', function() {
+            console.log("Checking links");
+            const lines = text.value.split('\n');
 
             // Start fetching links
             while (i < lines.length) {
                 const line = lines[i];
+                console.log("Link " + i + " is " + lines[i]);
                 if (line.startsWith('http')) {
-                    fetch(line, { mode: 'no-cors' })
+                    fetch(line)
                         .then(response => {
-                            if (response.redirected && response.url.startsWith("https://cn1759619306-16-7vnsr40002.ibosscloud.com/")) {
-                                workingLinks.push(line); // Assuming you want to add the original URL to the array if redirected to the specific domain
+                            console.log("Is response redirected? " + response.redirected);
+                            console.log("Response URL: " + response.url);
+                            if (!response.url.startsWith("https://cn1759619306-16-7vnsr40002.ibosscloud.com/")) {
+                                workingLinks.push(line); // Assuming you want to add the original URL to the array if not redirected to the specific domain
+                                console.log("Added to list");
                             }
                         })
                         .catch(error => console.error('Error fetching links:', error));
@@ -59,7 +64,8 @@
             }
 
             // Update the output when fetching is finished
-            updateOutput();
+            console.log("Finished testing links, here are the working ones: " + workingLinks);
+            updateOutput(workingLinks);
         });
     </script>
 </body>
