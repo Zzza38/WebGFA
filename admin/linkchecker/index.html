@@ -56,15 +56,14 @@
                                 workingLinks.push(line); // Assuming you want to add the original URL to the array if not redirected to the specific domain
                                 console.log("Added to list");
                             }
+                            updateOutput(workingLinks);
                         })
                         .catch(error => console.error('Error fetching links:', error));
                 }
                 i++;
             }
 
-            // Update the output when fetching is finished
-            console.log("Finished testing links, here are the working ones: " + workingLinks);
-            updateOutput(workingLinks);
+
         });
     </script>
 </body>
