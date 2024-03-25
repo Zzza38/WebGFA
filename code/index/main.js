@@ -29,6 +29,7 @@ const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().s
 if (loggedInCookie) {
     window.location.href = 'https://webgfa.com/gameselect.html';
 }
+// If the user wants to log in as a guest, a button calls this function to log in as a guest. Will be removed on 4/1/24
 function guestLogin(){
     document.cookie = "loggedIn=true; path=/";
     document.cookie = `user=guest; path=/`;
@@ -37,8 +38,8 @@ function guestLogin(){
     // Redirect to the gameselect.html page
     window.location.href = "gameselect.html"; 
 }
-window.guestLogin=guestLogin;
-form.addEventListener('submit', async function(event) {
+    window.guestLogin=guestLogin;
+    form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
 
       // Get the username and password values from the form
@@ -68,6 +69,8 @@ form.addEventListener('submit', async function(event) {
                     document.cookie = `user=${username}; path=/`;
                     document.cookie = `pass=${password}; path=/`;
 
+                    // Debug purposos, a wait time
+                    alert();
                     // Redirect to the gameselect.html page
                     window.location.href = "gameselect.html"; 
           } else {

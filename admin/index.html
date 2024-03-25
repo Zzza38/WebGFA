@@ -55,9 +55,7 @@
     <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
         <script defer>
         // If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
-      if (getCookie("user") == "zion") {
-          window.location.href = 'adminpanel.html';
-        }
+      
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault(); // Prevent form submission
 
@@ -94,6 +92,12 @@
                 console.error('Error fetching usernames document:', error);
             }
         });
+        
+        setTimeout(() => { 
+            if (getCookie("user") == "zion") {
+          window.location.href = 'adminpanel.html';
+        }
+         }, 500);
     </script>
     <h2>Login</h2>
     <form id="loginForm">
