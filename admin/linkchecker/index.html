@@ -33,35 +33,69 @@
         const output = document.getElementById('output');
         const checkLinksButton = document.getElementById('checkLinks'); // Reference to the button
         let workingLinks = []; // Initialize workingLinks as an array
-        let i = 0; // Index variable for while loop
 
         // Function to check if fetching is finished and update the output
         function updateOutput(withLinks) {
                 console.log("Output will be updated with this text: " + '<pre>' + withLinks.join('\n') + '</pre>')
-                output.innerHTML = '<pre>' + withLinks.join('\n') + '</pre>';
+                let linkElements = withLinks.map(link => `<a href="${link}" target="_blank">${link}</a>`);
+                let outputHtml = linkElements.join('<br>');
+                console.log
+                output.innerHTML = '<pre>' + outputHtml + '</pre>';
             }
+
         checkLinksButton.addEventListener('click', function() {
             console.log("Checking links");
             const lines = text.value.split('\n');
 
-            // Start fetching links
-            while (i < lines.length) {
-                const line = lines[i];
-                console.log("Link " + i + " is " + lines[i]);
-                if (line.startsWith('http')) {
-                    fetch(line, { mode: 'no-cors' })
-                        .then(response => {
-                            console.log("Is response redirected? " + response.redirected);
-                            if (!response.redirected) {
-                                workingLinks.push(line); // Assuming you want to add the original URL to the array if not redirected to the specific domain
-                                console.log("Added to list");
-                            }
-                            updateOutput(workingLinks);
-                        })
-                        .catch(error => console.error('Error fetching links:', error));
-                }
-                i++;
+            
+
+            function fetchWithNoCors(url) {
+                return fetch(url, { mode: 'no-cors' })
+                .then(response => response.text())
+                .then(data => {
+                   return true; // Link is working
+                })
+                .catch(error => {
+                    console.error('Error fetching links:', error);
+                    return false; // Fetch failed
+                });
             }
+
+            function fetchWithCors(url) {
+                return fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    const snippet = "<!DOCTYPE html>\n<html>\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n    <meta name=\"robots\" content=\"noindex\">\n\t<title>Page Restricted</title>";
+                    if (data.includes(snippet)) {
+                        console.log("The fetched data contains the specified HTML snippet.");
+                        return true; // Snippet found
+                    } else {
+                        console.log("The fetched data does not contain the specified HTML snippet.");
+                        return false; // Snippet not found
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching links:', error);
+                    return false; // Fetch failed
+                });
+            }
+
+            lines.forEach(line => {
+                //console.log("Link " + i + " is " + lines[i]);
+                if (line.startsWith('http')) {
+                    fetchWithCors(line).then(snippetFound => {
+                        if (!snippetFound) {
+                            // If no-cors fetch fails or snippet not found, try with CORS
+                            fetchWithNoCors(line).then(linksWorks => {
+                                if (linksWorks){
+                                    workingLinks.push(line);
+                                    updateOutput(workingLinks);
+                                }
+                            });
+                        }
+                    })
+                }
+            })
 
 
         });
