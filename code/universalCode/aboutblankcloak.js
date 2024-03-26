@@ -18,8 +18,19 @@ function AB() {
         const style = iframe.style;
         const link = doc.createElement('link');
         const script = doc.createElement('script');
-        const name = 'WebGFA';
-        const icon = 'https://webgfa.com/code/img/favicon.ico';
+        if (localStorage.getItem("nameAB") !== null){
+            const name = localStorage.getItem("nameAB");
+        }
+        else {
+            const name = 'WebGFA';
+        }
+        if (localStorage.getItem("icoAB") !== null){
+            const icon = localStorage.getItem("icoAB");
+        }
+        else {
+            const icon = 'https://webgfa.com/code/img/favicon.ico';
+        }
+        // const icon = 'https://webgfa.com/code/img/favicon.ico';
         doc.title = name;
         link.rel = 'icon';
         link.href = icon;
