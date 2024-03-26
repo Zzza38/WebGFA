@@ -18,17 +18,19 @@ function AB() {
         const style = iframe.style;
         const link = doc.createElement('link');
         const script = doc.createElement('script');
+        let name;
+        let icon;
         if (localStorage.getItem("nameAB") !== null){
-            const name = localStorage.getItem("nameAB");
+           name = localStorage.getItem("nameAB");
         }
         else {
-            const name = 'WebGFA';
+          name = 'WebGFA';
         }
         if (localStorage.getItem("icoAB") !== null){
-            const icon = localStorage.getItem("icoAB");
+          icon = localStorage.getItem("icoAB");
         }
         else {
-            const icon = 'https://webgfa.com/code/img/favicon.ico';
+          icon = 'https://webgfa.com/code/img/favicon.ico';
         }
         // const icon = 'https://webgfa.com/code/img/favicon.ico';
         doc.title = name;
@@ -43,7 +45,7 @@ function AB() {
         doc.head.appendChild(link);
         doc.body.appendChild(iframe);
         doc.body.appendChild(script);
-        location.replace('about:blank')
+        location.replace('https://webgfa.com/code/universalCode/closetab.html');
       }
     }
   }
