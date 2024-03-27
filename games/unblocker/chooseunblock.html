@@ -76,11 +76,16 @@
                 const select = document.getElementById('unblockerSelect');
 
                 lines.forEach(line => {
+                    const option = document.createElement('option');
+                    option.textContent = line;
                     if (line.startsWith('http')) {
                         const option = document.createElement('option');
                         option.value = line;
-                        option.textContent = line;
                         select.appendChild(option);
+                        option.value = line;
+                        option.disabled = false;
+                    } else {
+                        option.disabled = true;
                     }
                 });
             })
