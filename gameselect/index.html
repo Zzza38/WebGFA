@@ -14,8 +14,21 @@
 	<script src="https://webgfa.com/code/universalCode/aboutblankcloak.js"></script>
     <script src="https://webgfa.dom/code/universalCode/firestore.js"type="module"></script>
     <script>
-        	async function checkForcedSave(){
-		const username = "zion";
+	    function checkGuest(){
+	    	try{
+	    		if (getCookie('username') == guest {
+            		// Delete cookies
+           		  deleteCookie('loggedIn');
+          		  deleteCookie('pass');
+           		 deleteCookie('user');
+            // Redirect to webgfa.com
+            window.location.href = "https://webgfa.com";
+       	 	}
+			}
+		}
+setTimeout(checkGuest, 500);
+        	//async function checkForcedSave(){
+		//const username = "zion";
 		//const forcedSave = getFieldFromFirestore('data','ccfs',username);
 		//const saveFile = getFieldFromFirestore('data','cookieclicker',username);
        // const docRef = doc(firestore, "data", "ccfs");
@@ -31,7 +44,7 @@
 	//	} else{
 	//		console.log("Save is not forced.");
 	//	}
-	console.log(getFieldFromFirestore('data', 'ccfs', username));
+//	console.log(getFieldFromFirestore('data', 'ccfs', username));
 	}
 
     </script>
@@ -52,11 +65,11 @@
             <a href="https://webgfa.com/games/tunnelrush/" class="game-link">Tunnel Rush</a>
             <a href="https://webgfa.com/games/vex8/" class="game-link">Vex 8</a>
 	        <a href="https://webgfa.com/games/gd/" class="game-link">Geometry Dash</a>
-            <a href="https://webgfa.com/games/subwaysurfers/" class="game-link">Subway Surfers (Broken)</a>
+            <!--<a href="https://webgfa.com/games/subwaysurfers/" class="game-link">Subway Surfers (Broken)</a>-->
             <a href="https://webgfa.com/games/stickmanhook/" class="game-link">Stickman Hook<a>
             <a href="https://webgfa.com/games/paperminecraft/" class="game-link">Paper Minecraft<a>
             <h3>Premium Games</h3>
-            <a href="https://webgfa.com/games/rblx/login.html" class="game-link">Roblox</a>
+            <a href="https://webgfa.com/games/rblx/" class="game-link">Roblox</a>
             <a href="https://webgfa.com/games/unblocker/" class="game-link">Unblockers</a>
 			<h3>Admin Things</h3>
 			<a href="https://webgfa.com/admin/" class="game-link">Admin Panel</a>
