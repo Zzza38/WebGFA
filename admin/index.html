@@ -61,7 +61,7 @@
         <button type="submit">Login</button>
     </form>
     <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
-        <script defer>
+        <script>
         // If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
       
         document.getElementById("loginForm").addEventListener("submit", async function(event) {
@@ -105,7 +105,7 @@
             if (getCookie("user") == "zion") {
           window.location.href = 'adminpanel.html';
         }
-         }, 20);
+         }, 100);
     </script>
 </body>
 </html>
