@@ -81,12 +81,11 @@
                     if (line.startsWith('http')) {
                         const option = document.createElement('option');
                         option.value = line;
-                        select.appendChild(option);
-                        option.value = line;
                         option.disabled = false;
                     } else {
                         option.disabled = true;
                     }
+			                        select.appendChild(option);
                 });
             })
             .catch(error => console.error('Error fetching unblocker links:', error));
