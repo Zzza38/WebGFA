@@ -1,3 +1,10 @@
+// Check if the loggedIn cookie is set to 'true'
+const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().startsWith('loggedIn=true'));
+
+// If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
+if (loggedInCookie) {
+    window.location.href = 'https://webgfa.com/gameselect.html';
+}
 // Import Firebase
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -22,13 +29,6 @@ const firestore = getFirestore(app);
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
-// Check if the loggedIn cookie is set to 'true'
-const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().startsWith('loggedIn=true'));
-
-// If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
-if (loggedInCookie) {
-    window.location.href = 'https://webgfa.com/gameselect.html';
-}
 // If the user wants to log in as a guest, a button calls this function to log in as a guest. Will be removed on 4/1/24
 function guestLogin(){
     document.cookie = "loggedIn=true; path=/";
@@ -38,7 +38,7 @@ function guestLogin(){
     // Redirect to the gameselect.html page
     window.location.href = "gameselect.html"; 
 }
-    window.guestLogin=guestLogin;
+    window.guestLogin = guestLogin;
     form.addEventListener('submit', async function(event) {
       event.preventDefault(); // Prevent the form from submitting
 
@@ -68,9 +68,6 @@ function guestLogin(){
 					document.cookie = "loggedIn=true; path=/";
                     document.cookie = `user=${username}; path=/`;
                     document.cookie = `pass=${password}; path=/`;
-
-                    // Debug purposos, a wait time
-                    alert();
                     // Redirect to the gameselect.html page
                     window.location.href = "gameselect.html"; 
           } else {

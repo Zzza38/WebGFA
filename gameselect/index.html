@@ -6,46 +6,44 @@
 	<meta name="google-adsense-account" content="ca-pub-8561781792679334">
     <title>Game Navigation</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="https://webgfa.com/code/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="${window.location.origin}/code/img/favicon.ico" type="image/x-icon">
 </head>
 <body>
     <script src="main.js"></script>
-   <script src="https://webgfa.com/code/universalCode/maincheck.js"></script>
-	<script src="https://webgfa.com/code/universalCode/aboutblankcloak.js"></script>
-    <script src="https://webgfa.dom/code/universalCode/firestore.js"type="module"></script>
+   <script src="${window.location.origin}/code/universalCode/maincheck.js"></script>
+	<script src="${window.location.origin}/code/universalCode/aboutblankcloak.js"></script>
+    <script src="${window.location.origin}/code/universalCode/firestore.js"type="module"></script>
     <script>
 	    function checkGuest(){
-	    	try{
-	    		if (getCookie('username') == guest {
+	    		if (getCookie('username') == 'guest' ){
             		// Delete cookies
            		  deleteCookie('loggedIn');
           		  deleteCookie('pass');
            		 deleteCookie('user');
             // Redirect to webgfa.com
-            window.location.href = "https://webgfa.com";
+            window.location.href = "${window.location.origin}";
        	 	}
-			}
 		}
 setTimeout(checkGuest, 500);
-        	//async function checkForcedSave(){
-		//const username = "zion";
-		//const forcedSave = getFieldFromFirestore('data','ccfs',username);
-		//const saveFile = getFieldFromFirestore('data','cookieclicker',username);
-       // const docRef = doc(firestore, "data", "ccfs");
+        	/*async function checkForcedSave(){
+		const username = "zion";
+		const forcedSave = getFieldFromFirestore('data','ccfs',username);
+		const saveFile = getFieldFromFirestore('data','cookieclicker',username);
+        const docRef = doc(firestore, "data", "ccfs");
 	
-			// Get the document
-		//	const docSnapshot = await getDoc(docRef);
-         //   let forcedSave = docSnapshot.data();
-	//	console.log("Data, is save forced: ", forcedSave)
-	//	console.log("Checking for forced save load");
-	//	if(forcedSave){
-	//		localStorage.setItem("CookieClickerGame",saveFile);
-	//		console.log("Save is forced, loading.");
-	//	} else{
-	//		console.log("Save is not forced.");
-	//	}
-//	console.log(getFieldFromFirestore('data', 'ccfs', username));
-	}
+			 // Get the document
+			const docSnapshot = await getDoc(docRef);
+            let forcedSave = docSnapshot.data();
+	console.log("Data, is save forced: ", forcedSave)
+		console.log("Checking for forced save load");
+		if(forcedSave){
+			localStorage.setItem("CookieClickerGame",saveFile);
+			console.log("Save is forced, loading.");
+		} else{
+			console.log("Save is not forced.");
+		}
+	console.log(getFieldFromFirestore('data', 'ccfs', username));
+	}*/
 
     </script>
     <div class="container">
@@ -53,26 +51,26 @@ setTimeout(checkGuest, 500);
         <p>Please select a game to play:</p>
         <div class="game-links">
             <!-- Add links/buttons for each game -->
-            <a href="https://webgfa.com/games/cc/" class="game-link">Cookie Clicker</a>
-	  	    <a href="https://webgfa.com/games/ccsave/" class="game-link">Cookie Clicker Save Getter</a>
-            <a href="https://webgfa.com/games/slope/" class="game-link">Slope</a>
-           <!-- <a href="https://webgfa.com/games/run03/" class="game-link">Run 03 (Broken)</a>-->
-            <a href="https://webgfa.com/games/retrobowl/" class="game-link">Retro Bowl</a>
-            <a href="https://webgfa.com/games/ftb/" class="game-link">Fantasy Tank Builder</a>
-            <a href="https://webgfa.com/games/ltf3/" class="game-link">Learn to fly 3</a>
-            <a href="https://webgfa.com/games/flappybird/" class="game-link">Flappy Bird</a>
-            <a href="https://webgfa.com/games/basketballstars/" class="game-link">Basketball Stars</a>
-            <a href="https://webgfa.com/games/tunnelrush/" class="game-link">Tunnel Rush</a>
-            <a href="https://webgfa.com/games/vex8/" class="game-link">Vex 8</a>
-	        <a href="https://webgfa.com/games/gd/" class="game-link">Geometry Dash</a>
-            <!--<a href="https://webgfa.com/games/subwaysurfers/" class="game-link">Subway Surfers (Broken)</a>-->
-            <a href="https://webgfa.com/games/stickmanhook/" class="game-link">Stickman Hook<a>
-            <a href="https://webgfa.com/games/paperminecraft/" class="game-link">Paper Minecraft<a>
+            <a href="${window.location.origin}/games/cc/" class="game-link">Cookie Clicker</a>
+	  	    <a href="${window.location.origin}/games/ccsave/" class="game-link">Cookie Clicker Save Getter</a>
+            <a href="${window.location.origin}/games/slope/" class="game-link">Slope</a>
+           <!-- <a href="${window.location.origin}/games/run03/" class="game-link">Run 03 (Broken)</a>-->
+            <a href="${window.location.origin}/games/retrobowl/" class="game-link">Retro Bowl</a>
+            <a href="${window.location.origin}/games/ftb/" class="game-link">Fantasy Tank Builder</a>
+            <a href="${window.location.origin}/games/ltf3/" class="game-link">Learn to fly 3</a>
+            <a href="${window.location.origin}/games/flappybird/" class="game-link">Flappy Bird</a>
+            <a href="${window.location.origin}/games/basketballstars/" class="game-link">Basketball Stars</a>
+            <a href="${window.location.origin}/games/tunnelrush/" class="game-link">Tunnel Rush</a>
+            <a href="${window.location.origin}/games/vex8/" class="game-link">Vex 8</a>
+	        <a href="${window.location.origin}/games/gd/" class="game-link">Geometry Dash</a>
+            <!--<a href="${window.location.origin}/games/subwaysurfers/" class="game-link">Subway Surfers (Broken)</a>-->
+            <a href="${window.location.origin}/games/stickmanhook/" class="game-link">Stickman Hook<a>
+            <a href="${window.location.origin}/games/paperminecraft/" class="game-link">Paper Minecraft<a>
             <h3>Premium Games</h3>
-            <a href="https://webgfa.com/games/rblx/" class="game-link">Roblox</a>
-            <a href="https://webgfa.com/games/unblocker/" class="game-link">Unblockers</a>
+            <a href="${window.location.origin}/games/rblx/" class="game-link">Roblox</a>
+            <a href="${window.location.origin}/games/unblocker/" class="game-link">Unblockers</a>
 			<h3>Admin Things</h3>
-			<a href="https://webgfa.com/admin/" class="game-link">Admin Panel</a>
+			<a href="${window.location.origin}/admin/" class="game-link">Admin Panel</a>
             <h3>Request things</h3>
             <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
             <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
@@ -80,7 +78,7 @@ setTimeout(checkGuest, 500);
             <!-- Add more game links/buttons as needed -->
         </div>
         <p>Log out is CTRL+SHIFT+L</p>
-		<a href="https://webgfa.com/updates" class="game-link">UPDATES</a>
+		<a href="${window.location.origin}/updates" class="game-link">UPDATES</a>
     </div>
 </body>
 </html>
