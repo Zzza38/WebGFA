@@ -1,5 +1,4 @@
 Interstellar Links
-https://fghelpergames.opticalize.com/ 
 https://math.masteryourtest.com  
 https://e.tecteach.net 
 https://entrepreneurship.keybusinessconnection.com 
