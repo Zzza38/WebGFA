@@ -101,7 +101,7 @@
         // Handle the ctrl+shift+g keyboard shortcut to return to the original page
         document.addEventListener('keydown', (event) => {
             if (event.ctrlKey && event.shiftKey && event.key === 'g') {
-                window.history.back();
+                location.reload();
             }
         });
     </script>
