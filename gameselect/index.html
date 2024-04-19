@@ -16,7 +16,7 @@
     <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
     <script>
         function checkGuest() {
-            if (getCookie('username') == 'guest' || getCookie('username') == 'G-AD' || getCookie('eli')) {
+            if (getCookie('user') == 'guest' || getCookie('user') == 'G-AD' || getCookie('user') == 'eli') {
                 // Delete cookies
                 deleteCookie('loggedIn');
                 deleteCookie('pass');
@@ -26,7 +26,7 @@
             }
         }
         function jamesCheck(){
-            if (getCookie('username') == 'james' || getCookie('username') == 'zion'){
+            if (getCookie('user') == 'james' || getCookie('user') == 'zion'){
             document.getElementById("jamesAddUser").style = "display: block;"
             }
         }
