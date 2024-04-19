@@ -24,7 +24,6 @@ https://natural.oaksatstoneycreek.org/
 https://zeta.y.glenwaverleychurches.org/ 
 https://boeing.morlockaerospace.com/ 
 https://iota.y.glenwaverleychurches.org/  
-Abyss Unblocker
 Equinox Unblocker
 https://edu.estic.org/
 https://lxt.surfnet.ca/

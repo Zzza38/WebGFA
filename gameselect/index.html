@@ -16,7 +16,7 @@
     <script src="https://webgfa.com/code/universalCode/firestore.js" type="module"></script>
     <script>
         function checkGuest() {
-            if (getCookie('username') == 'guest' || getCookie('username') == 'G-AD') {
+            if (getCookie('username') == 'guest' || getCookie('username') == 'G-AD' || getCookie('eli')) {
                 // Delete cookies
                 deleteCookie('loggedIn');
                 deleteCookie('pass');
@@ -25,7 +25,13 @@
                 window.location.href = "https://webgfa.com";
             }
         }
+        function jamesCheck(){
+            if (getCookie('username') == 'james' || getCookie('username') == 'zion'){
+            document.getElementById("jamesAddUser").style = "display: block;"
+            }
+        }
         setTimeout(checkGuest, 500);
+        setTimeout(jamesCheck, 500);
         /*async function checkForcedSave(){
     const username = "zion";
     const forcedSave = getFieldFromFirestore('data','ccfs',username);
@@ -73,8 +79,13 @@ console.log(getFieldFromFirestore('data', 'ccfs', username));
             <a href="https://webgfa.com/games/lowsadventure3/" class="game-link">Low's Adventure 3</a>
             <a href="https://webgfa.com/games/infinitewordle/" class="game-link">Infinite Wordle</a>
             <a href="https://webgfa.com/games/darkroom/" class="game-link">Dark Room (Math Playground)</a>
+            <div id="jamesAddUser" style="display: none;">
+                <h3>Limited Admin</h3>
+                <a href="https://webgfa.com/limitedadmin.html" class="game-link">This is it James!</a>
+
+            </div>
             <h3>Premium Games</h3> 
-            <a href="https://webgfa.com/games/rblx/" class="game-link">Roblox</a>
+           <!-- <a href="https://webgfa.com/games/rblx/" class="game-link">Roblox</a>-->
             <a href="https://webgfa.com/games/unblocker/" class="game-link">Unblockers</a>
             <h3>Admin Things</h3>
             <a href="https://webgfa.com/admin/" class="game-link">Admin Panel</a>
