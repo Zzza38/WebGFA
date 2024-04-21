@@ -3,7 +3,7 @@ const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().s
 
 // If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
 if (loggedInCookie) {
-    window.location.href = 'https://webgfa.com/gameselect.html';
+    window.location.href = '/gameselect.html';
 }
 // Import Firebase
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules

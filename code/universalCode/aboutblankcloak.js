@@ -30,9 +30,8 @@ function AB() {
           icon = localStorage.getItem("icoAB");
         }
         else {
-          icon = 'https://webgfa.com/code/img/favicon.ico';
+          icon = '/code/img/favicon.ico';
         }
-        // const icon = 'https://webgfa.com/code/img/favicon.ico';
         doc.title = name;
         link.rel = 'icon';
         link.href = icon;
@@ -45,7 +44,7 @@ function AB() {
         doc.head.appendChild(link);
         doc.body.appendChild(iframe);
         doc.body.appendChild(script);
-        location.replace('https://webgfa.com/code/universalCode/closetab.html');
+        location.replace('about:blank');
       }
     }
   }
