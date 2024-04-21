@@ -5,7 +5,7 @@ function checkLoggedIn() {
 
     // If the loggedIn cookie is not set to "true", redirect to webgfa.com
     if (loggedIn !== "true") {
-        window.location.href = "https://webgfa.com/games/rblx";
+        window.location.href = "/games/rblx/";
     }
 }
 

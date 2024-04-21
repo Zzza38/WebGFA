@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/code/universalCode/aboutblankcloak.js"></script>
-    <script src="/code/universalCode/firestore.js"></script>
-    <script src="/code/universalCode/maincheck.js"></script>
-    <script src="/code/universalCode/minecheck.js"></script>
     <title>Login Page</title>
     <link rel="icon" href="/code/img/favicon.ico" type="image/x-icon">
     <style>
@@ -118,8 +115,8 @@ button[type="submit"],
                        // let permissionsArray = permission.split(',');
 
                         if (password === storedPassword && permission.includes("prem")) {
-                            document.cookie = "loggedInMinecraft=true; path=/"; // Set loggedInMinecraft cookie
-                            window.location.href = "game.html"; // Redirect to the game.html page
+                            document.cookie = "loggedIn=true; path=/"; // Set loggedIn{name} cookie
+                            window.location.href = "game.html"; // Redirect to the {game}.html page
                         } else {
                             showAlert("Invalid password");
                         }
