@@ -1,29 +1,14 @@
-function askNotificationPermission() {
-    if (!("Notification" in window)) {
-        alert("This browser does not support desktop notification");
-    }
-    else if (Notification.permission !== "denied") {
-        Notification.requestPermission().then(permission => {
-            if (permission === "granted") {
-                console.log("Notification permission granted.");
-            }
-        });
-    }
-}
+// Check for service worker support
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js', { type: 'module' })
+    .then(function(registration) {
+        console.log('Service Worker registered with scope:', registration.scope);
 
-// Function to send a notification
-function sendNotification(title, desc, iconURL) {
-    if (Notification.permission === "granted") {
-        const notification = new Notification(title, {
-            body: desc,
-            icon: iconURL // This will display an icon with the notification
-        });
+        // Request notification permission
+        Notification.requestPermission();
 
-        // Optional: Add click event to notification
-        notification.onclick = function () {
-            window.focus(); // Focus the window on notification click
-        };
-    } else {
-        console.log("Notification permission has not been granted");
-    }
+    })
+    .catch(function(error) {
+        console.error('Service Worker registration failed:', error);
+    });
 }

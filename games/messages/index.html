@@ -6,34 +6,7 @@
 </head>
 <body>
     <h2>Notification on Demand via Service Worker</h2>
-    <button id="showNotification">Show Notification</button>
 
-    <script>
-        // Check for service worker support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js')
-            .then(function(registration) {
-                console.log('Service Worker registered with scope:', registration.scope);
-
-                // Request notification permission
-                Notification.requestPermission();
-
-                // Send message to service worker to show a notification
-                document.getElementById('showNotification').addEventListener('click', () => {
-                    if (navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.controller.postMessage({
-                            action: 'showNotification',
-                            title: 'Hello!',
-                            body: 'This notification was triggered from the main script.',
-                            icon: '/path/to/icon.png' // Optional: Specify an icon path
-                        });
-                    }
-                });
-            })
-            .catch(function(error) {
-                console.error('Service Worker registration failed:', error);
-            });
-        }
-    </script>
+    <script src="main.js" type="module"></script>
 </body>
 </html>
