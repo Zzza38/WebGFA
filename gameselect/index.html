@@ -51,13 +51,11 @@
         const app = initializeApp(firebaseConfig);
         //const analytics = getAnalytics(app);
         const firestore = getFirestore(app);
-
-        const docRef = doc(firestore, 'data', 'ccfs');
-        const docData = await getDoc(docRef).data();
-        console.log(docData);
-        window.docData = docData;
-
-        const username = getCookie('user');
+        window.app = app;
+        window.firestore = firestore;
+        window.doc = doc;
+        window.getDoc = getDoc;
+        const username = 'zion';
         const ccfs = doc(firestore, "data", "ccfs");
         const data = doc(firestore, "data", "cookieclicker");
 
@@ -73,6 +71,10 @@
         } else {
             console.log("Save is not forced.");
         }
+        // const docRef = doc(firestore, 'data', 'ccfs');
+        //  const docData = await getDoc(docRef).data();
+        //  console.log(docData);
+        //  window.docData = docData;
 
 
 
