@@ -32,7 +32,7 @@ Feel free to alter this code to your liking, but please do not re-host it, do no
 	<link href="style.css?v=9" rel="stylesheet" type="text/css">
 	<script src="main.js?v=10"></script>
 	<!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
-	<script>
+	<script type="module">
 		import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 		import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
@@ -72,6 +72,7 @@ Feel free to alter this code to your liking, but please do not re-host it, do no
 				console.error('Error:', error);
 			}
 		}
+		window.saveFB = saveFB;
 	</script>
 	ad
 
