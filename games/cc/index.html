@@ -44,7 +44,6 @@ var App=typeof App==='undefined'?0:App;
 		console.log('Saving savefile for user:', username, ' with savefile:', saveFile);
 
 		try {
-			let saveRef = doc(firestore,)
 			await writeFieldToFirestore('data', 'cookieclicker', { [username]: saveFile });
 
 			console.log('User registered successfully:', username);
