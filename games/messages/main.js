@@ -32,6 +32,7 @@ function changedField(oldData, newData) {
     for (const [key, value] of Object.entries(newData)) {
         if (!oldData.hasOwnProperty(key)) {
             changes[key] = value;
+            continue;
         }
         if (oldData[key] !== value) {
             changes[key] = value + '|~';
@@ -72,7 +73,7 @@ onSnapshot(docRef, (doc) => {
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
                 console.log('message removed');
-                sendNotification('A message in ' + docName + ' was removed.', null, 'https://webgfa.com/favicon.ico')
+                sendNotification('A message in ' + docName + ' was removed.', '', 'https://webgfa.com/favicon.ico')
             } else {
                 console.log('message edited');
                 sendNotification('A message in ' + docName + ' was edited.', message, 'https://webgfa.com/favicon.ico')
