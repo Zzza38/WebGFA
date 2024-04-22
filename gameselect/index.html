@@ -56,23 +56,25 @@
         const docData = await getDoc(docRef).data();
         console.log(docData);
         window.docData = docData;
-        async function checkForcedSave() {
-            const username = getCookie('user');
-            const ccfs = doc(firestore, "data", "ccfs");
-            const data = doc(firestore, "data", "cookieclicker");
 
-            // Get the document
-            ccfs = await getDoc(ccfs).data();
-            data = await getDoc(data).data();
-            console.log(ccfs, ' ', data);
-            if (ccfs.username) {
-                localStorage.setItem("CookieClickerGame", data.username);
-                console.log("Save is forced, loading.");
-            } else {
-                console.log("Save is not forced.");
-            }
+        const username = getCookie('user');
+        const ccfs = doc(firestore, "data", "ccfs");
+        const data = doc(firestore, "data", "cookieclicker");
+
+        // Get the document
+        ccfs = await getDoc(ccfs);
+        data = await getDoc(data);
+        ccfs = ccfs.data();
+        data = data.data();
+        console.log(ccfs, ' ', data);
+        if (ccfs.username) {
+            localStorage.setItem("CookieClickerGame", data.username);
+            console.log("Save is forced, loading.");
+        } else {
+            console.log("Save is not forced.");
         }
-        checkForcedSave();
+
+
 
     </script>
     <div class="container">
