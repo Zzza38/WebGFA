@@ -1,21 +1,3 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-    authDomain: "webgfa-games.firebaseapp.com",
-    projectId: "webgfa-games",
-    storageBucket: "webgfa-games.appspot.com",
-    messagingSenderId: "553239008504",
-    appId: "1:553239008504:web:b91fba77cf0f131849170d",
-    measurementId: "G-5W79NYJZ11"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
-
 function sendNotification(title, desc, iconURL) {
     if (Notification.permission === "granted") {
         const notification = new Notification(title, {
