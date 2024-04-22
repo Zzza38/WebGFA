@@ -21,7 +21,7 @@ const firestore = getFirestore(app);
 
 // Reference a document
 const docRef = doc(firestore, 'messages', 'test');
-
+let lastDoc = await(docRef).data();
 function changedField(oldData, newData) {
     let changes = {};
 
@@ -63,6 +63,7 @@ onSnapshot(docRef, (doc) => {
         console.log("Current data: ", doc.data());
         let message;
         message = String(changedField(lastDoc, doc.data())[0]);
+        lastDoc = doc.data();
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
                 sendNotification('A message in ' + docName + ' was removed.', null, 'https://webgfa.com/favicon.ico')
