@@ -16,12 +16,33 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-window.firestore = firestore;
-window.doc = doc;
-window.getDoc = getDoc;
-window.setDoc = setDoc;
-window.onSnapshot = onSnapshot;
-window.app = app;
+// Assuming this script is part of your main web app's scripts
+// and the Firebase setup code you provided is included before this script
+
+// Reference a document
+const docRef = doc(firestore, 'messages', 'test');
+
+// Listen for document updates
+onSnapshot(docRef, (docSnapshot) => {
+    if (docSnapshot.exists()) {
+        console.log("Current data:", docSnapshot.data());
+        // Extract information you want to send in the notification
+        const data = docSnapshot.data();
+        const title = 'Document Updated';
+        const body = `Updated Data: ${JSON.stringify(data)}`;
+        // Send a message to your service worker to show a notification
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                action: 'showNotification',
+                title: title,
+                body: body,
+                icon: 'https://webgfa.com/favicon.ico'
+            });
+        }
+    } else {
+        console.log("No such document!");
+    }
+});
 
 // Check for service worker support
 if ('serviceWorker' in navigator) {
