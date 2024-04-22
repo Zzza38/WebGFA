@@ -22,24 +22,60 @@ const firestore = getFirestore(app);
 // Reference a document
 const docRef = doc(firestore, 'messages', 'test');
 
+function changedField(oldData, newData) {
+    let changes = {};
+
+    // Check for new or changed fields in newData
+    for (const [key, value] of Object.entries(newData)) {
+        if (!oldData.hasOwnProperty(key)) {
+            changes[key] = value;
+        }
+        if (oldData[key] !== value) {
+            changes[key] = value + '|~';
+        }
+    }
+
+    // Check if any field was removed in the newData (optional)
+    for (const key of Object.keys(oldData)) {
+        if (!newData.hasOwnProperty(key)) {
+            changes[key] = "removed|~";
+            // If you prefer to ignore removed fields, you can skip this part
+        }
+    }
+
+    return Object.keys(changes).length > 0 ? changes : null;
+}
 // Listen for document updates
-onSnapshot(docRef, (docSnapshot) => {
-    if (docSnapshot.exists()) {
-        console.log("Current data:", docSnapshot.data());
-        // Extract information you want to send in the notification
-        const data = docSnapshot.data();
-        const title = 'Document Updated';
-        const body = `Updated Data: ${JSON.stringify(data)}`;
+function sendNotification(title, desc, iconURL) {
         // Send a message to your service worker to show a notification
         if (navigator.serviceWorker.controller) {
             navigator.serviceWorker.controller.postMessage({
                 action: 'showNotification',
                 title: title,
-                body: body,
-                icon: 'https://webgfa.com/favicon.ico'
+                body: desc,
+                icon: iconURL
             });
         }
+}
+
+onSnapshot(docRef, (doc) => {
+    if (doc.exists()) {
+        console.log("Current data: ", doc.data());
+        let message;
+        message = String(changedField(lastDoc, doc.data())[0]);
+        if (message.endsWith('|~')) {
+            if (message == 'removed|~') {
+                sendNotification('A message in ' + docName + ' was removed.', null, 'https://webgfa.com/favicon.ico')
+            } else {
+                sendNotification('A message in ' + docName + ' was edited.', message, 'https://webgfa.com/favicon.ico')
+            }
+        } else {
+            sendNotification('New Message in ' + docName, message, 'https://webgfa.com/favicon.ico')
+        }
+
+
     } else {
+        // doc.data() will be undefined in this case
         console.log("No such document!");
     }
 });
