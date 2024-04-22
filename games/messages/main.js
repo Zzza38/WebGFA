@@ -68,8 +68,10 @@ onSnapshot(docRef, (doc) => {
         let message;
         try{
         message = String(changedField(lastDoc, doc.data())[0]);
-        lastDoc = doc.data();
+        console.log(lastDoc);
+        console.log(doc.data());
         console.log(changedField(lastDoc, doc.data()));
+        lastDoc = doc.data();
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
                 console.log('message removed');
