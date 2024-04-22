@@ -21,7 +21,7 @@ const firestore = getFirestore(app);
 
 // Reference a document
 const docRef = doc(firestore, 'messages', 'test');
-let lastDoc = await (docRef).data();
+let lastDoc = await getDoc(docRef).data();
 function changedField(oldData, newData) {
     let changes = {};
 
