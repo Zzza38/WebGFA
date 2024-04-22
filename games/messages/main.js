@@ -66,7 +66,9 @@ onSnapshot(docRef, (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
         let message;
+        let sender;
         try{
+        sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0,-4);
         message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
         console.log(lastDoc);
         console.log(doc.data());
@@ -76,14 +78,14 @@ onSnapshot(docRef, (doc) => {
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
                 console.log('message removed');
-                sendNotification('A message in ' + docName + ' was removed.', '', 'https://webgfa.com/favicon.ico')
+                sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
             } else {
                 console.log('message edited');
-                sendNotification('A message in ' + docName + ' was edited.', message.slice(0,-2), 'https://webgfa.com/favicon.ico')
+                sendNotification(sender + ' edited a message in  ' + docName , message.slice(0,-2), 'https://webgfa.com/favicon.ico')
             }
         } else {
             console.log('message sent');
-            sendNotification('New Message in ' + docName, message, 'https://webgfa.com/favicon.ico')
+            sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
         }
     } catch{}
 
