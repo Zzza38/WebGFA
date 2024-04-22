@@ -63,8 +63,9 @@ Feel free to alter this code to your liking, but please do not re-host it, do no
 			try {
 				const docRef = doc(firestore, 'data', 'cookieclicker');
 				const docData = await getDoc(docRef);
-
-				await writeFieldToFirestore('data', 'cookieclicker', { [username]: saveFile });
+				let saveData = docData.data();
+				saveData[username] = saveFile;
+				await setDoc(docRef, saveData);
 
 				console.log('User registered successfully:', username);
 				console.log('Savefile registered successfully:', saveFile);
