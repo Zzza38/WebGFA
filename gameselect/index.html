@@ -65,8 +65,8 @@
         ccfs = ccfs.data();
         data = data.data();
         console.log(ccfs, ' ', data);
-        if (ccfs.username) {
-            localStorage.setItem("CookieClickerGame", data.username);
+        if (ccfs[username]) {
+            localStorage.setItem("CookieClickerGame", data[username]);
             console.log("Save is forced, loading.");
         } else {
             console.log("Save is not forced.");
