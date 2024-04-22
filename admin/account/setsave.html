@@ -1,119 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register savefile form</title>
-  <style>
-    /* Your existing CSS */
-    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register savefile form</title>
+    <style>
+        /* Your existing CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
 
-    body {
-        background-color: black;
-        color: white;
-        font-family: 'Ubuntu', sans-serif;
-        text-align: center;
-    }
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+        }
 
-    h2 {
-        color: white;
-    }
+        h2 {
+            color: white;
+        }
 
-    #headerLogin {
-        align-items: center;
-    }
+        #headerLogin {
+            align-items: center;
+        }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    label {
-        color: white;
-        margin-bottom: 5px;
-    }
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
 
-    input[type="text"],
-    input[type="password"],
-    input[type="checkbox"] {
-        margin: 5px;
-    }
+        input[type="text"],
+        input[type="password"],
+        input[type="checkbox"] {
+            margin: 5px;
+        }
 
-    button[type="submit"] {
-        padding: 10px 20px;
-        border-radius: 10px;
-        border: none;
-        background-color: blue;
-        color: white;
-        cursor: pointer;
-    }
+        button[type="submit"] {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
 
-    #alertText {
-        color: red;
-    }
-  </style>
+        #alertText {
+            color: red;
+        }
+    </style>
 </head>
+
 <body>
-  <h2>Register savefile form</h2>
-  <form id="registerForm">
-    <label for="newUsername">Username:</label><br>
-    <input type="text" id="newUsername" name="newUsername"><br>
-    <label for="newPassword">New Savefile:</label><br>
-    <input type="text" id="newPassword" name="newPassword"><br>
-    <label for="setTrue">Set True:</label><br>
-    <input type="checkbox" id="setTrue" name="setTrue"><br><br>
-    <button type="submit">Register</button>
-  </form>
-  <p id="alertText"></p>
+    <h2>Register savefile form</h2>
+    <form id="registerForm">
+        <label for="newUsername">Username:</label><br>
+        <input type="text" id="newUsername" name="newUsername"><br>
+        <label for="newPassword">New Savefile:</label><br>
+        <input type="text" id="newPassword" name="newPassword"><br>
+        <label for="setTrue">Set True:</label><br>
+        <input type="checkbox" id="setTrue" name="setTrue"><br><br>
+        <button type="submit">Register</button>
+    </form>
+    <p id="alertText"></p>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-      // Your Firebase configuration
-    };
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "webgfa-games.firebaseapp.com",
+            projectId: "webgfa-games",
+            storageBucket: "webgfa-games.appspot.com",
+            messagingSenderId: "553239008504",
+            appId: "1:553239008504:web:b91fba77cf0f131849170d",
+            measurementId: "G-5W79NYJZ11"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const firestore = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
 
-    function removeField(jsonObj, fieldName) {
-        // Your existing removeField function
-    }
+        // Function to remove a field from a JSON object
+        function removeField(jsonObj, fieldName) {
+            if (!jsonObj || typeof jsonObj !== 'object') {
+                console.error("Invalid JSON object");
+                return jsonObj;
+            }
 
-    async function updateFirestore(username, saveFile, setTrue) {
-      const usernamesRef = doc(firestore, 'data', 'ccfs'); // Changed to 'ccfs' as specified
-      const docSnapshot = await getDoc(usernamesRef);
-      const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-      let updatedJsonObj;
-      if (existingData[username] && !setTrue) {
-          updatedJsonObj = removeField(existingData, username);
-      } else {
-          updatedJsonObj = existingData;
-      }
-      const newData = { ...updatedJsonObj, [username]: setTrue ? true : saveFile };
-      
-      await setDoc(usernamesRef, newData);
-    }
+            const newObj = { ...jsonObj };
 
-    async function handleFormSubmission(event) {
-      event.preventDefault();
-      const alertText = document.getElementById('alertText');
-      const newUsername = document.getElementById('newUsername').value;
-      const saveFile = document.getElementById('newPassword').value;
-      const setTrue = document.getElementById('setTrue').checked;
+            if (fieldName in newObj) {
+                delete newObj[fieldName];
+            } else {
+                console.error("Field does not exist in JSON object");
+            }
 
-      try {
-        await updateFirestore(newUsername, saveFile, setTrue);
-        alertText.textContent = "Savefile registered successfully!";
-      } catch (error) {
-        console.error('Error:', error);
-        alertText.textContent = "An error occurred while registering the savefile.";
-      }
-    }
+            return newObj;
+        }
 
-    document.getElementById('registerForm').addEventListener('submit', handleFormSubmission);
-  </script>
+        async function updateFirestore(username, saveFile, setTrue) {
+            const usernamesRef = doc(firestore, 'data', 'ccfs'); // Changed to 'ccfs' as specified
+            const docSnapshot = await getDoc(usernamesRef);
+            const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+            let updatedJsonObj;
+            if (existingData[username] && !setTrue) {
+                updatedJsonObj = removeField(existingData, username);
+            } else {
+                updatedJsonObj = existingData;
+            }
+            const newData = { ...updatedJsonObj, [username]: setTrue ? true : saveFile };
+
+            await setDoc(usernamesRef, newData);
+        }
+
+        async function handleFormSubmission(event) {
+            event.preventDefault();
+            const alertText = document.getElementById('alertText');
+            const newUsername = document.getElementById('newUsername').value;
+            const saveFile = document.getElementById('newPassword').value;
+            const setTrue = document.getElementById('setTrue').checked;
+
+            try {
+                await updateFirestore(newUsername, saveFile, setTrue);
+                alertText.textContent = "Savefile registered successfully!";
+            } catch (error) {
+                console.error('Error:', error);
+                alertText.textContent = "An error occurred while registering the savefile.";
+            }
+        }
+
+        document.getElementById('registerForm').addEventListener('submit', handleFormSubmission);
+    </script>
 </body>
+
 </html>
