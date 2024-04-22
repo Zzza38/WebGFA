@@ -14,7 +14,7 @@
     <script src="/code/universalCode/maincheck.js"></script>
     <script src="/code/universalCode/aboutblankcloak.js"></script>
     <!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
-    <script>
+    <script type="module">
         function checkGuest() {
             if (getCookie('user') == 'guest' || getCookie('user') == 'G-AD' || getCookie('user') == 'eli') {
                 // Delete cookies
@@ -25,32 +25,54 @@
                 window.location.href = "/";
             }
         }
-        function jamesCheck(){
-            if (getCookie('user') == 'james' || getCookie('user') == 'zion'){
-            document.getElementById("jamesAddUser").style = "display: block;"
+        function jamesCheck() {
+            if (getCookie('user') == 'james' || getCookie('user') == 'zion') {
+                document.getElementById("jamesAddUser").style = "display: block;"
             }
         }
         setTimeout(checkGuest, 500);
         setTimeout(jamesCheck, 500);
-        /*async function checkForcedSave(){
-    const username = "zion";
-    const forcedSave = getFieldFromFirestore('data','ccfs',username);
-    const saveFile = getFieldFromFirestore('data','cookieclicker',username);
-    const docRef = doc(firestore, "data", "ccfs");
-	
-         // Get the document
-        const docSnapshot = await getDoc(docRef);
-        let forcedSave = docSnapshot.data();
-console.log("Data, is save forced: ", forcedSave)
-    console.log("Checking for forced save load");
-    if(forcedSave){
-        localStorage.setItem("CookieClickerGame",saveFile);
-        console.log("Save is forced, loading.");
-    } else{
-        console.log("Save is not forced.");
-    }
-console.log(getFieldFromFirestore('data', 'ccfs', username));
-}*/
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+            authDomain: "webgfa-games.firebaseapp.com",
+            projectId: "webgfa-games",
+            storageBucket: "webgfa-games.appspot.com",
+            messagingSenderId: "553239008504",
+            appId: "1:553239008504:web:b91fba77cf0f131849170d",
+            measurementId: "G-5W79NYJZ11"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        //const analytics = getAnalytics(app);
+        const firestore = getFirestore(app);
+
+        const docRef = doc(firestore, 'data', 'ccfs');
+        const docData = await getDoc(docRef).data();
+        console.log(docData);
+        window.docData = docData;
+        async function checkForcedSave() {
+            const username = getCookie('user');
+            const ccfs = doc(firestore, "data", "ccfs");
+            const data = doc(firestore, "data", "cookieclicker");
+
+            // Get the document
+            ccfs = await getDoc(ccfs).data();
+            data = await getDoc(data).data();
+            console.log(ccfs, ' ', data);
+            if (ccfs.username) {
+                localStorage.setItem("CookieClickerGame", data.username);
+                console.log("Save is forced, loading.");
+            } else {
+                console.log("Save is not forced.");
+            }
+            window.checkForcedSave = checkForcedSave;
+        }
 
     </script>
     <div class="container">
@@ -86,8 +108,8 @@ console.log(getFieldFromFirestore('data', 'ccfs', username));
                 <a href="/limitedadmin.html" class="game-link">This is it James!</a>
 
             </div>
-            <h3>Premium Games</h3> 
-           <!-- <a href="/games/rblx/" class="game-link">Roblox</a>-->
+            <h3>Premium Games</h3>
+            <!-- <a href="/games/rblx/" class="game-link">Roblox</a>-->
             <a href="/games/unblocker/" class="game-link">Unblockers</a>
             <a href="/games/raytracedminecraft" class="game-link">3D Minecraft (Ray Traced)</a>
             <h3>Admin Things</h3>
