@@ -67,7 +67,7 @@ onSnapshot(docRef, (doc) => {
         console.log("Current data: ", doc.data());
         let message;
         try{
-        message = String(Object.keys(changedField(lastDoc, doc.data()))[0]);
+        message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
         console.log(lastDoc);
         console.log(doc.data());
         console.log(changedField(lastDoc, doc.data()));
@@ -79,7 +79,7 @@ onSnapshot(docRef, (doc) => {
                 sendNotification('A message in ' + docName + ' was removed.', '', 'https://webgfa.com/favicon.ico')
             } else {
                 console.log('message edited');
-                sendNotification('A message in ' + docName + ' was edited.', message, 'https://webgfa.com/favicon.ico')
+                sendNotification('A message in ' + docName + ' was edited.', message.slice(0,-2), 'https://webgfa.com/favicon.ico')
             }
         } else {
             console.log('message sent');
