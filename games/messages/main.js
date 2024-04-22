@@ -64,7 +64,11 @@ onSnapshot(docRef, (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
         let message;
+        try{
         message = String(changedField(lastDoc, doc.data())[0]);
+        } catch {
+            
+        }
         lastDoc = doc.data();
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
