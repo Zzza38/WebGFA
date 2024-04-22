@@ -20,7 +20,8 @@ const firestore = getFirestore(app);
 // and the Firebase setup code you provided is included before this script
 
 // Reference a document
-const docRef = doc(firestore, 'messages', 'test');
+const docName = 'test';
+const docRef = doc(firestore, 'messages', docName);
 let lastDoc = await getDoc(docRef);
 lastDoc = lastDoc.data();
 
@@ -69,11 +70,14 @@ onSnapshot(docRef, (doc) => {
         lastDoc = doc.data();
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
+                console.log('message removed');
                 sendNotification('A message in ' + docName + ' was removed.', null, 'https://webgfa.com/favicon.ico')
             } else {
+                console.log('message edited');
                 sendNotification('A message in ' + docName + ' was edited.', message, 'https://webgfa.com/favicon.ico')
             }
         } else {
+            console.log('message sent');
             sendNotification('New Message in ' + docName, message, 'https://webgfa.com/favicon.ico')
         }
     } catch{}
