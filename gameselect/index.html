@@ -56,8 +56,8 @@
         window.doc = doc;
         window.getDoc = getDoc;
         const username = 'zion';
-        const ccfs = doc(firestore, "data", "ccfs");
-        const data = doc(firestore, "data", "cookieclicker");
+        let ccfs = doc(firestore, "data", "ccfs");
+        let data = doc(firestore, "data", "cookieclicker");
 
         // Get the document
         ccfs = await getDoc(ccfs);
