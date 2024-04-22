@@ -66,9 +66,6 @@ onSnapshot(docRef, (doc) => {
         let message;
         try{
         message = String(changedField(lastDoc, doc.data())[0]);
-        } catch {
-            
-        }
         lastDoc = doc.data();
         if (message.endsWith('|~')) {
             if (message == 'removed|~') {
@@ -79,7 +76,7 @@ onSnapshot(docRef, (doc) => {
         } else {
             sendNotification('New Message in ' + docName, message, 'https://webgfa.com/favicon.ico')
         }
-
+    } catch{}
 
     } else {
         // doc.data() will be undefined in this case
