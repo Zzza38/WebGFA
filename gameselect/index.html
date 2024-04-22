@@ -15,6 +15,11 @@
     <script src="/code/universalCode/aboutblankcloak.js"></script>
     <!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
     <script type="module">
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
         function checkGuest() {
             if (getCookie('user') == 'guest' || getCookie('user') == 'G-AD' || getCookie('user') == 'eli') {
                 // Delete cookies
@@ -32,7 +37,7 @@
         }
         setTimeout(checkGuest, 500);
         setTimeout(jamesCheck, 500);
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
@@ -55,26 +60,29 @@
         window.firestore = firestore;
         window.doc = doc;
         window.getDoc = getDoc;
-        const username = 'zion';
-        let ccfs = doc(firestore, "data", "ccfs");
-        let data = doc(firestore, "data", "cookieclicker");
+        const username = getCookie('user');
+        try {
+            const ccfsRef = doc(firestore, "data", "ccfs");
+            const dataRef = doc(firestore, "data", "cookieclicker");
 
-        // Get the document
-        ccfs = await getDoc(ccfs);
-        data = await getDoc(data);
-        ccfs = ccfs.data();
-        data = data.data();
-        console.log(ccfs, ' ', data);
-        if (ccfs[username]) {
-            localStorage.setItem("CookieClickerGame", data[username]);
-            console.log("Save is forced, loading.");
-        } else {
-            console.log("Save is not forced.");
+            // Get the document
+            let ccfs = await getDoc(ccfsRef);
+            let data = await getDoc(dataRef);
+            ccfs = ccfs.data();
+            data = data.data();
+            console.log(ccfs, ' ', data);
+            if (ccfs[username]) {
+                localStorage.setItem("CookieClickerGame", data[username]);
+                console.log("Save is forced, loaded.");
+                ccfs[username] = false;
+                await setDoc(ccfsRef, ccfs);
+
+            } else {
+                console.log("Save is not forced.");
+            }
+        } catch (e) { 
+            console.error(e);
         }
-        // const docRef = doc(firestore, 'data', 'ccfs');
-        //  const docData = await getDoc(docRef).data();
-        //  console.log(docData);
-        //  window.docData = docData;
 
 
 
