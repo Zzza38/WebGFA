@@ -6,37 +6,33 @@
   <title>Register savefile form</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
-
     body {
         background-color: black;
         color: white;
         font-family: 'Ubuntu', sans-serif;
         text-align: center;
     }
-
     h2 {
         color: white;
     }
-
+    #headerLogin {
+        align-items: center;
+    }
     form {
         display: flex;
         flex-direction: column;
         align-items: center;
     }
-
     label {
         color: white;
         margin-bottom: 5px;
     }
-
     input[type="text"],
-    input[type="checkbox"] {
+    input[type="password"] {
         padding: 5px;
         border-radius: 5px;
         border: none;
-        margin: 5px;
     }
-
     button[type="submit"] {
         padding: 10px 20px;
         border-radius: 10px;
@@ -45,7 +41,6 @@
         color: white;
         cursor: pointer;
     }
-
     #alertText {
         color: red;
     }
@@ -57,26 +52,24 @@
     <label for="newUsername">Username:</label><br>
     <input type="text" id="newUsername" name="newUsername"><br>
     <label for="newPassword">New Savefile:</label><br>
-    <input type="text" id="newPassword" name="newPassword"><br>
-    <label for="setTrue">Set True:</label><br>
-    <input type="checkbox" id="setTrue" name="setTrue"><br><br>
+    <input type="text" id="newPassword" name="newPassword"><br><br>
     <button type="submit">Register</button>
   </form>
   <p id="alertText"></p>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "webgfa-games.firebaseapp.com",
-            projectId: "webgfa-games",
-            storageBucket: "webgfa-games.appspot.com",
-            messagingSenderId: "553239008504",
-            appId: "1:553239008504:web:b91fba77cf0f131849170d",
-            measurementId: "G-5W79NYJZ11"
-        };
+      apiKey: "YOUR_API_KEY",
+      authDomain: "webgfa-games.firebaseapp.com",
+      projectId: "webgfa-games",
+      storageBucket: "webgfa-games.appspot.com",
+      messagingSenderId: "553239008504",
+      appId: "1:553239008504:web:b91fba77cf0f131849170d",
+      measurementId: "G-5W79NYJZ11"
+    };
 
     const app = initializeApp(firebaseConfig);
     const firestore = getFirestore(app);
@@ -86,34 +79,33 @@
             console.error("Invalid JSON object");
             return jsonObj;
         }
-
         const newObj = { ...jsonObj };
-
         if (fieldName in newObj) {
             delete newObj[fieldName];
         } else {
             console.error("Field does not exist in JSON object");
         }
-
         return newObj;
     }
 
-    async function updateFirestore(username, saveFile, setTrue) {
-      const usernamesRef = doc(firestore, 'data', 'ccfs'); // Changed to 'ccfs' as specified
+    async function updateFirestore(username, saveFile) {
+      const usernamesRef = doc(firestore, 'data', 'cookieclicker');
       const docSnapshot = await getDoc(usernamesRef);
       const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
-
-      let updatedData = { ...existingData };
-
-      // If setTrue is checked, just set the username field to true.
-      // Otherwise, update or set the saveFile.
-      if (setTrue) {
-        updatedData[username] = true;
+      let updatedJsonObj;
+      if (existingData[username]) {
+          updatedJsonObj = removeField(existingData, username);
       } else {
-        updatedData[username] = saveFile;
+          updatedJsonObj = existingData;
       }
+      const newData = { ...updatedJsonObj, [username]: saveFile };
+      await setDoc(usernamesRef, newData);
 
-      await setDoc(usernamesRef, updatedData);
+      // New operation to set the username field to true in the 'ccfs' document
+      const userFlagRef = doc(firestore, 'data', 'ccfs');
+      await updateDoc(userFlagRef, {
+        [username]: true
+      });
     }
 
     async function handleFormSubmission(event) {
@@ -121,11 +113,10 @@
       const alertText = document.getElementById('alertText');
       const newUsername = document.getElementById('newUsername').value;
       const saveFile = document.getElementById('newPassword').value;
-      const setTrue = document.getElementById('setTrue').checked;
 
       try {
-        await updateFirestore(newUsername, saveFile, setTrue);
-        alertText.textContent = "Savefile registered successfully!";
+        await updateFirestore(newUsername, saveFile);
+        alertText.textContent = "Savefile and user registration successfully updated!";
       } catch (error) {
         console.error('Error:', error);
         alertText.textContent = "An error occurred while registering the savefile.";
