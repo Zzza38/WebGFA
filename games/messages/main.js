@@ -121,7 +121,7 @@ onSnapshot(docRef, async (doc) => {
         let sender;
         try {
             timestampDoc = await getDoc(timestampRef);
-            lastDoc = lastDoc.data();
+            timestampDoc = timestampDoc.data();
             updateHTML(doc.data());
             sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
             message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
