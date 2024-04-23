@@ -21,6 +21,7 @@ function getCookie(name) {
 	const parts = value.split(`; ${name}=`);
 	if (parts.length === 2) return parts.pop().split(';').shift();
 }
+let docName;
 let docRef;
 let timestampRef;
 let timestampDoc;
@@ -29,8 +30,8 @@ let lastDoc;
 
 document.getElementById('connect').addEventListener('click', async function() {
 // Reference a document
-const docName = document.getElementById('docId').value;
-if(1 == 0) return;
+docName = document.getElementById('docId').value;
+if(docId == '') return;
 docRef = doc(firestore, 'messages', docName);
 timestampRef = doc(firestore, 'messageTimestamps', docName);
 myUser = getCookie('user');
