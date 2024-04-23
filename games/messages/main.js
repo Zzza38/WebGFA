@@ -142,7 +142,7 @@ function sendMessage(){
     if (message === '') return;
     let messageID = generateID();
     console.log('Non-null message will be added... ' + message)
-    addField('messageTimestamps', docName, myUser + messageID, now.getUTCSeconds);
+    addField('messageTimestamps', docName, myUser + messageID, now.getUTCSeconds());
     addField('messages', docName, myUser + messageID, message);
 }
 window.sendMessage = sendMessage;
