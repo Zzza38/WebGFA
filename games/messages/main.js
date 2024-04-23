@@ -91,7 +91,7 @@ function updateHTML(doc) {
         if (message.sender.slice(0, -4) == myUser) {
             messageDiv.id = 'messageSent';
         } else {
-            messageDiv.id = 'messageReceived';
+            messageDiv.id = 'messageRecieved';
             container.appendChild(senderDiv);
         }
 
