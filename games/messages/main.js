@@ -144,7 +144,7 @@ function sendMessage(){
     addField('messageTimestamps', docName, myUser + generateID(), now.getUTCSeconds);
     addField('messages', docName, myUser + generateID(), message);
 }
-window.sendMessage = sendMessage();
+window.sendMessage = sendMessage;
 updateHTML(lastDoc);
 document.getElementById('submit').addEventListener('click', sendMessage())
 onSnapshot(docRef, async (doc) => {
