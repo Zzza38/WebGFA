@@ -142,7 +142,9 @@ onSnapshot(docRef, async (doc) => {
                 console.log('message sent');
                 sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
             }
-        } catch { }
+        } catch(e){
+            console.error(e);
+         }
 
     } else {
         // doc.data() will be undefined in this case
