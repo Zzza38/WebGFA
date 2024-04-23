@@ -14,7 +14,7 @@ body {
     height: 95vh;
 }
 
-#messageSent, #messageRecieved {
+#messageSent, #messageReceived {
     background-color: rgb(188, 188, 188); /* Use a common style block for shared properties */
     border-radius: 5%;
     margin: 10px; /* Keep consistent margins */
