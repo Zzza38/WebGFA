@@ -137,8 +137,10 @@ function capitalizeWords(str) {
     }
   }
 function sendMessage(){
+    console.log('Send Message button clicked, value = ' + document.getElementById('input').value);
     let message = document.getElementById('input').value;
     if (message === '') return;
+    console.log('Non-null message will be added... ' + message)
     addField('messageTimestamps', docName, myUser + generateID(), now.getUTCSeconds);
     addField('messages', docName, myUser + generateID(), message);
 }
