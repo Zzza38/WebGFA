@@ -147,7 +147,7 @@ function sendMessage(){
 }
 window.sendMessage = sendMessage;
 updateHTML(lastDoc);
-document.getElementById('submit').addEventListener('click', sendMessage())
+document.getElementById('submit').addEventListener('click', sendMessage);
 onSnapshot(docRef, async (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
