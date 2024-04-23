@@ -22,9 +22,12 @@ const firestore = getFirestore(app);
 // Reference a document
 const docName = 'test';
 const docRef = doc(firestore, 'messages', docName);
+const timestampRef = doc(firestore, 'messageTimestamps', docName)
 const myUser = 'zion';
 let lastDoc = await getDoc(docRef);
+let timestampDoc = await getDoc(timestampRef);
 lastDoc = lastDoc.data();
+timestampDoc = timestampDoc.data();
 
 function changedField(oldData, newData) {
     let changes = {};
@@ -62,43 +65,58 @@ function sendNotification(title, desc, iconURL) {
         });
     }
 }
-function updateHTML(doc) {
+function updateHTML(doc, timestampDoc) {
     let container = document.getElementById('messageContainer');
-    let messageDiv = document.createElement('div');
-    let senderDiv = document.createElement('div');
-    container.innerHTML = null;
-    for (const [sender, message] of Object.entries(doc)) {
-        senderDiv.innerText = sender.slice(0, -4);
-        senderDiv.id = 'whoSent';
-        messageDiv.innerText = message;
-        if (sender.slice(0, -4) == myUser) {
-            messageDiv.id = 'messageSent';
-        } else {
-            container.appendChild(senderDiv);
-            messageDiv.id = 'messageRecieved';
-        }
-        container.appendChild(messageDiv);
-        messageDiv = document.createElement('div');
-        senderDiv = document.createElement('div');
-    }
+    container.innerHTML = '';  // Clear previous contents
+
+    // Create elements for input and submit outside of the loop
     let input = document.createElement('input');
     let submit = document.createElement('button');
     let img = document.createElement('img');
     input.id = 'input';
-    container.appendChild(input);
-    submit.id = 'submit';
     img.src = 'image.png';
-    img.style = 'width: 16px; height: 16px;'
-    container.appendChild(submit);
+    img.style = 'width: 16px; height: 16px;';
+    submit.id = 'submit';
     submit.appendChild(img);
+
+    // Sort the timestampDoc by keys (timestamps)
+    const sortedTimestamps = Object.keys(timestampDoc).sort((a, b) => a - b);
+
+    for (const timestamp of sortedTimestamps) {
+        let messageData = timestampDoc[timestamp];
+        let sender = messageData.sender;
+        let message = messageData.message;
+
+        let messageDiv = document.createElement('div');
+        let senderDiv = document.createElement('div');
+        senderDiv.innerText = sender.slice(0, -4);
+        senderDiv.id = 'whoSent';
+        messageDiv.innerText = message;
+
+        if (sender.slice(0, -4) == myUser) {
+            messageDiv.id = 'messageSent';
+        } else {
+            messageDiv.id = 'messageReceived';
+            container.appendChild(senderDiv);
+        }
+
+        container.appendChild(messageDiv);
+    }
+
+    // Append input and submit elements at the end
+    container.appendChild(input);
+    container.appendChild(submit);
 }
+
 updateHTML(lastDoc);
-onSnapshot(docRef, (doc) => {
+onSnapshot(docRef, async (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
         let message;
         let sender;
         try {
+            timestampDoc = await getDoc(timestampRef);
+            lastDoc = lastDoc.data();
             updateHTML(doc.data());
             sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
             message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
