@@ -23,6 +23,7 @@ function getCookie(name) {
 }
 let docRef;
 let timestampRef;
+let timestampDoc;
 let myUser;
 let lastDoc;
 
