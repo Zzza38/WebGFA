@@ -28,7 +28,6 @@ let lastDoc = await getDoc(docRef);
 let timestampDoc = await getDoc(timestampRef);
 lastDoc = lastDoc.data();
 timestampDoc = timestampDoc.data();
-const now = new Date();
 
 function changedField(oldData, newData) {
     let changes = {};
@@ -140,9 +139,10 @@ function sendMessage(){
     console.log('Send Message button clicked, value = ' + document.getElementById('input').value);
     let message = document.getElementById('input').value;
     if (message === '') return;
+    const unixTime = Math.floor(Date.now() / 1000);
     let messageID = generateID();
     console.log('Non-null message will be added... ' + message)
-    addField('messageTimestamps', docName, myUser + messageID, now.getUTCSeconds());
+    addField('messageTimestamps', docName, myUser + messageID, unixTime);
     addField('messages', docName, myUser + messageID, message);
 }
 window.sendMessage = sendMessage;
