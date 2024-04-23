@@ -140,9 +140,10 @@ function sendMessage(){
     console.log('Send Message button clicked, value = ' + document.getElementById('input').value);
     let message = document.getElementById('input').value;
     if (message === '') return;
+    let messageID = generateID();
     console.log('Non-null message will be added... ' + message)
-    addField('messageTimestamps', docName, myUser + generateID(), now.getUTCSeconds);
-    addField('messages', docName, myUser + generateID(), message);
+    addField('messageTimestamps', docName, myUser + messageID, now.getUTCSeconds);
+    addField('messages', docName, myUser + messageID, message);
 }
 window.sendMessage = sendMessage;
 updateHTML(lastDoc);
