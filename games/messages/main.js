@@ -16,19 +16,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-// Assuming this script is part of your main web app's scripts
-// and the Firebase setup code you provided is included before this script
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}
+let docRef;
+let timestampRef;
+let myUser;
+let lastDoc;
 
+document.getElementById('connect').addEventListener('click', async function() {
 // Reference a document
-const docName = 'test';
-const docRef = doc(firestore, 'messages', docName);
-const timestampRef = doc(firestore, 'messageTimestamps', docName)
-const myUser = 'zion';
-let lastDoc = await getDoc(docRef);
-let timestampDoc = await getDoc(timestampRef);
+const docName = document.getElementById('docId').value;
+if(1 == 0) return;
+docRef = doc(firestore, 'messages', docName);
+timestampRef = doc(firestore, 'messageTimestamps', docName);
+myUser = getCookie('user');
+lastDoc = await getDoc(docRef);
+timestampDoc = await getDoc(timestampRef);
 lastDoc = lastDoc.data();
 timestampDoc = timestampDoc.data();
-
+if (lastDoc == null) await setDoc(docRef, {}); await setDoc(timestampRef, {});
+startListening();
+document.getElementById('connect').style = 'display: none;'
+document.getElementById('docId').style = 'display: none;'
+});
 function changedField(oldData, newData) {
     let changes = {};
 
@@ -102,7 +115,7 @@ function updateHTML(doc) {
     let input = document.createElement('input');
     input.id = 'input';
     container.appendChild(input);
-    
+
     let submit = document.createElement('button');
     submit.id = 'submit';
     let img = document.createElement('img');
@@ -123,19 +136,19 @@ function generateID() {
 
 function capitalizeWords(str) {
     return str.replace(/\b\w/g, char => char.toUpperCase());
- }
- async function addField(collection, docId, fieldName, fieldValue) {
+}
+async function addField(collection, docId, fieldName, fieldValue) {
     const docRef = doc(firestore, collection, docId);
     try {
-      await setDoc(docRef, {
-        [fieldName]: fieldValue  // Replace 'newFieldName' and 'newValue' with your field name and value
-      }, { merge: true });
-      console.log("Field added or updated successfully");
+        await setDoc(docRef, {
+            [fieldName]: fieldValue  // Replace 'newFieldName' and 'newValue' with your field name and value
+        }, { merge: true });
+        console.log("Field added or updated successfully");
     } catch (error) {
-      console.error("Error adding or updating field: ", error);
+        console.error("Error adding or updating field: ", error);
     }
-  }
-function sendMessage(){
+}
+function sendMessage() {
     console.log('Send Message button clicked, value = ' + document.getElementById('input').value);
     let message = document.getElementById('input').value;
     if (message === '') return;
@@ -147,45 +160,48 @@ function sendMessage(){
 }
 window.sendMessage = sendMessage;
 updateHTML(lastDoc);
-document.getElementById('submit').addEventListener('click', sendMessage);
-onSnapshot(docRef, async (doc) => {
-    if (doc.exists()) {
-        console.log("Current data: ", doc.data());
-        let message;
-        let sender;
-        try {
-            timestampDoc = await getDoc(timestampRef);
-            timestampDoc = timestampDoc.data();
-            updateHTML(doc.data());
-            sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
-            sender = capitalizeWords(sender);
-            message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
-            console.log(lastDoc);
-            console.log(doc.data());
-            console.log(changedField(lastDoc, doc.data()));
-            console.log(message);
-            lastDoc = doc.data();
-            if (message.endsWith('|~')) {
-                if (message == 'removed|~') {
-                    console.log('message removed');
-                    sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
-                } else {
-                    console.log('message edited');
-                    sendNotification(sender + ' edited a message in  ' + docName, message.slice(0, -2), 'https://webgfa.com/favicon.ico')
-                }
-            } else {
-                console.log('message sent');
-                sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
-            }
-        } catch(e){
-            console.error(e);
-         }
 
-    } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
-});
+document.getElementById('submit').addEventListener('click', sendMessage);
+
+function startListening(){
+    onSnapshot(docRef, async (doc) => {
+        if (doc.exists()) {
+            console.log("Current data: ", doc.data());
+            let message;
+            let sender;
+            try {
+                let timestampDoc = await getDoc(timestampRef);
+                timestampDoc = timestampDoc.data();
+                updateHTML(doc.data());
+                sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
+                sender = capitalizeWords(sender);
+                message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
+                console.log(lastDoc);
+                console.log(doc.data());
+                console.log(changedField(lastDoc, doc.data()));
+                console.log(message);
+                lastDoc = doc.data();
+                if (message.endsWith('|~')) {
+                    if (message == 'removed|~') {
+                        console.log('message removed');
+                        sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
+                    } else {
+                        console.log('message edited');
+                        sendNotification(sender + ' edited a message in ' + docName, message.slice(0, -2), 'https://webgfa.com/favicon.ico')
+                    }
+                } else {
+                    console.log('message sent');
+                    sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        } else {
+            console.log("No such document!");
+        }
+    });
+};
+
 
 // Check for service worker support
 if ('serviceWorker' in navigator) {
