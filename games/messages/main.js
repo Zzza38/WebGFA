@@ -65,35 +65,30 @@ function sendNotification(title, desc, iconURL) {
         });
     }
 }
-function updateHTML(doc, timestampDoc) {
+function updateHTML(doc) {
     let container = document.getElementById('messageContainer');
     container.innerHTML = '';  // Clear previous contents
 
-    // Create elements for input and submit outside of the loop
-    let input = document.createElement('input');
-    let submit = document.createElement('button');
-    let img = document.createElement('img');
-    input.id = 'input';
-    img.src = 'image.png';
-    img.style = 'width: 16px; height: 16px;';
-    submit.id = 'submit';
-    submit.appendChild(img);
+    // Combine doc and timestampDoc into an array of objects to facilitate sorting
+    let messages = Object.keys(doc).map(key => {
+        return {
+            sender: key,
+            message: doc[key],
+            timestamp: timestampDoc[key]
+        };
+    });
 
-    // Sort the timestampDoc by keys (timestamps)
-    const sortedTimestamps = Object.keys(timestampDoc).sort((a, b) => a - b);
+    // Sort messages by timestamp
+    messages.sort((a, b) => a.timestamp - b.timestamp);
 
-    for (const timestamp of sortedTimestamps) {
-        let messageData = timestampDoc[timestamp];
-        let sender = messageData.sender;
-        let message = messageData.message;
-
+    for (const message of messages) {
         let messageDiv = document.createElement('div');
         let senderDiv = document.createElement('div');
-        senderDiv.innerText = sender.slice(0, -4);
+        senderDiv.innerText = message.sender.slice(0, -4); // Assuming name is up to last 4 digits
         senderDiv.id = 'whoSent';
-        messageDiv.innerText = message;
+        messageDiv.innerText = message.message;
 
-        if (sender.slice(0, -4) == myUser) {
+        if (message.sender.slice(0, -4) == myUser) {
             messageDiv.id = 'messageSent';
         } else {
             messageDiv.id = 'messageReceived';
@@ -103,10 +98,20 @@ function updateHTML(doc, timestampDoc) {
         container.appendChild(messageDiv);
     }
 
-    // Append input and submit elements at the end
+    // Add input and submit elements
+    let input = document.createElement('input');
+    input.id = 'input';
     container.appendChild(input);
+    
+    let submit = document.createElement('button');
+    submit.id = 'submit';
+    let img = document.createElement('img');
+    img.src = 'image.png';
+    img.style = 'width: 16px; height: 16px;';
+    submit.appendChild(img);
     container.appendChild(submit);
 }
+
 
 updateHTML(lastDoc);
 onSnapshot(docRef, async (doc) => {
