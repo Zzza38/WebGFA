@@ -120,7 +120,7 @@ function updateHTML(doc) {
 
     let submit = document.createElement('button');
     submit.id = 'submit';
-    submit.onclick = sendMessages
+    submit.onclick = sendMessage;
     let img = document.createElement('img');
     img.src = 'image.png';
     img.style = 'width: 16px; height: 16px;';
