@@ -120,6 +120,7 @@ function updateHTML(doc) {
 
     let submit = document.createElement('button');
     submit.id = 'submit';
+    submit.onclick = 'sendMessage()'
     let img = document.createElement('img');
     img.src = 'image.png';
     img.style = 'width: 16px; height: 16px;';
@@ -163,7 +164,7 @@ function sendMessage() {
 window.sendMessage = sendMessage;
 updateHTML(lastDoc);
 
-document.getElementById('submit').addEventListener('click', sendMessage);
+//document.getElementById('submit').addEventListener('click', sendMessage);
 
 function startListening(){
     onSnapshot(docRef, async (doc) => {
