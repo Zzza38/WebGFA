@@ -22,6 +22,7 @@ const firestore = getFirestore(app);
 // Reference a document
 const docName = 'test';
 const docRef = doc(firestore, 'messages', docName);
+const myUser = 'zion';
 let lastDoc = await getDoc(docRef);
 lastDoc = lastDoc.data();
 
@@ -51,43 +52,74 @@ function changedField(oldData, newData) {
 }
 // Listen for document updates
 function sendNotification(title, desc, iconURL) {
-        // Send a message to your service worker to show a notification
-        if (navigator.serviceWorker.controller) {
-            navigator.serviceWorker.controller.postMessage({
-                action: 'showNotification',
-                title: title,
-                body: desc,
-                icon: iconURL
-            });
-        }
+    // Send a message to your service worker to show a notification
+    if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+            action: 'showNotification',
+            title: title,
+            body: desc,
+            icon: iconURL
+        });
+    }
 }
-
+function updateHTML(doc) {
+    let container = document.getElementById('messageContainer');
+    let messageDiv = document.createElement('div');
+    let senderDiv = document.createElement('div');
+    container.innerHTML = null;
+    for (const [sender, message] of Object.entries(doc)) {
+        senderDiv.innerText = sender.slice(0, -4);
+        senderDiv.id = 'whoSent';
+        messageDiv.innerText = message;
+        if (sender.slice(0, -4) == myUser) {
+            messageDiv.id = 'messageSent';
+        } else {
+            container.appendChild(senderDiv);
+            messageDiv.id = 'messageRecieved';
+        }
+        container.appendChild(messageDiv);
+        messageDiv = document.createElement('div');
+        senderDiv = document.createElement('div');
+    }
+    let input = document.createElement('input');
+    let submit = document.createElement('button');
+    let img = document.createElement('img');
+    input.id = 'input';
+    container.appendChild(input);
+    submit.id = 'submit';
+    img.src = 'image.png';
+    img.style = 'width: 16px; height: 16px;'
+    container.appendChild(submit);
+    submit.appendChild(img);
+}
+updateHTML(lastDoc);
 onSnapshot(docRef, (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
         let message;
         let sender;
-        try{
-        sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0,-4);
-        message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
-        console.log(lastDoc);
-        console.log(doc.data());
-        console.log(changedField(lastDoc, doc.data()));
-        console.log(message);
-        lastDoc = doc.data();
-        if (message.endsWith('|~')) {
-            if (message == 'removed|~') {
-                console.log('message removed');
-                sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
+        try {
+            updateHTML(doc.data());
+            sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
+            message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
+            console.log(lastDoc);
+            console.log(doc.data());
+            console.log(changedField(lastDoc, doc.data()));
+            console.log(message);
+            lastDoc = doc.data();
+            if (message.endsWith('|~')) {
+                if (message == 'removed|~') {
+                    console.log('message removed');
+                    sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
+                } else {
+                    console.log('message edited');
+                    sendNotification(sender + ' edited a message in  ' + docName, message.slice(0, -2), 'https://webgfa.com/favicon.ico')
+                }
             } else {
-                console.log('message edited');
-                sendNotification(sender + ' edited a message in  ' + docName , message.slice(0,-2), 'https://webgfa.com/favicon.ico')
+                console.log('message sent');
+                sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
             }
-        } else {
-            console.log('message sent');
-            sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
-        }
-    } catch{}
+        } catch { }
 
     } else {
         // doc.data() will be undefined in this case
@@ -98,14 +130,14 @@ onSnapshot(docRef, (doc) => {
 // Check for service worker support
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
-    .then(function(registration) {
-        console.log('Service Worker registered with scope:', registration.scope);
+        .then(function (registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
 
-        // Request notification permission
-        Notification.requestPermission();
+            // Request notification permission
+            Notification.requestPermission();
 
-    })
-    .catch(function(error) {
-        console.error('Service Worker registration failed:', error);
-    });
+        })
+        .catch(function (error) {
+            console.error('Service Worker registration failed:', error);
+        });
 }
