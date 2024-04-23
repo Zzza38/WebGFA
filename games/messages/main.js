@@ -28,6 +28,7 @@ let lastDoc = await getDoc(docRef);
 let timestampDoc = await getDoc(timestampRef);
 lastDoc = lastDoc.data();
 timestampDoc = timestampDoc.data();
+const now = new Date();
 
 function changedField(oldData, newData) {
     let changes = {};
@@ -111,9 +112,40 @@ function updateHTML(doc) {
     submit.appendChild(img);
     container.appendChild(submit);
 }
+function generateID() {
+    // Generate a random number between 0 and 9999
+    const randomNumber = Math.round(Math.random() * 9999);
 
+    // Convert the number to a string and pad with zeros if necessary to ensure it is always four digits
+    const fourDigitNumber = randomNumber.toString().padStart(4, '0');
 
+    return fourDigitNumber;
+}
+
+function capitalizeWords(str) {
+    return str.replace(/\b\w/g, char => char.toUpperCase());
+ }
+ async function addField(collection, docId, fieldName, fieldValue) {
+    const docRef = doc(firestore, collection, docId);
+    try {
+      await setDoc(docRef, {
+        [fieldName]: fieldValue  // Replace 'newFieldName' and 'newValue' with your field name and value
+      }, { merge: true });
+      console.log("Field added or updated successfully");
+    } catch (error) {
+      console.error("Error adding or updating field: ", error);
+    }
+  }
+function sendMessage(){
+    let message = document.getElementById('input').value;
+    if (message === null) return;
+    addField(messageTimestamps, docName, myUser + generateID(), now.getUTCSeconds);
+    addField(messages, docName, myUser + generateID(), message);
+    
+
+}
 updateHTML(lastDoc);
+document.getElementById('submit').addEventListener('click', sendMessage())
 onSnapshot(docRef, async (doc) => {
     if (doc.exists()) {
         console.log("Current data: ", doc.data());
@@ -124,6 +156,7 @@ onSnapshot(docRef, async (doc) => {
             timestampDoc = timestampDoc.data();
             updateHTML(doc.data());
             sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
+            sender = capitalizeWords(sender);
             message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
             console.log(lastDoc);
             console.log(doc.data());
