@@ -138,7 +138,7 @@ function capitalizeWords(str) {
   }
 function sendMessage(){
     let message = document.getElementById('input').value;
-    if (message === null) return;
+    if (message === '') return;
     addField('messageTimestamps', docName, myUser + generateID(), now.getUTCSeconds);
     addField('messages', docName, myUser + generateID(), message);
 }
