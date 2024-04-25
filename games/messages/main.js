@@ -40,7 +40,8 @@ document.getElementById('connect').addEventListener('click', async function () {
     lastDoc = lastDoc.data();
     timestampDoc = timestampDoc.data();
     console.log(lastDoc, timestampDoc);
-    if (lastDoc == null) await setDoc(docRef, {}); await setDoc(timestampRef, {});
+    lastDoc == null ? await setDoc(docRef, {}) :
+    timestampDoc == null ? await setDoc(timestampRef, {}) :
     startListening();
     document.getElementById('connect').style = 'display: none;'
     document.getElementById('docId').style = 'display: none;'
