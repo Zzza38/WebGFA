@@ -94,8 +94,9 @@ function updateHTML(doc) {
     });
 
     // Sort messages by timestamp
+    console.log(messages)
     messages.sort((a, b) => a.timestamp - b.timestamp);
-
+    console.log(messages);
     for (const message of messages) {
         let messageDiv = document.createElement('div');
         let senderDiv = document.createElement('div');
