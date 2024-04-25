@@ -17,9 +17,9 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
 function getCookie(name) {
-	const value = `; ${document.cookie}`;
-	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop().split(';').shift();
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
 }
 let docName;
 let docRef;
@@ -28,21 +28,22 @@ let timestampDoc;
 let myUser;
 let lastDoc;
 
-document.getElementById('connect').addEventListener('click', async function() {
-// Reference a document
-docName = document.getElementById('docId').value;
-if(docId == '') return;
-docRef = doc(firestore, 'messages', docName);
-timestampRef = doc(firestore, 'messageTimestamps', docName);
-myUser = getCookie('user');
-lastDoc = await getDoc(docRef);
-timestampDoc = await getDoc(timestampRef);
-lastDoc = lastDoc.data();
-timestampDoc = timestampDoc.data();
-if (lastDoc == null) await setDoc(docRef, {}); await setDoc(timestampRef, {});
-startListening();
-document.getElementById('connect').style = 'display: none;'
-document.getElementById('docId').style = 'display: none;'
+document.getElementById('connect').addEventListener('click', async function () {
+    // Reference a document
+    docName = document.getElementById('docId').value;
+    if (docId == '') return;
+    docRef = doc(firestore, 'messages', docName);
+    timestampRef = doc(firestore, 'messageTimestamps', docName);
+    myUser = getCookie('user');
+    lastDoc = await getDoc(docRef);
+    timestampDoc = await getDoc(timestampRef);
+    lastDoc = lastDoc.data();
+    timestampDoc = timestampDoc.data();
+    console.log(lastDoc, timestampDoc);
+    if (lastDoc == null) await setDoc(docRef, {}); await setDoc(timestampRef, {});
+    startListening();
+    document.getElementById('connect').style = 'display: none;'
+    document.getElementById('docId').style = 'display: none;'
 });
 function changedField(oldData, newData) {
     let changes = {};
@@ -167,7 +168,7 @@ updateHTML(lastDoc);
 
 //document.getElementById('submit').addEventListener('click', sendMessage);
 
-function startListening(){
+function startListening() {
     onSnapshot(docRef, async (doc) => {
         if (doc.exists()) {
             console.log("Current data: ", doc.data());
