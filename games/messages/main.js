@@ -41,8 +41,8 @@ document.getElementById('connect').addEventListener('click', async function () {
     timestampDoc = timestampDoc.data();
     console.log(lastDoc, timestampDoc);
     lastDoc == null ? await setDoc(docRef, {}) :
-    timestampDoc == null ? await setDoc(timestampRef, {}) :
-    startListening();
+        timestampDoc == null ? await setDoc(timestampRef, {}) :
+            startListening();
     document.getElementById('connect').style = 'display: none;'
     document.getElementById('docId').style = 'display: none;'
 });
@@ -82,6 +82,13 @@ function sendNotification(title, desc, iconURL) {
         });
     }
 }
+function convertUnixToLocalTime(unixTimestamp) {
+    // Create a new Date object from the UNIX timestamp
+    let date = new Date(unixTimestamp * 1000);
+
+    // Return the local date and time as a string
+    return date.toLocaleString();
+}
 function updateHTML(doc) {
     let container = document.getElementById('messageContainer');
     container.innerHTML = '';  // Clear previous contents
@@ -102,7 +109,7 @@ function updateHTML(doc) {
     for (const message of messages) {
         let messageDiv = document.createElement('div');
         let senderDiv = document.createElement('div');
-        senderDiv.innerText = message.sender.slice(0, -4); // Assuming name is up to last 4 digits
+        senderDiv.innerText = message.sender.slice(0, -4) + ' - ' + convertUnixToLocalTime(message.timestamp); // Assuming name is up to last 4 digits
         senderDiv.id = 'whoSent';
         messageDiv.innerText = message.message;
 
