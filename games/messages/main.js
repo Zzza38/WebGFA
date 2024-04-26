@@ -35,7 +35,7 @@ function populateOldThreads() {
     start.innerText = '----------';
     threadDiv.appendChild(start);
     if (!threads) return;
-    threads.split(',') = threads;
+    threads = threads.split(',');
     threads.forEach(threadName => {
         let option = document.createElement('option');
         option.innerText = threadName;
