@@ -69,7 +69,7 @@ function guestLogin(){
                     document.cookie = `user=${username}; path=/`;
                     document.cookie = `pass=${password}; path=/`;
                     // Redirect to the gameselect.html page
-                    window.location.href = "gameselect.html"; 
+                    window.location.href = "/gameselect/"; 
           } else {
                     alertText.textContent = 'Incorrect password for user: ' + username;
                 }

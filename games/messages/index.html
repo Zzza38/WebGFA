@@ -8,9 +8,19 @@
 </head>
 
 <body>
-    <input id="docId"> <button id="connect">Connect To Thread</button>
+    <div id="connectContainer">
+        <input id="docId"> <button id="connect">Connect To Thread</button>
+        <br> <br>
+    </div>
     <div id="messageContainer"></div>
-    <script src="main.js" type="module"></script>
+    <script src='main.js' type="module"></script>
+    <script>
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Optional: Add smooth scrolling behavior
+        });
+    </script>
+
 </body>
 
 </html>
