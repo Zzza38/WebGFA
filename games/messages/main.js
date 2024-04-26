@@ -133,7 +133,7 @@ function updateHTML(doc) {
         deleteButton.innerHTML = deleteImg;
         editButton.style = 'background-color: rgb(88,88,88);';
         deleteButton.style = 'background-color: rgb(88,88,88);';
-        senderDiv.innerText = message.sender.slice(0, -4) + ' - ' + convertUnixToLocalTime(message.timestamp); // Assuming name is up to last 4 digits
+        senderDiv.innerText = capitalizeWords(message.sender.slice(0, -4)) + ' - ' + convertUnixToLocalTime(message.timestamp); // Assuming name is up to last 4 digits
         senderDiv.id = 'whoSent';
         messageDiv.innerText = message.message;
 

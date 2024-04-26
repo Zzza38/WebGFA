@@ -5,7 +5,7 @@ body {
 
 #messageContainer {
     background-color: rgb(88, 88, 88);
-    border-radius: 5%;
+    border-radius: 2%;
     display: inline-block;
     min-width: 60vw;
     max-width: 600px;
