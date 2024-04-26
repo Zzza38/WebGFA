@@ -30,7 +30,7 @@ let lastDoc;
 
 function populateOldThreads() {
     const threads = getCookie('previousThreads');
-    const threadDiv = document.getElementById('pThreads');
+    let threadDiv = document.getElementById('pThreads');
     let start = document.createElement('option');
     start.innerText = '----------';
     threadDiv.appendChild(start);
