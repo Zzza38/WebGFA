@@ -29,10 +29,11 @@ let myUser;
 let lastDoc;
 
 function populateOldThreads() {
-    const threads = getCookie('previousThreads').split(',');
+    const threads = getCookie('previousThreads');
+    if (threads) threads.split(',') = threads;
     const threadDiv = document.getElementById('pThreads');
     let start = document.createElement('option');
-    option.innerText = '----------';
+    start.innerText = '----------';
     threadDiv.appendChild(start);
     threads.forEach(threadName => {
         let option = document.createElement('option');
@@ -53,6 +54,7 @@ document.getElementById('deleteThread').addEventListener('click', function () {
     if (index !== -1) {
         threads.splice(index, 1); // Remove 1 element starting from the index
     }
+
     // Update the cookie with the modified threads array
     document.cookie = `previousThreads=${threads.join(',')}; path=/`;
 
