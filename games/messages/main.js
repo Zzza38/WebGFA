@@ -28,10 +28,40 @@ let timestampDoc;
 let myUser;
 let lastDoc;
 
+function populateOldThreads() {
+    const threads = getCookie('previousThreads').split(',');
+    const threadDiv = document.getElementById('pThreads');
+    let start = document.createElement('option');
+    option.innerText = '----------';
+    threadDiv.appendChild(start);
+    threads.forEach(threadName => {
+        let option = document.createElement('option');
+        option.innerText = threadName;
+        threadDiv.appendChild(option);
+    });
+
+}
+populateOldThreads();
+document.getElementById('deleteThread').addEventListener('click', function () {
+    // Retrieve the array of threads from the cookie
+    const threads = getCookie('previousThreads').split(',');
+    // Get the threadDiv element
+    const threadDiv = document.getElementById('pThreads');
+    // Find the index of the threadDiv element in the threads array
+    const index = threads.indexOf(threadDiv);
+    // Remove the element if it exists in the array
+    if (index !== -1) {
+        threads.splice(index, 1); // Remove 1 element starting from the index
+    }
+    // Update the cookie with the modified threads array
+    document.cookie = `previousThreads=${threads.join(',')}; path=/`;
+
+});
 document.getElementById('connect').addEventListener('click', async function () {
     // Reference a document
-    docName = document.getElementById('docId').value;
-    if (docId == '') return;
+    docName = document.getElementById('pThreads').value != '----------' ? document.getElementById('docId').value : document.getElementById('pThreads').value
+    if (docName == '') return;
+    document.cookie = `previousThreads=${getCookie('user') + ',' + docName}; path=/`;
     docRef = doc(firestore, 'messages', docName);
     timestampRef = doc(firestore, 'messageTimestamps', docName);
     myUser = getCookie('user');
