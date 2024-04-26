@@ -34,7 +34,7 @@ document.getElementById('connect').addEventListener('click', async function () {
     if (docId == '') return;
     docRef = doc(firestore, 'messages', docName);
     timestampRef = doc(firestore, 'messageTimestamps', docName);
-    myUser = 'zion'//getCookie('user');
+    myUser = getCookie('user');
     lastDoc = await getDoc(docRef);
     timestampDoc = await getDoc(timestampRef);
     lastDoc = lastDoc.data();
