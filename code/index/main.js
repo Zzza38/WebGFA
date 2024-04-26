@@ -36,7 +36,7 @@ function guestLogin(){
     document.cookie = `pass=guest; path=/`;
 
     // Redirect to the gameselect.html page
-    window.location.href = "gameselect.html"; 
+    window.location.href = "/gameselect/"; 
 }
     window.guestLogin = guestLogin;
     form.addEventListener('submit', async function(event) {

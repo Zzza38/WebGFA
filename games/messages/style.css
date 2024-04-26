@@ -10,41 +10,63 @@ body {
     min-width: 60vw;
     max-width: 600px;
     height: 99vh;
-    overflow-y: auto; /* Add this line to enable vertical scrolling */
+    max-height: 100vh;
+    overflow-y: auto;
+    /* Add this line to enable vertical scrolling */
 }
 
 
-#messageSent, #messageReceived {
-    background-color: rgb(188, 188, 188); /* Use a common style block for shared properties */
+#messageSent,
+#messageReceived {
+    background-color: rgb(188, 188, 188);
+    /* Use a common style block for shared properties */
     border-radius: 5%;
-    margin: 10px; /* Keep consistent margins */
+    margin: 10px;
+    /* Keep consistent margins */
     padding: 10px;
-    display: block; /* Make them block to stack inside the container */
-    width: fit-content; /* Adjust width to fit the content */
-    max-width: 90%; /* Prevent extremely long messages from stretching the container too much */
+    display: block;
+    /* Make them block to stack inside the container */
+    width: fit-content;
+    /* Adjust width to fit the content */
+    max-width: 90%;
+    /* Prevent extremely long messages from stretching the container too much */
 }
 
 #messageSent {
-    background-color: rgb(0, 98, 255); /* Only override what's different */
+    background-color: rgb(0, 98, 255);
+    /* Only override what's different */
     margin: 10px 10px 10px auto;
 }
-#actionsSent, #actionsReceive{
+
+#actionsSent,
+#actionsReceive {
     background-color: rgb(88, 88, 88);
     border-radius: 5%;
     float: left;
-    margin-bottom: 10px;
+    /*margin: 10px;*/
 
 }
-#actionsSent{
+
+#actionsSent {
     float: right;
 }
-#whoSent{
+
+#whoSent {
     clear: both;
     font-size: 12px;
     text-align: left;
     margin: 10px;
 }
 
-#input{
+#input {
     display: inline-block;
+    max-width: 15vh;
+}
+
+.inputContainer {
+    position: fixed;
+    top: 98vh;
+    /* Adjust as needed to position the element */
+    left: 50vw;
+    /* Adjust as needed to position the element */
 }
