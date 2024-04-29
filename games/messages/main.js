@@ -65,7 +65,6 @@ document.getElementById('deleteThread').addEventListener('click', function () {
 document.getElementById('connect').addEventListener('click', function() {
     handleSetup(null);
   });
-  handleSetup('zion');
 async function handleSetup(customThread) {
     if (!customThread) {
         docName = document.getElementById('pThreads').value == '---' ? document.getElementById('docId').value : document.getElementById('pThreads').value

@@ -13,14 +13,20 @@
     <script src="main.js" type="module"></script>
     <script src="/code/universalCode/maincheck.js"></script>
     <script src="/code/universalCode/aboutblankcloak.js"></script>
-    <!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
-    <script type="module">
-        function getCookie(name) {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop().split(';').shift();
-        }
-        function checkGuest() {
+    <script src="/code/universalCode/firestore.js" type="module"></script>
+    <script>
+        async function checkGuest() {
+            let docRef = doc(firestore, 'users', 'usernames');
+            let doc = await getDoc(docRef);
+            doc = doc.data();
+            let users = Object.keys(doc);
+            if (users.indexOf(getCookie('user')) === -1) {
+                deleteCookie('loggedIn');
+                deleteCookie('pass');
+                deleteCookie('user');
+                // Redirect to webgfa.com
+                window.location.href = "/";
+            }
             if (getCookie('user') == 'guest' || getCookie('user') == 'G-AD' || getCookie('user') == 'eli') {
                 // Delete cookies
                 deleteCookie('loggedIn');
@@ -35,31 +41,8 @@
                 document.getElementById("jamesAddUser").style = "display: block;"
             }
         }
-        setTimeout(checkGuest, 500);
-        setTimeout(jamesCheck, 500);
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-            authDomain: "webgfa-games.firebaseapp.com",
-            projectId: "webgfa-games",
-            storageBucket: "webgfa-games.appspot.com",
-            messagingSenderId: "553239008504",
-            appId: "1:553239008504:web:b91fba77cf0f131849170d",
-            measurementId: "G-5W79NYJZ11"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        //const analytics = getAnalytics(app);
-        const firestore = getFirestore(app);
-        window.app = app;
-        window.firestore = firestore;
-        window.doc = doc;
-        window.getDoc = getDoc;
+        jamesCheck();
+        checkGuest();
         const username = getCookie('user');
         try {
             const ccfsRef = doc(firestore, "data", "ccfs");
@@ -80,7 +63,7 @@
             } else {
                 console.log("Save is not forced.");
             }
-        } catch (e) { 
+        } catch (e) {
             console.error(e);
         }
 
