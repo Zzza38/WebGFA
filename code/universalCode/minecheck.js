@@ -1,12 +1,14 @@
 // Function to check if the user is logged in
 function checkLoggedIn() {
     // Get the value of the loggedIn cookie
-    const loggedIn = getCookie("loggedInMine");
+    const loggedIn = getCookie("loggedInMinecraft");
 
     // If the loggedIn cookie is not set to "true", redirect to webgfa.com
-    if (loggedIn !== "true") {
+    if (!loggedIn) {
         window.location.href = "/games/raytracedminecraft/";
     }
+    if (loggedIn) {
+        window.location.href = '/games/raytracedminecraft/game.html';
 }
 
 // Function to retrieve the value of a cookie by its name
