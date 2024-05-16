@@ -1,9 +1,37 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const nodemailer = require("nodemailer");
+const googleAppPassword = 'vllqgkpeskbyiqnu';
 admin.initializeApp();
 
 const firestore = admin.firestore();
-let lastDoc = 1; 
+let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587, // Port 587 for TLS
+    secure: false, // true for 465 (SSL), false for other ports like 587 (TLS)
+    auth: {
+        user: 'zwatch3@gmail.com', // your Gmail address
+        pass: googleAppPassword // generated App Password
+    }
+});
+let lastDoc = {};
+
+exports.sendWelcomeEmail = functions.auth.user().onCreate(async (user) => {
+    // user variable contains the newly created user's info
+    const email = 'zwatch3@gmail.com'; // My email
+    const displayName = user.displayName || 'New User'; // User's display name or a default.
+
+    // Here you can integrate with an email service provider to send an email
+    console.log(`Sending email to Zion that someone named ${displayName} signed up.`);
+
+    const info = await transporter.sendMail({
+        from: email, // sender address
+        to: email, // list of receivers
+        subject: "New user sign-up", // Subject line
+        text: `${displayName} wants to sign up for WebGFA.`, // plain text body
+        html: "", // html body
+    });
+});
 
 exports.processHeartbeat = functions.firestore.document('users/heartbeat').onUpdate(async (change, context) => {
     console.log('Function processHeartbeat started');
@@ -14,7 +42,7 @@ exports.processHeartbeat = functions.firestore.document('users/heartbeat').onUpd
     const changes = analyzeChanges(previousData, newData);
     console.log(`Analyzed changes: ${JSON.stringify(changes)}`);
 
-    for (const {user, oldTimestamp, newTimestamp} of changes) {
+    for (const { user, oldTimestamp, newTimestamp } of changes) {
         const timeDifference = newTimestamp - oldTimestamp;
         console.log(`Processing user: ${user} with time difference: ${timeDifference}`);
 
