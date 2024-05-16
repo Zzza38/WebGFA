@@ -1,0 +1,15 @@
+{
+  "name": "games-site-new",
+  "version": "1.0.0",
+  "description": "This is a game site made to play games! If you want to add any games, just use to form in the /gameselect code and submit. The website linked to this github is https://webgfa.com\r with other links being https://webgfa.org and https://webgfa.online",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^10.11.1",
+    "webpack": "^5.91.0"
+  }
+}

@@ -1,8 +1,9 @@
-async function getProfilePic(){
+export async function getProfilePic(){
     if (!firestore) {
         console.error("'/code/universalCode/firestore.js' isn't loaded!");
         return;
     }
+    try {
     let docRef = doc(firestore, 'data', 'profilePic');
     let doc = await getDoc(docRef);
     if (!doc) window.profilePic = null; return;
@@ -13,4 +14,8 @@ async function getProfilePic(){
     let index = names.indexOf(username);
     if (index === -1) window.profilePic = null; return;
     window.profilePic = imgs[index];
+    }
+    catch (error){
+        console.error(error);
+    }
 }
