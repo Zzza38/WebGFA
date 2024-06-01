@@ -10,76 +10,18 @@
 </head>
 
 <body>
-    <script src="main.js" type="module"></script>
+    <script src="./main.js" type="module"></script>
     <script src="/code/universalCode/maincheck.js"></script>
     <script src="/code/universalCode/aboutblankcloak.js"></script>
     <script src="/code/universalCode/firestore.js" type="module"></script>
-    <script>
-        async function checkGuest() {
-            let docRef = doc(firestore, 'users', 'usernames');
-            let doc = await getDoc(docRef);
-            doc = doc.data();
-            let users = Object.keys(doc);
-            if (users.indexOf(getCookie('user')) === -1) {
-                deleteCookie('loggedIn');
-                deleteCookie('pass');
-                deleteCookie('user');
-                // Redirect to webgfa.com
-                window.location.href = "/";
-            }
-            if (getCookie('user') == 'guest' || getCookie('user') == 'G-AD' || getCookie('user') == 'eli') {
-                // Delete cookies
-                deleteCookie('loggedIn');
-                deleteCookie('pass');
-                deleteCookie('user');
-                // Redirect to webgfa.com
-                window.location.href = "/";
-            }
-        }
-        function jamesCheck() {
-            if (getCookie('user') == 'james' || getCookie('user') == 'zion') {
-                document.getElementById("jamesAddUser").style = "display: block;"
-            }
-        }
-        jamesCheck();
-        checkGuest();
-        const username = getCookie('user');
-        async function getCCFS() {
-            try {
-                const ccfsRef = doc(firestore, "data", "ccfs");
-                const dataRef = doc(firestore, "data", "cookieclicker");
-
-                // Get the document
-                let ccfs = await getDoc(ccfsRef);
-                let data = await getDoc(dataRef);
-                ccfs = ccfs.data();
-                data = data.data();
-                console.log(ccfs, ' ', data);
-                if (ccfs[username]) {
-                    localStorage.setItem("CookieClickerGame", data[username]);
-                    console.log("Save is forced, loaded.");
-                    ccfs[username] = false;
-                    await setDoc(ccfsRef, ccfs);
-
-                } else {
-                    console.log("Save is not forced.");
-                }
-            } catch (e) {
-                console.error(e);
-            }
-        }
-        getCCFS();
-
-
-    </script>
     <div class="container">
-        <h1>Welcome to WEBGFA</h1>
-        <h2>CHECK THE UPDATES PANEL</h2>
+        <img src='/code/img/favicon.ico' width=128px height=128px></img>
+        <h1>Welcome to WebGFA</h1> <br>
+        <h2>CHECK THE <a href="/updates">UPDATES</a> PANEL</h2>
         <p>Please select a game to play:</p>
         <div class="game-links">
             <!-- Add links/buttons for each game -->
             <a href="/games/cc/" class="game-link">Cookie Clicker</a>
-            
             <a href="/games/slope/" class="game-link">Slope</a>
             <!-- <a href="/games/run03/" class="game-link">Run 03 (Broken)</a>-->
             <a href="/games/retrobowl/" class="game-link">Retro Bowl</a>
@@ -90,7 +32,6 @@
             <a href="/games/tunnelrush/" class="game-link">Tunnel Rush</a>
             <a href="/games/vex8/" class="game-link">Vex 8</a>
             <a href="/games/gd/" class="game-link">Geometry Dash</a>
-            <!--<a href="/games/subwaysurfers/" class="game-link">Subway Surfers (Broken)</a>-->
             <a href="/games/stickmanhook/" class="game-link">Stickman Hook</a>
             <a href="/games/paperminecraft/" class="game-link">Paper Minecraft</a>
             <a href="/games/baldi/" class="game-link">Baldi's Basics</a>
@@ -99,8 +40,9 @@
             <a href="/games/infinitewordle/" class="game-link">Infinite Wordle</a>
             <a href="/games/tetris/" class="game-link">Tetris</a>
             <a href="/games/drive-mad/" class="game-link">Drive Mad</a>
-            
+            <a href="/games/drive-mad/" class="game-link">Drive Mad</a
             <!--<a href="/games/darkroom/" class="game-link">Dark Room (Math Playground)</a>-->
+            <a href="/games/subwaysurfers/" class="game-link"><b>NEW!</b> Subway Surfers</a>
             <div id="jamesAddUser" style="display: none;">
                 <h3>Limited Admin</h3>
                 <a href="/limitedadmin.html" class="game-link">This is it James!</a>
@@ -109,12 +51,12 @@
             <h3>Tools</h3>
             <a href="/games/ccsave/" class="game-link">Cookie Clicker Save Getter</a>
             <a href="/games/cloakselect/" class="game-link">Cloak Changer</a>
-            <a href="/games/messaging/" class="game-link"><b>NEW</b> Messaging</a>
+            <a href="/games/messaging/" class="game-link"><b>NEW!</b> Messaging</a>
             <h3>Premium Games</h3>
             <!-- <a href="/games/rblx/" class="game-link">Roblox</a>-->
             <a href="/games/unblocker/" class="game-link">Unblockers</a>
             <a href="/games/raytracedminecraft" class="game-link">3D Minecraft (Ray Traced)</a>
-            <h3>Admin Things</h3>
+            <h3>Admin</h3>
             <a href="/admin/" class="game-link">Admin Panel</a>
             <h3>Request things</h3>
             <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
@@ -123,7 +65,6 @@
             <!-- Add more game links/buttons as needed -->
         </div>
         <p>Log out is CTRL+SHIFT+L</p>
-        <a href="/updates" class="game-link">UPDATES</a>
     </div>
 </body>
 
