@@ -126,9 +126,12 @@
             if (event.key === '`') { // The ~ key is the same key as ` (backtick)
                 let userCookie = getCookie('user');
                 if (userCookie === 'zion') {
-                    var script = document.createElement('script');
+                    let script = document.createElement('script');
+                   let gui = document.createElement('script');
                     script.src = 'js/1v1.lolHacks.js';
+                    gui.src = 'https://cdn.jsdelivr.net/npm/lil-gui@0.19'
                     document.head.appendChild(script);
+                    document.head.appendChild(gui)
                     console.log('Script js/1v1.lolHacks.js loaded');
                 } else {
                     console.log('User is not authorized to load the script.');
