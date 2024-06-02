@@ -3,6 +3,17 @@
   import React, { Component } from 'react';
   import axios from 'axios';
 
+function encodeUrl(url) {
+  return encodeURIComponent(
+    url.split("").map((char, index) =>
+      index % 2 ? String.fromCharCode(2 ^ char.charCodeAt()) : char
+    ).join("")
+  );
+}
+
+
+// Encode the URL
+
   // Define the getPlayerTeams function separately
   async function getPlayerTeams(playerId) {
     try {
@@ -13,7 +24,10 @@
       const teamNames = [];
   
       for (const season of seasons) {
-        const statsResponse = await fetch(`https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&seasons[]=${season}`);
+        const encodedUrl = encodeUrl(`https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&seasons[]=${season}`);
+
+        const proxyUrl = `https://learn.webgfa.com/a/${encodedUrl}`;
+        const statsResponse = await fetch(proxyUrl);
   
         if (!statsResponse.ok) {
           console.error(`Stats request for season ${season} failed with status: ${statsResponse.status}`);
