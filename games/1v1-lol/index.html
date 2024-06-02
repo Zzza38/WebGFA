@@ -110,6 +110,32 @@
 
     <script id="unity-loader" src="UnityLoader.js"></script>
     <!--<script src="Build/UnityLoader.js"></script>-->
+   <script>
+   function getCookie(name) {
+            let cookieArr = document.cookie.split(";");
+            for (let i = 0; i < cookieArr.length; i++) {
+                let cookiePair = cookieArr[i].split("=");
+                if (name == cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === '`') { // The ~ key is the same key as ` (backtick)
+                let userCookie = getCookie('user');
+                if (userCookie === 'zion') {
+                    var script = document.createElement('script');
+                    script.src = 'js/1v1.lolHacks.js';
+                    document.head.appendChild(script);
+                    console.log('Script js/1v1.lolHacks.js loaded');
+                } else {
+                    console.log('User is not authorized to load the script.');
+                }
+            }
+        });
+   </script>
     <script>
       var gameJsonUrl = "https://justbuild.nyc3.cdn.digitaloceanspaces.com/CI/1v1/Prod/162/WebGL.json"; //%gameJsonUrl
       var hostname = window.location.hostname;
