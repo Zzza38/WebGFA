@@ -14,14 +14,18 @@ document.addEventListener('keydown', function(event) {
     }
 
     // Event listener for keydown event
-    document.addEventListener('keydown', function(event) {
+    document.addEventListener('keydown', async function(event) {
         // Check if Ctrl+Shift+L is pressed
         if (event.ctrlKey && event.shiftKey && event.key === 'L') {
             // Delete cookies
             deleteCookie('loggedIn');
             deleteCookie('pass');
             deleteCookie('user');
+            sleep(100)
             // Redirect to webgfa.com
             window.location.href = "https://webgfa.com";
         }
     });
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
