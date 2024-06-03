@@ -67,7 +67,7 @@ document.addEventListener('keydown', function(event) {
             deleteCookie('loggedIn');
             deleteCookie('pass');
             deleteCookie('user');
-            sleep(100)
+            await sleep(100)
             // Redirect to webgfa.com
             window.location.href = "https://webgfa.com";
         }
