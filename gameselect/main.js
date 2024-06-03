@@ -1,4 +1,50 @@
+ async function checkGuest() {
+            let docRef = doc(firestore, 'users', 'usernames');
+            let doc = await getDoc(docRef);
+            doc = doc.data();
+            let users = Object.keys(doc);
+            if (users.indexOf(getCookie('user')) === -1) {
+                deleteCookie('loggedIn');
+                deleteCookie('pass');
+                deleteCookie('user');
+                // Redirect to webgfa.com
+                window.location.href = "/";
+            }
+        }
+        function jamesCheck() {
+            if (getCookie('user') == 'james' || getCookie('user') == 'zion') {
+                document.getElementById("jamesAddUser").style = "display: block;"
+            }
+        }
+        
+        checkGuest();
+        const username = getCookie('user');
+        async function getCCFS() {
+            try {
+                const ccfsRef = doc(firestore, "data", "ccfs");
+                const dataRef = doc(firestore, "data", "cookieclicker");
 
+                // Get the document
+                let ccfs = await getDoc(ccfsRef);
+                let data = await getDoc(dataRef);
+                ccfs = ccfs.data();
+                data = data.data();
+                console.log(ccfs, ' ', data);
+                if (ccfs[username]) {
+                    localStorage.setItem("CookieClickerGame", data[username]);
+                    console.log("Save is forced, loaded.");
+                    ccfs[username] = false;
+                    await setDoc(ccfsRef, ccfs);
+
+                } else {
+                    console.log("Save is not forced.");
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        getCCFS();
+        jamesCheck();
 document.addEventListener('keydown', function(event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'C') {
         const cookies = document.cookie.split(';');
