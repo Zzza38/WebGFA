@@ -27,9 +27,15 @@
 </style>
 </head>
 <body>
-  <button id='backward'><img src='https://webgfa.com/code/img/left.png'></img></button>
-  <button id='forward'><img src='https://webgfa.com/code/img/right.png'></img></button>
-  <button id='reload'><img src='https://webgfa.com/code/img/reload.png'></img></button>
-  <button id='home'><img src='https://webgfa.com/code/img/home.png'></img></button>
+  <button id='backward' onclick='sendMessage("b")'><img src=/code/media/left.png'></img></button>
+  <button id='forward' onclick='sendMessage("f")'><img src='/code/media/right.png'></img></button>
+  <button id='reload' onclick='sendMessage("r")'><img src='/code/media/reload.png'></img></button>
+  <button id='home' onclick='sendMessage("h")'><img src='/code/media/home.png'></img></button>
+  <button id='devTools' onclick='sendMessage("s")'><img src='/code/media/devTools.png'></button>
+	<script>
+        function sendMessage(action) {
+            parent.postMessage({ action: action }, '*');
+        }
+    </script>
 </body>
 </html>
