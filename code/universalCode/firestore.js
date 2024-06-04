@@ -23,11 +23,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
+const analytics = getAnalytics(app)
 
 getProfilePic();
 
 window.app = app;
-window.analytics = getAnalytics;
+window.analytics = analytics;
 window.firestore = firestore;
 window.doc = doc;
 window.setDoc = setDoc;
