@@ -98,3 +98,4 @@ async function loadGames() {
         console.error(e);
     }
 }
+loadGames();
