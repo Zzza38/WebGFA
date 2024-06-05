@@ -80,7 +80,7 @@ function loadGames() {
                 const gamesRef = doc(firestore, "data", "games");
 
                 // Get the document
-                let gamesDoc = await getDoc(gamesDoc);
+                let gamesDoc = await getDoc(gamesRef);
                 gamesDoc = gamesDoc.data();
                 console.log(gamesDoc);
 				let names = Object.keys(gamesDoc);
