@@ -1,16 +1,4 @@
- async function checkGuest() {
-            let docRef = doc(firestore, 'users', 'usernames');
-            let doc = await getDoc(docRef);
-            doc = doc.data();
-            let users = Object.keys(doc);
-            if (users.indexOf(getCookie('user')) === -1) {
-                deleteCookie('loggedIn');
-                deleteCookie('pass');
-                deleteCookie('user');
-                // Redirect to webgfa.com
-                window.location.href = "/";
-            }
-        }
+ 
         function jamesCheck() {
             if (getCookie('user') == 'james' || getCookie('user') == 'zion') {
                 document.getElementById("jamesAddUser").style = "display: block;"
@@ -41,6 +29,19 @@
                 }
             } catch (e) {
                 console.error(e);
+            }
+        }
+		async function checkGuest() {
+            let docRef = doc(firestore, 'users', 'usernames');
+            let doc = await getDoc(docRef);
+            doc = doc.data();
+            let users = Object.keys(doc);
+            if (users.indexOf(getCookie('user')) === -1) {
+                deleteCookie('loggedIn');
+                deleteCookie('pass');
+                deleteCookie('user');
+                // Redirect to webgfa.com
+                window.location.href = "/";
             }
         }
         getCCFS();
