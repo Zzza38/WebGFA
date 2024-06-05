@@ -8,7 +8,7 @@ window.getCookie = getCookie;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 import { getFirestore, doc, getDoc, setDoc, onSnapshot, updateDoc, deleteField } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-import { getProfilePic } from "./profilePic.js";
+// import { getProfilePic } from "./profilePic.js";
 // Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
@@ -25,7 +25,7 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const analytics = getAnalytics(app)
 
-getProfilePic();
+// getProfilePic();
 
 window.app = app;
 window.analytics = analytics;
