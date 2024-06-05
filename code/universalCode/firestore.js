@@ -23,7 +23,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
-const analytics = getAnalytics(app)
+const analytics = getAnalytics(app);
 
 // getProfilePic();
 
