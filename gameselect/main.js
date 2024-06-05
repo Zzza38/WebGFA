@@ -75,25 +75,25 @@ document.addEventListener('keydown', function(event) {
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-function loadGames() {
-	try {
-                const gamesRef = doc(firestore, "data", "games");
+async function loadGames() {
+    try {
+        const gamesRef = doc(firestore, "data", "games");
 
-                // Get the document
-                let gamesDoc = await getDoc(gamesRef);
-                gamesDoc = gamesDoc.data();
-                console.log(gamesDoc);
-				let names = Object.keys(gamesDoc);
-				let links = Object.values(gamesDoc);
-				names.forEach((elem, i), function() {
-					let a = document.createElement('a');
-					a.innerText = elem;
-					a.href = links[i];
-					a.class = 'game-link';
-					let gameLinks = document.getElementsByClassName('game-links')[0];
-					gameLinks.appendChild(a);
-				});
-            } catch (e) {
-                console.error(e);
-            }
+        // Get the document
+        let gamesDoc = await getDoc(gamesRef); // Changed gamesDoc to gamesRef
+        gamesDoc = gamesDoc.data();
+        console.log(gamesDoc);
+        let names = Object.keys(gamesDoc);
+        let links = Object.values(gamesDoc);
+        names.forEach((elem, i) => { // Changed the function definition to arrow function
+            let a = document.createElement('a');
+            a.innerText = elem;
+            a.href = links[i];
+            a.className = 'game-link'; // Changed 'class' to 'className'
+            let gameLinks = document.getElementsByClassName('game-links')[0];
+            gameLinks.appendChild(a);
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
