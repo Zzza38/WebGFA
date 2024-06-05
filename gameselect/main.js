@@ -146,9 +146,10 @@ function filterGames() {
 }
 
 document.getElementById('searchG').addEventListener('input', filterGames);
-document.addEventListener('DOMContentLoaded', function() {
+async function runOthers() {
+	await sleep(1000);
 	checkGuest();
 	getCCFS();
 	jamesCheck();
 	loadGames();
-});
+}
