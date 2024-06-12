@@ -166,8 +166,11 @@
                     a.innerHTML = blockText;
                     a.href = game.link;
                     a.className = 'game-link';
-
+					if (game.link == '/404.html'){
+						a.style.color = '#F00'
+					}
                     gameLinks.appendChild(a);
+					
                 });
             }
 
@@ -180,8 +183,9 @@
             document.getElementById('searchG').addEventListener('input', filterGames);
 
             // Run all the necessary functions after initialization
+			await loadGames();
             await checkGuest();
             await getCCFS();
             jamesCheck();
-            await loadGames();
+            
         });

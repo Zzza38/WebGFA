@@ -235,7 +235,7 @@ function generateID() {
     const randomNumber = Math.round(Math.random() * 9999);
 
     // Convert the number to a string and pad with zeros if necessary to ensure it is always four digits
-    const fourDigitNumber = randomNumber.toString().padStart(4, '0');
+    const fourDigitNumber = randomNumber.toString().padStart(4 '0');
 
     return fourDigitNumber;
 }
