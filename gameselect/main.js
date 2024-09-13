@@ -72,8 +72,7 @@ async function checkUser() {
         let users = Object.keys(userData); // Now using userData instead of doc
         if (users.indexOf(username) === -1) {
             logout();
-            // Redirect to webgfa.com
-            window.location.href = "/";
+            
         }
     } catch (e) {
         console.error(e);
@@ -84,6 +83,8 @@ function logout() {
     localStorage.removeItem('loggedIn');
     localStorage.removeItem('pass');
     localStorage.removeItem('user');
+    // Redirect to the main page
+    window.location.href = "/";
 }
 document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'C') {
@@ -104,8 +105,6 @@ document.addEventListener('keydown', async function (event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'L') {
         // Delete cookies
         logout();
-        // Redirect to webgfa.com
-        window.location.href = "/";
     }
 });
 

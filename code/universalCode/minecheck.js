@@ -9,8 +9,8 @@ function checkLoggedIn() {
     }
     if (loggedIn) {
         window.location.href = '/games/raytracedminecraft/game.html';
+    }
 }
-
 // Function to retrieve the value of a cookie by its name
 function getCookie(name) {
     const value = `; ${document.cookie}`;
