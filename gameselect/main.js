@@ -87,8 +87,12 @@ async function checkUser() {
     }
 }
 
-
-document.addEventListener('keydown', function(event) {
+function logout() {
+    localStorage.removeItem('loggedIn');
+    localStorage.removeItem('pass');
+    localStorage.removeItem('user');
+}
+document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'C') {
         const cookies = document.cookie.split(';');
         const cookieText = cookies.map(cookie => cookie.trim()).join('\n');
@@ -102,16 +106,16 @@ function deleteCookie(name) {
 }
 
 // Event listener for keydown event
-document.addEventListener('keydown', async function(event) {
+document.addEventListener('keydown', async function (event) {
     // Check if Ctrl+Shift+L is pressed
     if (event.ctrlKey && event.shiftKey && event.key === 'L') {
         // Delete cookies
         deleteCookie('loggedIn');
         deleteCookie('pass');
         deleteCookie('user');
-        await sleep(100);
+        await sleep(250);
         // Redirect to webgfa.com
-        window.location.href = "https://webgfa.com";
+        window.location.href = "/";
     }
 });
 

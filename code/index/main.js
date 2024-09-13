@@ -1,27 +1,22 @@
-// Check if the loggedIn cookie is set to 'true'
-const loggedInCookie = document.cookie.split(';').some(cookie => cookie.trim().startsWith('loggedIn=true'));
-
-// If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
-if (loggedInCookie) {
+if (localStorage.getItem('loggedIn')) {
     window.location.href = '/gameselect/';
 }
 // Import Firebase
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-	apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-	authDomain: "webgfa-games.firebaseapp.com",
-	projectId: "webgfa-games",
-	storageBucket: "webgfa-games.appspot.com",
-	messagingSenderId: "553239008504",
-	appId: "1:553239008504:web:b91fba77cf0f131849170d",
-	measurementId: "G-5W79NYJZ11"
+    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
+    authDomain: "webgfa-games.firebaseapp.com",
+    projectId: "webgfa-games",
+    storageBucket: "webgfa-games.appspot.com",
+    messagingSenderId: "553239008504",
+    appId: "1:553239008504:web:b91fba77cf0f131849170d",
+    measurementId: "G-5W79NYJZ11"
 };
 
-        // Initialize Firebase
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 //const analytics = getAnalytics(app);
 const firestore = getFirestore(app);
@@ -30,25 +25,28 @@ const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
 // If the user wants to log in as a guest, a button calls this function to log in as a guest. Will be removed on 4/1/24
-function guestLogin(){
+function guestLogin() {
     document.cookie = "loggedIn=true; path=/";
     document.cookie = `user=guest; path=/`;
     document.cookie = `pass=guest; path=/`;
+    localStorage.setItem('loggedIn', true);
+    localStorage.setItem('user', 'guest');
+    localStorage.setItem('pass', 'guest');
 
-    // Redirect to the gameselect.html page
-    window.location.href = "/gameselect/"; 
+    // Redirect to the /gameselect page
+    window.location.href = "/gameselect";
 }
-    window.guestLogin = guestLogin;
-    form.addEventListener('submit', async function(event) {
-      event.preventDefault(); // Prevent the form from submitting
+window.guestLogin = guestLogin;
+form.addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent the form from submitting
 
-      // Get the username and password values from the form
-      const username = form.username.value;
-      const password = form.password.value;
+    // Get the username and password values from the form
+    const username = form.username.value;
+    const password = form.password.value;
 
-      console.log('Attempting login with username:', username, 'and password:', password);
+    console.log('Attempting login with username:', username, 'and password:', password);
 
-      try {
+    try {
         // Reference to the document containing usernames
         const usernamesRef = doc(firestore, 'users', 'usernames');
 
@@ -58,19 +56,19 @@ function guestLogin(){
         console.log('Retrieved usernames document:', usernamesDoc.data());
 
         if (usernamesDoc.exists()) {
-          const usernamesData = usernamesDoc.data();
+            const usernamesData = usernamesDoc.data();
 
-          // Check if the entered username exists and retrieve the associated password
-          if (usernamesData.hasOwnProperty(username)) {
-            const storedPassword = usernamesData[username];
-            if (password === storedPassword) {
-              console.log('Login successful for user:', username);
-					document.cookie = "loggedIn=true; path=/";
-                    document.cookie = `user=${username}; path=/`;
-                    document.cookie = `pass=${password}; path=/`;
-                    // Redirect to the gameselect.html page
-                    window.location.href = "/gameselect/"; 
-          } else {
+            // Check if the entered username exists and retrieve the associated password
+            if (usernamesData.hasOwnProperty(username)) {
+                const storedPassword = usernamesData[username];
+                if (password === storedPassword) {
+                    console.log('Login successful for user:', username);
+                    localStorage.setItem('loggedIn', true)
+                    localStorage.setItem('user', username)
+                    localStorage.setItem('pass', password)
+                    // Redirect to the /gameselect page
+                    window.location.href = "/gameselect/";
+                } else {
                     alertText.textContent = 'Incorrect password for user: ' + username;
                 }
             } else {
@@ -84,4 +82,4 @@ function guestLogin(){
         // Display error message
         alertText.textContent = 'An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error;
     }
-    });
+});

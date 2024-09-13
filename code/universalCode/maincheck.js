@@ -1,20 +1,18 @@
 // Function to check if the user is logged in
 function checkLoggedIn() {
     // Get the value of the loggedIn cookie
-    const loggedIn = getCookie("loggedIn");
+    const loggedIn = localStorage.getItem("loggedIn");
 
     // If the loggedIn cookie is not set to "true", redirect to webgfa.com
-    if (loggedIn !== "true") {
+    if (loggedIn != true) {
         window.location.href = "/";
     }
 }
 
-// Function to retrieve the value of a cookie by its name
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
+function checkLockdown() {
+    if (sessionStorage.getItem('lockdown')) {
+        window.location.href = "/code/universalCode/lockdown.html"
+    }
 }
-
 // Call the function to check if the user is logged in when the page loads
 checkLoggedIn();

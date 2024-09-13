@@ -12,12 +12,6 @@ const firebaseConfig = {
     measurementId: "G-5W79NYJZ11"
 };
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
@@ -32,17 +26,19 @@ async function checkUID(){
     const docRef = doc(firestore, 'users', 'whitelistedUIDs');
     let document = await getDoc(docRef);
     document = document.data();
-    let whitelistedUIDs = document[getCookie('user')].split(',');
+    let whitelistedUIDs = document[localStorage.getItem('user')].split(',');
     if (!whitelistedUIDs) {
+        whitelistedUIDs = [];
         whitelistedUIDs[0] = UID;
         setDoc(docRef, {
-            [getCookie('user')]: UID
+            [localStorage.getItem('user')]: whitelistedUIDs
         }, merge = true);
     }
     let lockdown = !whitelistedUIDs.includes(UID);
     if (lockdown) {
+        sessionStorage.setItem('lockdown', true)
         setDoc(doc(firestore, 'users', 'lockdown'), {
-            [getCookie('user')]: true
+            [localStorage.getItem('user')]: true
         }, merge = true);
     }
     
