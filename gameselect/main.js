@@ -1,9 +1,4 @@
-// Function to retrieve the value of a cookie by its name
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
+
 
 // Import the functions you need from the SDKs you need
 import {
@@ -34,7 +29,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const analytics = getAnalytics(app);
-const username = getCookie('user');
+const username = localStorage.getItem('user');
 
 function jamesCheck() {
     if (username == 'james' || username == 'zion') {
@@ -76,9 +71,7 @@ async function checkUser() {
         let userData = docSnap.data(); // Using userData instead of doc
         let users = Object.keys(userData); // Now using userData instead of doc
         if (users.indexOf(username) === -1) {
-            deleteCookie('loggedIn');
-            deleteCookie('pass');
-            deleteCookie('user');
+            logout();
             // Redirect to webgfa.com
             window.location.href = "/";
         }
@@ -110,10 +103,7 @@ document.addEventListener('keydown', async function (event) {
     // Check if Ctrl+Shift+L is pressed
     if (event.ctrlKey && event.shiftKey && event.key === 'L') {
         // Delete cookies
-        deleteCookie('loggedIn');
-        deleteCookie('pass');
-        deleteCookie('user');
-        await sleep(250);
+        logout();
         // Redirect to webgfa.com
         window.location.href = "/";
     }
