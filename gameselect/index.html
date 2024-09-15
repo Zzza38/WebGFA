@@ -7,40 +7,45 @@
     <title>Game Navigation</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="/code/img/favicon.ico" type="image/x-icon">
-	  <!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
+    <!--<script src="/code/universalCode/firestore.js" type="module"></script>-->
 </head>
 
 <body>
     <script src="./main.js" defer type="module"></script>
+    <script src="/npmBundledScripts/checkUID.bundle.js"></script>
     <script src="/code/universalCode/aboutblankcloak.js"></script>
     <div class="container">
         <img src='/code/img/favicon.ico' width=128px height=128px></img>
         <h1>Welcome to WebGFA</h1> <br>
         <h2>CHECK THE <a href="/updates">UPDATES</a> PANEL</h2>
-        <h2>On September 30, a monday, do not put your backpack into your locker. This is the start of a strike against the school, so we can have backpacks again.</h2>
-		<input type="text" id="searchG" placeholder="Search games...">
+        <h2>On September 30, a monday, do not put your backpack into your locker. This is the start of a strike against
+            the school, so we can have backpacks again.</h2>
+        <input type="text" id="searchG" placeholder="Search games...">
         <p>Please select a game to play:</p>
         <div class="game-links" id="game-links"></div>
-            <div id="jamesAddUser" style="display: none;">
-                <h3>Limited Admin</h3>
-                <a href="/limitedadmin.html" class="game-link">Add users</a>
-            </div>
-            <h3>Tools</h3>
-			<div class="game-links" id="tool-links"></div>
-
+        <div id="jamesAddUser" style="display: none;">
+            <h3>Limited Admin</h3>
+            <a href="/limitedadmin.html" class="game-link">Add users</a>
+        </div>
+        <h3>Tools</h3>
+        <div class="game-links" id="tool-links"></div>
+        <div id="prem">
             <h3>Premium Games</h3>
             <!-- <a href="/games/rblx/" class="game-link">Roblox</a>-->
-            <a href="/games/unblocker/" class="game-link">Unblockers</a>
-            <a href="/games/raytracedminecraft" class="game-link">3D Minecraft (Ray Traced)</a>
-            <h3>Admin</h3>
-            <a href="/admin/" class="game-link">Admin Panel</a>
-            <h3>Request things</h3>
-            <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
-            <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
-            <a href="https://forms.gle/XFzTnrQPuziy826t8" class="game-link">Report something broken</a>
-            <!-- Add more game links/buttons as needed -->
+            <div class="game-links" id="prem-game-links"></div>
+
+            <h3>Premium Tools</h3>
+            <div class="game-links" id="prem-tool-links"></div>
+        </div>
+        <h3>Admin</h3>
+        <a href="/admin/" class="game-link" id="admin" style="display: none;">Admin Panel</a>
+        <h3>Request things</h3>
+        <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
+        <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
+        <a href="https://forms.gle/XFzTnrQPuziy826t8" class="game-link">Report something broken</a>
+        <!-- Add more game links/buttons as needed -->
         <p>Log out is CTRL+SHIFT+L</p>
-		</div>
+    </div>
     </div>
 </body>
 

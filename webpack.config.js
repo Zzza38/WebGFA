@@ -3,7 +3,8 @@ const path = require('path');
 module.exports = {
   entry: {
     register: './register/main.js',
-    auth: './auth/main.js'
+    auth: './auth/main.js',
+    checkUID: './code/universalCode/checkUIDunbundled.js'
   },
   output: {
     path: path.resolve(__dirname, 'npmBundledScripts'), // Output directory

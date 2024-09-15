@@ -30,6 +30,7 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const analytics = getAnalytics(app);
 const username = localStorage.getItem('user');
+let prem;
 
 function jamesCheck() {
     if (username == 'james' || username == 'zion') {
@@ -37,6 +38,13 @@ function jamesCheck() {
         if (jamesAddUser) {
             jamesAddUser.style.display = "block";
         }
+    }
+}
+
+function adminCheck() {
+    const adminPanelLink = document.getElementById('admin')
+    if (username == 'zion') {
+        adminPanelLink.style.display = "";
     }
 }
 
@@ -67,12 +75,16 @@ async function getCCFS() {
 async function checkUser() {
     try {
         const docRef = doc(firestore, 'users', 'usernames');
+        const permissionsDocRef = doc(firestore, 'users', 'permissions');
         let docSnap = await getDoc(docRef); // Renaming variable to docSnap
+        let per = await getDoc(permissionsDocRef);
+        let permissions = per.data();
+        prem = String(permissions[username]).includes('prem');
+        console.log(`User prem = ${prem}`)
         let userData = docSnap.data(); // Using userData instead of doc
         let users = Object.keys(userData); // Now using userData instead of doc
         if (users.indexOf(username) === -1) {
-            logout();
-            
+            logout();  
         }
     } catch (e) {
         console.error(e);
@@ -214,8 +226,113 @@ async function loadTools() {
     }
 }
 
+async function loadPrem() {
+    try {
+        let gamesDoc;
+        const gamesRef = doc(firestore, "data", "premiumGames");
+        let toolsDoc;
+        const toolsRef = doc(firestore, "data", "premiumTools");
+
+        // Get the document
+        gamesDoc = await getDoc(gamesRef);
+        gamesDoc = gamesDoc.data();
+        console.log(gamesDoc);
+        toolsDoc = await getDoc(toolsRef);
+        toolsDoc = toolsDoc.data();
+        console.log(toolsDoc);
+
+        // Get names and links
+        let gnames = Object.keys(gamesDoc);
+        let glinks = Object.values(gamesDoc);
+        let tnames = Object.keys(toolsDoc);
+        let tlinks = Object.values(toolsDoc);
+
+        // Combine names and links into a single array of objects
+        let allGames = gnames.map((name, index) => ({
+            name,
+            link: glinks[index]
+        }));
+        let allTools = tnames.map((name, index) => ({
+            name,
+            link: tlinks[index]
+        }));
+
+        // Sort the combined array alphabetically by name
+        allGames.sort((a, b) => a.name.localeCompare(b.name));
+        allTools.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Render the games
+        renderPremGames(allGames);
+        renderPremTools(allTools);
+    } catch (e) {
+        console.error(e);
+    }
+}
 function renderTools(games) {
     const gameLinks = document.getElementById('tool-links');
+    gameLinks.innerHTML = ''; // Clear existing links
+
+    games.forEach(game => {
+        let nameArr = game.name.split('**');
+        let blockText;
+
+        // Improved bold formatting
+        if (nameArr.length === 1) {
+            blockText = nameArr[0]; // No bold part
+        } else if (nameArr.length === 2) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
+        } else if (nameArr.length === 3) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
+        } else {
+            // Handle cases with more than 3 parts by bolding the middle parts
+            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
+        }
+
+        let a = document.createElement('a');
+        a.innerHTML = blockText;
+        a.href = game.link;
+        a.className = 'game-link';
+        if (game.link == '/404.html') {
+            a.style.color = '#F00'
+        }
+        gameLinks.appendChild(a);
+
+    });
+}
+function renderPremGames(games) {
+    const gameLinks = document.getElementById('prem-game-links');
+    gameLinks.innerHTML = ''; // Clear existing links
+
+    games.forEach(game => {
+        let nameArr = game.name.split('**');
+        let blockText;
+
+        // Improved bold formatting
+        if (nameArr.length === 1) {
+            blockText = nameArr[0]; // No bold part
+        } else if (nameArr.length === 2) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
+        } else if (nameArr.length === 3) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
+        } else {
+            // Handle cases with more than 3 parts by bolding the middle parts
+            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
+        }
+
+        let a = document.createElement('a');
+        a.innerHTML = blockText;
+        a.href = game.link;
+        a.className = 'game-link';
+        if (game.link == '/404.html') {
+            a.style.color = '#F00'
+        }
+        gameLinks.appendChild(a);
+
+    });
+}
+
+function renderPremTools(games) {
+    const gameLinks = document.getElementById('prem-tool-links');
     gameLinks.innerHTML = ''; // Clear existing links
 
     games.forEach(game => {
@@ -250,6 +367,10 @@ document.getElementById('searchG').addEventListener('input', filterGames);
 // Run all the necessary functions after initialization
 loadTools();
 loadGames();
-checkUser();
+await checkUser();
+if (prem) {
+    loadPrem();
+}
+adminCheck();
 getCCFS();
 jamesCheck();
