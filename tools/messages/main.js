@@ -62,9 +62,9 @@ document.getElementById('deleteThread').addEventListener('click', function () {
     navigation.reload()
 
 });
-document.getElementById('connect').addEventListener('click', function() {
+document.getElementById('connect').addEventListener('click', function () {
     handleSetup(null);
-  });
+});
 async function handleSetup(customThread) {
     if (!customThread) {
         docName = document.getElementById('pThreads').value == '---' ? document.getElementById('docId').value : document.getElementById('pThreads').value
@@ -88,7 +88,7 @@ async function handleSetup(customThread) {
     }
     docRef = doc(firestore, 'messages', docName);
     timestampRef = doc(firestore, 'messageTimestamps', docName);
-    myUser = getCookie('user');
+    myUser = localStorage.getItem('user');
     lastDoc = await getDoc(docRef);
     timestampDoc = await getDoc(timestampRef);
     lastDoc = lastDoc.data();
@@ -180,8 +180,6 @@ function updateHTML(doc) {
         let deleteButton = document.createElement('button');
         let br = document.createElement('br');
         let br1 = document.createElement('br');
-        // editButton.addEventListener('click', () => editMessage(`${i}`));
-        // deleteButton.addEventListener('click', () => deleteMessage(`${i}`));
         (function (index) {
             editButton.addEventListener('click', () => editMessage(`${index}`));
             deleteButton.addEventListener('click', () => deleteMessage(`${index}`));
@@ -227,7 +225,7 @@ function updateHTML(doc) {
     submit.appendChild(img);
     inputContainer.appendChild(input);
     inputContainer.appendChild(submit);
-    inputContainer.className = 'inputContainer'; 
+    inputContainer.className = 'inputContainer';
     container.appendChild(inputContainer);
 }
 function generateID() {
@@ -235,7 +233,7 @@ function generateID() {
     const randomNumber = Math.round(Math.random() * 9999);
 
     // Convert the number to a string and pad with zeros if necessary to ensure it is always four digits
-    const fourDigitNumber = randomNumber.toString().padStart(4 '0');
+    const fourDigitNumber = randomNumber.toString().padStart(4, '0');
 
     return fourDigitNumber;
 }
@@ -257,6 +255,7 @@ async function changeField(collection, docId, fieldName, fieldValue) {
 }
 async function delField(collection, docId, fieldName) {
     const docRef = doc(firestore, collection, docId);
+    console.log(docRef);
     try {
         await updateDoc(docRef, {
             [fieldName]: deleteField()  // This will delete the specified field
@@ -317,7 +316,7 @@ function deleteMessage(i) {
     console.log(messages);
     console.log('messages', docName, messages.map(msg => msg.sender)[i]);
     delField('messages', docName, messages.map(msg => msg.sender)[i]);
-    delField('messageTimestamp', docName, messages.map(msg => msg.sender)[i]);
+    delField('messageTimestamps', docName, messages.map(msg => msg.sender)[i]);
     console.log('DELETE CODE FINISHED');
 }
 window.sendMessage = sendMessage;
@@ -335,25 +334,29 @@ function startListening() {
                 timestampDoc = await getDoc(timestampRef);
                 timestampDoc = timestampDoc.data();
                 updateHTML(doc.data());
-                sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
-                sender = capitalizeWords(sender);
-                message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
-                console.log(lastDoc);
-                console.log(doc.data());
-                console.log(changedField(lastDoc, doc.data()));
-                console.log(message);
-                lastDoc = doc.data();
-                if (message.endsWith('|~')) {
-                    if (message == 'removed|~') {
-                        console.log('message removed');
-                        sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
-                    } else {
-                        console.log('message edited');
-                        sendNotification(sender + ' edited a message in ' + docName, message.slice(0, -2), 'https://webgfa.com/favicon.ico')
-                    }
+                if (doc.data()[0] == undefined) {
+                    console.log('The document is empty, not running the onSnapshot function');
                 } else {
-                    console.log('message sent');
-                    sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
+                    sender = String(Object.keys(changedField(lastDoc, doc.data()))[0]).slice(0, -4);
+                    sender = capitalizeWords(sender);
+                    message = String(Object.values(changedField(lastDoc, doc.data()))[0]);
+                    console.log(lastDoc);
+                    console.log(doc.data());
+                    console.log(changedField(lastDoc, doc.data()));
+                    console.log(message);
+                    lastDoc = doc.data();
+                    if (message.endsWith('|~')) {
+                        if (message == 'removed|~') {
+                            console.log('message removed');
+                            sendNotification(sender + ' removed a message in ' + docName, '', 'https://webgfa.com/favicon.ico')
+                        } else {
+                            console.log('message edited');
+                            sendNotification(sender + ' edited a message in ' + docName, message.slice(0, -2), 'https://webgfa.com/favicon.ico')
+                        }
+                    } else {
+                        console.log('message sent');
+                        sendNotification(sender + ' sent a message in ' + docName, message, 'https://webgfa.com/favicon.ico')
+                    }
                 }
             } catch (e) {
                 console.error(e);
