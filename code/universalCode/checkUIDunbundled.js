@@ -24,7 +24,9 @@ async function checkUID() {
     }
 
     const user = localStorage.getItem('user');
-
+    if (user == 'guest' || user == 'zion') {
+        return;
+    }
     try {
         // Firestore references
         const whitelistDocRef = doc(firestore, 'users', 'whitelistedUIDs');
