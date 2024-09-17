@@ -16,25 +16,21 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
 let docName;
 let docRef;
 let timestampRef;
 let timestampDoc;
 let myUser;
-let lastDoc;
 
 function populateOldThreads() {
-    let threads = getCookie('previousThreads');
+    let threads = localStorage.getItem('previousThreads');
     let threadDiv = document.getElementById('pThreads');
     let start = document.createElement('option');
     start.innerText = '---'
     threadDiv.appendChild(start);
-    if (!threads) return;
+    if (!threads) {
+        return;
+    }
     threads = threads.split(',');
     threads.forEach(threadName => {
         let option = document.createElement('option');
@@ -47,8 +43,8 @@ populateOldThreads();
 window.populateOldThreads = populateOldThreads;
 document.getElementById('deleteThread').addEventListener('click', function () {
     console.log('Thread will be deleted...');
-    // Retrieve the array of threads from the cookie
-    const threads = getCookie('previousThreads').split(',');
+    // Retrieve the array of threads from localStorage
+    const threads = localStorage.getItem('previousThreads').split(',');
     // Get the threadDiv element
     const threadDiv = document.getElementById('pThreads').value;
     // Find the index of the threadDiv element in the threads array
@@ -57,8 +53,8 @@ document.getElementById('deleteThread').addEventListener('click', function () {
     if (index !== -1) {
         threads.splice(index, 1); // Remove 1 element starting from the index
     }
-    // Update the cookie with the modified threads array
-    document.cookie = `previousThreads=${threads.join(',')}; path=/`;
+    // Update localStorage with the modified threads array
+    localStorage.setItem('previousThreads', threads.join(','));
     navigation.reload()
 
 });
@@ -68,20 +64,22 @@ document.getElementById('connect').addEventListener('click', function () {
 async function handleSetup(customThread) {
     if (!customThread) {
         docName = document.getElementById('pThreads').value == '---' ? document.getElementById('docId').value : document.getElementById('pThreads').value
-        if (docName == '') return;
+        if (docName == '') {
+            return;
+        }
         console.log(document.getElementById('pThreads').value);
-        if (getCookie('previousThreads') && document.getElementById('pThreads').value == '---') {
-            let threads = getCookie('previousThreads');
-            console.log('Cookie exists, adding it along.');
+        if (localStorage.getItem('previousThreads') && document.getElementById('pThreads').value == '---') {
+            let threads = localStorage.getItem('previousThreads');
+            console.log('Item exists, adding it along.');
             if (typeof threads == 'object') {
                 threads = threads.split(',');
-                threads.indexOf(docName) === -1 ? document.cookie = `previousThreads=${getCookie('previousThreads') + ',' + docName}; path=/` : false
+                threads.indexOf(docName) === -1 ? localStorage.setItem('previousThreads', localStorage.getItem('previousThreads') + ',' + docName) : false
             } else if (typeof threads == 'string') {
-                !threads.includes(docName) ? document.cookie = `previousThreads=${getCookie('previousThreads') + ',' + docName}; path=/` : false
+                threads.includes(docName) ? false : localStorage.setItem('previousThreads', localStorage.getItem('previousThreads') + ',' + docName)
             }
-        } else if (!getCookie('previousThreads')) {
-            console.log('Creating cookie');
-            document.cookie = `previousThreads=${docName}; path=/`;
+        } else if (!localStorage.getItem('previousThreads')) {
+            console.log('Creating item in localStorage');
+            localStorage.setItem('previousThreads', docName);
         }
     } else {
         docName = customThread;
@@ -233,9 +231,7 @@ function generateID() {
     const randomNumber = Math.round(Math.random() * 9999);
 
     // Convert the number to a string and pad with zeros if necessary to ensure it is always four digits
-    const fourDigitNumber = randomNumber.toString().padStart(4, '0');
-
-    return fourDigitNumber;
+    return randomNumber.toString().padStart(4, '0');
 }
 
 function capitalizeWords(str) {
@@ -268,7 +264,9 @@ async function delField(collection, docId, fieldName) {
 function sendMessage() {
     console.log('Send Message button clicked');
     let message = document.getElementById('input').value;
-    if (message === '') return;
+    if (message === '') {
+        return;
+    }
     window.scrollTo({
         top: 0,
         behavior: 'smooth' // Optional: Add smooth scrolling behavior
@@ -287,7 +285,9 @@ async function editMessage(i) {
     await waitButton(submitButton);
     submitButton.onclick = sendMessage;
     let message = document.getElementById('input').value;
-    if (message === '') return;
+    if (message === '') {
+        return;
+    }
     let messages = Object.keys(lastDoc).map(key => {
         return {
             sender: key,
