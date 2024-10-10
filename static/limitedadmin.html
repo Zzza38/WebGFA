@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/code/img/favicon.ico">
+    <title>Add user in consideration</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+            background-color: #000;
+            /* Set background color to black */
+            color: #FFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button {
+            margin-bottom: 5px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script src="/code/universalCode/aboutblankcloak.js"></script>
+    <script src="/code/universalCode/firestore.js"></script>
+    <script src="/code/universalCode/maincheck.js"></script>
+    <form id="registerForm" netlify>
+        <label for="newUsername">Username:</label><br>
+        <input type="text" id="newUsername" name="newUsername"><br>
+        <label for="newPassword">Password:</label><br>
+        <input type="text" id="newPassword" name="newPassword"><br>
+        <input type="checkbox" id="premiumCheckbox" name="premiumCheckbox">
+        <label for="premiumCheckbox">Premium (If they pay atleast 5 bucks)</label><br><br>
+        <button type="submit">Register</button>
+      </form>
+
+</body>
+
+</html>

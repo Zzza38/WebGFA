@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Change Password Form</title>
+  <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        #headerLogin {
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button[type="submit"] {
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        #alertText {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+  <h2>Change Password Form</h2>
+  <form id="changePasswordForm">
+    <label for="username">Username:</label><br>
+    <input type="text" id="username" name="username"><br>
+    <label for="oldPassword">Old Password:</label><br>
+    <input type="password" id="oldPassword" name="oldPassword"><br>
+    <label for="newPassword">New Password:</label><br>
+    <input type="password" id="newPassword" name="newPassword"><br>
+    <label for="premiumCheckbox">Premium</label>
+    <input type="checkbox" id="premiumCheckbox" name="premiumCheckbox">
+    <label for="adminCheckbox">Admin</label>
+    <input type="checkbox" id="adminCheckbox" name="adminCheckbox">
+    <button type="submit">Change User</button>
+  </form>
+  <p id="alertText"></p>
+
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
+
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "webgfa-games.firebaseapp.com",
+      projectId: "webgfa-games",
+      storageBucket: "webgfa-games.appspot.com",
+      messagingSenderId: "553239008504",
+      appId: "1:553239008504:web:b91fba77cf0f131849170d",
+      measurementId: "G-5W79NYJZ11"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Initialize Firestore
+    const firestore = getFirestore(app);
+
+    const form = document.getElementById('changePasswordForm');
+    const alertText = document.getElementById('alertText');
+
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent the form from submitting
+
+      // Get the username, old password, new password, and premium status values from the form
+      const username = form.username.value;
+      const oldPassword = form.oldPassword.value;
+      const newPassword = form.newPassword.value;
+      const isPremium = form.premiumCheckbox.checked;
+      const isAdmin = form.adminCheckbox.checked;
+
+      console.log('Changing password for user:', username);
+
+      try {
+        // Reference to the document containing the usernames
+        const usernamesRef = doc(firestore, 'users', 'usernames');
+        const permissionsRef = doc(firestore, 'users', 'permissions');
+
+        // Get the current data of the document
+        const docSnapshot = await getDoc(usernamesRef);
+        const existingData = docSnapshot.exists() ? docSnapshot.data() : {};
+
+        // Check if the old password matches
+        if (existingData[username] !== oldPassword) {
+          alertText.textContent = "Old password is incorrect.";
+          return;
+        }
+
+        // Update the password in Firestore
+        const newData = { ...existingData, [username]: newPassword };
+        await setDoc(usernamesRef, newData);
+
+        // Update permissions if user's premium status changed
+        const permissionsSnapshot = await getDoc(permissionsRef);
+        const permissionsData = permissionsSnapshot.exists() ? permissionsSnapshot.data() : {};
+        const updatedPermissions = { ...permissionsData };
+        if (isAdmin) {
+          updatedPermissions[username] = "prem,admin"; // Set to admin if both are included
+        } else if(isPremium){
+          updatedPermissions[username] = "prem"; // Set to prem if admin is removed
+        } else {
+          updatedPermissions[username] = null; // Set to null if premium is removed
+        }
+        await setDoc(permissionsRef, updatedPermissions);
+
+        console.log('Password changed successfully for user:', username);
+        alertText.textContent = "Password changed successfully!";
+      } catch (error) {
+        console.error('Error:', error);
+        alertText.textContent = "An error occurred while changing the password.";
+      }
+    });
+  </script>
+</body>
+</html>

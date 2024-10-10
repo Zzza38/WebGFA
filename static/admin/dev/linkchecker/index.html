@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Checker</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="textTester" style="width: 100%; height: 100px;"></textarea>
+    <button id="checkLinks">Check Links</button>
+    <div id="output"></div>
+    <script>
+        const text = document.getElementById('textTester');
+        const output = document.getElementById('output');
+        const checkLinksButton = document.getElementById('checkLinks'); // Reference to the button
+        let workingLinks = []; // Initialize workingLinks as an array
+
+        // Function to check if fetching is finished and update the output
+        function updateOutput(withLinks) {
+                console.log("Output will be updated with this text: " + '<pre>' + withLinks.join('\n') + '</pre>')
+                let linkElements = withLinks.map(link => `<a href="${link}" target="_blank">${link}</a>`);
+                let outputHtml = linkElements.join('<br>');
+                output.innerHTML = '<pre>' + outputHtml + '</pre>';
+            }
+
+        checkLinksButton.addEventListener('click', function() {
+            console.log("Checking links");
+            const lines = text.value.split('\n');
+
+            
+
+            function fetchWithNoCors(url) {
+                return fetch(url, { mode: 'no-cors' })
+                .then(response => response.text())
+                .then(data => {
+                   return true; // Link is working
+                })
+                .catch(error => {
+                    console.error('Error fetching links:', error);
+                    return false; // Fetch failed
+                });
+            }
+
+            function fetchWithCors(url) {
+                return fetch(url)
+                .then(response =>{
+                    console.log(response);
+                })
+                .then(response => response.text())
+                .then(data => {
+                    const snippet = "<!DOCTYPE html>\n<html>\n<head>\n\t<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n    <meta name=\"robots\" content=\"noindex\">\n\t<title>Page Restricted</title>";
+                    if (data.includes(snippet)) {
+                        console.log("The fetched data contains the specified HTML snippet.");
+                        return true; // Snippet found
+                    } else {
+                        console.log("The fetched data does not contain the specified HTML snippet.");
+                        return false; // Snippet not found
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching links:', error);
+                    return false; // Fetch failed
+                });
+            }
+
+            lines.forEach(line => {
+                //console.log("Link " + i + " is " + lines[i]);
+                if (line.startsWith('http')) {
+                    fetchWithCors(line).then(snippetFound => {
+                        if (!snippetFound) {
+                            // If no-cors fetch fails or snippet not found, try with CORS
+                            fetchWithNoCors(line).then(linksWorks => {
+                                if (linksWorks){
+                                    workingLinks.push(line);
+                                    updateOutput(workingLinks);
+                                }
+                            });
+                        }
+                    })
+                }
+            })
+
+
+        });
+    </script>
+</body>
+</html>
