@@ -87,7 +87,7 @@ async function handleSetup(customThread) {
     docRef = doc(firestore, 'messages', docName);
     timestampRef = doc(firestore, 'messageTimestamps', docName);
     myUser = localStorage.getItem('user');
-    lastDoc = await getDoc(docRef);
+    let lastDoc = await getDoc(docRef);
     timestampDoc = await getDoc(timestampRef);
     lastDoc = lastDoc.data();
     timestampDoc = timestampDoc.data();
