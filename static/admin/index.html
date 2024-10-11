@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,6 +52,7 @@
         }
     </style>
 </head>
+
 <body>
     <h2>Login</h2>
     <form id="loginForm">
@@ -60,11 +62,10 @@
         <input type="password" id="password" name="password" required><br>
         <button type="submit">Login</button>
     </form>
-    <script src="/code/universalCode/firestore.js" type="module"></script>
-        <script>
+    <script>
         // If the loggedIn cookie is 'true', redirect the user to the gameselect.html page
-      
-        document.getElementById("loginForm").addEventListener("submit", async function(event) {
+
+        document.getElementById("loginForm").addEventListener("submit", async function (event) {
             event.preventDefault(); // Prevent form submission
 
             // Get input values
@@ -83,7 +84,7 @@
                     if (usernamesData.hasOwnProperty(username)) {
                         const storedPassword = usernamesData[username];
 
-                        if (password === storedPassword && username==="zion") {
+                        if (password === storedPassword && username === "zion") {
                             alert("Login successful!");
                             document.cookie = "loggedInAdmin=true; path=/"; // Set loggedInPP cookie
                             window.location.href = "adminpanel.html"; // Redirect to the chooseunblock.html page
@@ -100,14 +101,15 @@
                 console.error('Error fetching usernames document:', error);
             }
         });
-        function getCookieLocal(name){
+        function getCookieLocal(name) {
             const value = `; ${document.cookie}`;
-	const parts = value.split(`; ${name}=`);
-	if (parts.length === 2) return parts.pop().split(';').shift();
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
         }
         if (getCookieLocal("user") == "zion") {
-          window.location.href = 'adminpanel.html';
+            window.location.href = 'adminpanel.html';
         }
     </script>
 </body>
+
 </html>
