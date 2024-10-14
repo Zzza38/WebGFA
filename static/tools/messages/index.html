@@ -18,12 +18,7 @@
         window.scrollTo({
             top: 0
         });
-		function getCookie(name) {
-			const value = `; ${document.cookie}`;
-			const parts = value.split(`; ${name}=`);
-			if (parts.length === 2) return parts.pop().split(';').shift();
-		}
-		if (getCookie('user') === 'guest') {
+		if (localStorage.getItem('user') === 'guest') {
 			document.body.innerHTML = "<h1> You need a real WebGFA account to use messaging </h1>"
 		}
     </script>

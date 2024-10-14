@@ -48,30 +48,6 @@ function adminCheck() {
     }
 }
 
-async function getCCFS() {
-    try {
-        const ccfsRef = doc(firestore, "data", "ccfs");
-        const dataRef = doc(firestore, "data", "cookieclicker");
-
-        // Get the document
-        let ccfs = await getDoc(ccfsRef);
-        let data = await getDoc(dataRef);
-        ccfs = ccfs.data();
-        data = data.data();
-        console.log(ccfs, ' ', data);
-        if (ccfs[username]) {
-            localStorage.setItem("CookieClickerGame", data[username]);
-            console.log("Save is forced, loaded.");
-            ccfs[username] = false;
-            await setDoc(ccfsRef, ccfs);
-        } else {
-            console.log("Save is not forced.");
-        }
-    } catch (e) {
-        console.error(e);
-    }
-}
-
 async function checkUser() {
     try {
         const docRef = doc(firestore, 'users', 'usernames');
@@ -372,5 +348,4 @@ if (prem) {
     loadPrem();
 }
 adminCheck();
-getCCFS();
 jamesCheck();
