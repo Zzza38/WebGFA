@@ -53,7 +53,7 @@ function sleep(ms) {
 }
 
 async function ABLoop() {
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 1; index++) {
     AB(); // Call the AB function
     await sleep(10); // Wait for 100 milliseconds
   }
