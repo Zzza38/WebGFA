@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="icon" href="/code/img/favicon.ico">
+    <title>Tool Disabled</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+            background-color: #000;
+            /* Set background color to black */
+            color: #FFF;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        let text = document.createElement('h1')
+        text.innerText = params.get('txt')
+        document.body.append(text)
+    </script>
+</body>
+
+</html>

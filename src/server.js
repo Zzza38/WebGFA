@@ -9,15 +9,16 @@ const PORT = process.env.PORT || 8080;
 const DEBUG = true; // Set to true to enable debug statements
 
 // List of JS files to inject dynamically
-const jsFiles = [
-    '/code/universalCode/aboutblankcloak.js',
-    '/code/universalCode/maincheck.js',
+const extraTags = [
+    "<script src='/code/universalCode/aboutblankcloak.js'></script>",
+    "<script src='/code/universalCode/maincheck.js'></script>",
+    "<script src='/code/universalCode/firestore.js' type='module'></script>",
+    "<script src='/code/universalCode/autoSave.js' type='module'></script>"
 ];
-
-const moduleFiles = [
-    '/code/universalCode/firestore.js',
-    '/code/universalCode/autoSave.js'
-];
+const excludedTags = {
+    "/": "<script src='/code/universalCode/maincheck.js'></script>",
+    "index.html": "<script src='/code/universalCode/maincheck.js'></script>"
+};
 
 // Middleware to inject JS files dynamically into HTML responses
 app.use((req, res, next) => {
@@ -28,24 +29,35 @@ app.use((req, res, next) => {
         } else {
             filePath = path.join(__dirname, '../static', req.path, 'index.html');
         }
-
         // Read the HTML file
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
-                if (DEBUG) console.error(`Error reading file: ${filePath}`, err);
+                console.error (`Error reading file: ${filePath}`, err);
                 return next();
             }
 
             // Inject the script tags before the closing </body> tag
             let injectedHtml = data.replace('</body>', () => {
-                // Regular scripts
-                let scriptTags = jsFiles.map(file => `<script src="${file}"></script>`).join('');
-                // Module scripts
-                let moduleTags = moduleFiles.map(file => `<script type="module" src="${file}"></script>`).join('');
+                let tags = [...extraTags];  // Create a copy of extraTags
 
-                if (DEBUG) console.log(`Injecting scripts into ${req.path}`);
-                return scriptTags + moduleTags + '</body>';
+                if (Object.keys(excludedTags).includes(req.path)) {
+                    Object.entries(excludedTags).forEach(([key, value]) => {
+                        if (key === req.path) {
+                            // Check if the tag exists before trying to remove it
+                            if (tags.includes(value)) {
+                                tags = tags.filter(tag => tag !== value);
+                            } else {
+                                console.error(`Error: Tag "${value}" not found for removal in ${req.path}`);
+                                // TODO: Handle further error logic, if needed
+                            }
+                        }
+                    });
+                }
+
+                if (DEBUG) console.log(`Injecting HTML tags into ${req.path}`);
+                return tags.join('') + '</body>';  // Ensure tags are joined into a string
             });
+
 
             if (DEBUG) console.log(`Sending modified HTML response for: ${req.path}`);
             res.send(injectedHtml);

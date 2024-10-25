@@ -19,6 +19,9 @@ const firestore = getFirestore(app);
 const saveDataContainer = document.getElementById('saveDataContainer');
 const saveButton = document.getElementById('saveButton');
 
+if (localStorage.getItem('user') == 'guest') {
+    location.href = '/code/universalCode/toolDisabled.html?txt=Save%20Data%20Retrival%20is%20disabled%20for%20Guests.%20Please%20request%20a%20real%20account%20to%20use%20this%20tool.'
+}
 // Function to get save data from Firestore
 async function getSaveData(username) {
     try {
