@@ -42,9 +42,11 @@ function jamesCheck() {
 }
 
 function adminCheck() {
-    const adminPanelLink = document.getElementById('admin')
     if (username == 'zion') {
-        adminPanelLink.style.display = "";
+        const admin = document.getElementsByClassName('admin')
+        admin.forEach(element => {
+            element.style.display = ''
+        });
     }
 }
 
@@ -82,16 +84,12 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-// Function to delete a cookie by name
-function deleteCookie(name) {
-    document.cookie = name + '=; Max-Age=-99999999;';
-}
 
 // Event listener for keydown event
 document.addEventListener('keydown', async function (event) {
     // Check if Ctrl+Shift+L is pressed
     if (event.ctrlKey && event.shiftKey && event.key === 'L') {
-        // Delete cookies
+        // Log out
         logout();
     }
 });
@@ -346,6 +344,9 @@ loadGames();
 await checkUser();
 if (prem) {
     loadPrem();
+} else {
+    const element = document.getElementById('prem')
+    element.style.display = 'none'
 }
 adminCheck();
 jamesCheck();
