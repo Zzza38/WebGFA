@@ -5,10 +5,11 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-// Debug variable
-const DEBUG = true; // Set to true to enable debug statements
-const railway = process.env.RAILWAY_ENV !== undefined;
+const railway = process.env.RAILWAY_ENVIRONMENT_ID !== undefined;
+const DEBUG = railway == false;
 
+if (railway) console.log('Project in railway')
+else console.log('Project ran locally')
 // List of JS files to inject dynamically
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
