@@ -30,9 +30,9 @@
         let UIDBox = document.getElementById('UID');
         UIDBox.innerText = localStorage.getItem('UID');
         function logout() {
-            localStorage.deleteItem("loggedIn");
-            localStorage.deleteItem("user");
-            localStorage.deleteItem("pass");
+            localStorage.removeItem("loggedIn");
+            localStorage.removeItem("user");
+            localStorage.removeItem("pass");
             location.href = "/"
         }
     </script>
