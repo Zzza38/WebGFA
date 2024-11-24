@@ -1,0 +1,16 @@
+ @import url('https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&display=swap');
+
+        body {
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+            text-align: center;
+            background-color: #000; /* Set background color to black */
+            color: #FFF;
+            margin: 10px 50px 10px 50px;
+            padding: 10px;
+            height: 100vh; /* Set height to 100% of the viewport height */
+            font-size: 24px; /* Set font size to 24px */
+        }
+
+        p {
+            text-align: center; /* Center text */
+        }
