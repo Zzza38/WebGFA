@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Messaging</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="connectContainer">
+        <select id="pThreads"></select> <button id="deleteThread">Delete Option</button>
+        <input id="docId"> <button id="connect">Connect To Thread</button>
+    </div>
+    <div id="messageContainer"></div>
+    <script src='main.js' type="module"></script>
+    <script>
+        window.scrollTo({
+            top: 0
+        });
+		if (localStorage.getItem('user') === 'guest') {
+    location.href = '/code/universalCode/toolDisabled.html?txt=Messaging%20is%20disabled%20for%20Guests.%20Please%20request%20a%20real%20account%20to%20use%20this%20tool.'
+		}
+    </script>
+
+</body>
+
+</html>

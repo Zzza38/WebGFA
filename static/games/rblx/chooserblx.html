@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Roblox</title>
+    <style>
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000; /* Set background color to black */
+            color: #FFF;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+        .game-link {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: outline 0.3s; /* Add transition for smoother hover effect */
+        }
+        .game-link:hover {
+            outline: 2px solid white; /* Add white outline when hovering */
+        }
+        .dark-mode-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .dark-mode-switch input {
+            display: none;
+        }
+        .slider {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+        .slider:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: 0.4s;
+        }
+        .slider input:checked + .slider-label .slider:before {
+            background-color: #007bff;
+        }
+        .slider-label {
+            display: block;
+            position: relative;
+            cursor: pointer;
+            width: 60px;
+            height: 34px;
+        }
+        .slider-label:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background-color: #fff;
+            transition: 0.4s;
+        }
+        .slider input:checked + .slider-label:after {
+            background-color: #007bff;
+            right: 30px;
+        }
+        .game-links {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+	<script src="https://webgfa.com/code/loginchecks/rblxcheck.js"></script>
+    <div class="container">
+        <h1>Choose a Roblox link </h1>
+        <p>If one doesnt work try the next one. If they both don't work I cannot fix that.</p>
+        <div class="game-links">
+            <!-- Add links/buttons for each game -->
+            
+            <a href="britishempire.html" class="game-link">Roblox 1</a>
+            <a href="greatestaxeofllow.html" class="game-link">Roblox 2</a>
+            <a href="subto.html" class="game-link">Roblox 3</a>
+            <a href="collegeapp.html" class="game-link">Roblox 4 (Unblocked, Best)</a>
+            <!-- Add more game links/buttons as needed -->
+        </div>
+    </div>
+
+    <!-- Dark Mode Switch -->
+    <!-- Dark mode is kept as the default -->
+</body>
+</html>

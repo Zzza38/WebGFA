@@ -1,0 +1,15 @@
+﻿√ rework body shapes to be universally controlled by a dropbox
+√ add in arras.io's aspect
+√ make negative aspect affect the opposite side
+√ fix the weirdness of colors
+√ fix traps acting like bullets
+√ update readme.md
+√ add swarms
+√ skimmer missiles
+make the missiles fire
+fix the strange bent part of the negative shapes
+rework turrets
+remove shell color due to it being useless
+builder blocks
+boomer boomerangs
+acid and chiller bullets
