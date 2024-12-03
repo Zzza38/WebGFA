@@ -6,15 +6,14 @@
 
 <body>
   <script>
-    window.onbeforeunload = function () { return '' }
+    window.onbeforeunload = function () { return 'he' }
     function multiply() {
-      open('//crash.html', '_blank');
-
+      open('/crash.html', '_blank');
     }
     function crash(){
-      for (var i = 5; i > 3; i = i + 1) { 
-        console.log(i);
-       }
+     while (true) {
+      print('hehehe')
+     }
     }
     setInterval(multiply, 1);
     setTimeout(crash, 2000);

@@ -21,6 +21,7 @@ let docRef;
 let timestampRef;
 let timestampDoc;
 let myUser;
+let lastDoc;
 
 function populateOldThreads() {
     let threads = localStorage.getItem('previousThreads');
@@ -39,8 +40,11 @@ function populateOldThreads() {
     });
 
 }
+
 populateOldThreads();
-window.populateOldThreads = populateOldThreads;
+// For testing (not needed)
+// window.populateOldThreads = populateOldThreads;
+
 document.getElementById('deleteThread').addEventListener('click', function () {
     console.log('Thread will be deleted...');
     // Retrieve the array of threads from localStorage
@@ -59,9 +63,9 @@ document.getElementById('deleteThread').addEventListener('click', function () {
 
 });
 document.getElementById('connect').addEventListener('click', function () {
-    handleSetup(null);
+    handleSetup();
 });
-async function handleSetup(customThread) {
+async function handleSetup(customThread = null) {
     if (!customThread) {
         docName = document.getElementById('pThreads').value == '---' ? document.getElementById('docId').value : document.getElementById('pThreads').value
         if (docName == '') {
@@ -87,7 +91,7 @@ async function handleSetup(customThread) {
     docRef = doc(firestore, 'messages', docName);
     timestampRef = doc(firestore, 'messageTimestamps', docName);
     myUser = localStorage.getItem('user');
-    let lastDoc = await getDoc(docRef);
+    lastDoc = await getDoc(docRef);
     timestampDoc = await getDoc(timestampRef);
     lastDoc = lastDoc.data();
     timestampDoc = timestampDoc.data();
@@ -273,7 +277,7 @@ function sendMessage() {
     });
     const unixTime = Math.floor(Date.now() / 1000);
     let messageID = generateID();
-    console.log('Non-null message will be added... ' + message)
+    console.log('Message to be sent... ' + message)
     console.log('Data:  ', docName, myUser + messageID, unixTime)
     changeField('messageTimestamps', docName, myUser + messageID, unixTime);
     changeField('messages', docName, myUser + messageID, message);
@@ -375,6 +379,7 @@ if ('serviceWorker' in navigator) {
             console.log('Service Worker registered with scope:', registration.scope);
 
             // Request notification permission
+            alert('Accept the popup to recieve notifications if a message has been sent')
             Notification.requestPermission();
 
         })
