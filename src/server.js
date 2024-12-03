@@ -26,7 +26,7 @@ const excludedTags = {
 // Middleware to inject JS files and handle HTML responses
 app.use((req, res, next) => {
     const htmlRegex = /^\/(.*\.html$|.*\/$|.*\/[^\/\.]+$|[^\/\.]+$)/
-    const isHtmlRequest = htmlRegex.test(req.path)
+    const isHtmlRequest = htmlRegex.test(req.path + "a")
 
     // Redirect non-HTML requests to webgfa.online if in Railway
     if (!isHtmlRequest && railway) {
