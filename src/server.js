@@ -26,52 +26,53 @@ const excludedTags = {
 // Middleware to inject JS files and handle HTML responses
 app.use((req, res, next) => {
     const htmlRegex = /^\/(.*\.html$|.*\/$|.*\/[^\/\.]+$|[^\/\.]+$)/
-    const isHtmlRequest = htmlRegex.test(req.path + "a")
+    const modifiedPath = req.path + "a"
+    const isHtmlRequest = modifiedPath.match(htmlRegex)
 
     // Redirect non-HTML requests to webgfa.online if in Railway
     if (!isHtmlRequest && railway) {
         const externalUrl = `https://webgfa.online${req.path}`;
         if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
         return res.redirect(externalUrl);
+    } else if (DEBUG && railway) console.log('HTML Request for: ' + req.path)
+    else if (DEBUG) {
+        next()
+        return;
     }
 
     // Resolve the file path for HTML requests
-    let filePath = req.path.endsWith('/')
-        ? path.join(__dirname, '../static', req.path, 'index.html')
-        : path.join(__dirname, '../static', req.path);
-
-    if (isHtmlRequest) {
-        // Serve HTML file with injected scripts
-        fs.readFile(filePath, 'utf8', (err, data) => {
-            if (err) {
-                console.error(`Error reading file: ${filePath}`, err);
-                return res.status(404).sendFile(path.join(__dirname, '../static', '404.html'));
-            }
-
-            // Inject the script tags before the closing </body> tag
-            let injectedHtml = data.replace('</body>', () => {
-                let tags = [...extraTags];
-
-                // Remove excluded tags if needed
-                if (Object.keys(excludedTags).includes(req.path)) {
-                    Object.entries(excludedTags).forEach(([key, value]) => {
-                        if (key === req.path && tags.includes(value)) {
-                            tags = tags.filter(tag => tag !== value);
-                        }
-                    });
+    filePath = req.path.endsWith('.html')
+        ? path.join(__dirname, '../static', req.path)
+        : path.join(__dirname, '../static', req.path, 'index.html');
+        if (isHtmlRequest) {
+            // Serve HTML file with injected scripts
+            fs.readFile(filePath, 'utf8', (err, data) => {
+                if (err) {
+                    console.error(`Error reading file: ${filePath}`, err);
+                    return res.status(404).sendFile(path.join(__dirname, '../static', '404.html'));
                 }
-
-                if (DEBUG) console.log(`Injecting HTML tags into ${req.path}`);
-                return tags.join('') + '</body>';
+    
+                // Inject the script tags before the closing </body> tag
+                let injectedHtml = data.replace('</body>', () => {
+                    let tags = [...extraTags];
+    
+                    // Remove excluded tags if needed
+                    if (Object.keys(excludedTags).includes(req.path)) {
+                        Object.entries(excludedTags).forEach(([key, value]) => {
+                            if (key === req.path && tags.includes(value)) {
+                                tags = tags.filter(tag => tag !== value);
+                            }
+                        });
+                    }
+    
+                    if (DEBUG) console.log(`Injecting HTML tags into ${req.path}`);
+                    return tags.join('') + '</body>';
+                });
+    
+                if (DEBUG) console.log(`Sending modified HTML response for: ${req.path}`);
+                res.send(injectedHtml);
             });
-
-            if (DEBUG) console.log(`Sending modified HTML response for: ${req.path}`);
-            res.send(injectedHtml);
-        });
-    } else {
-        // Continue to the next middleware for static assets
-        next();
-    }
+        }
 });
 
 // Serve static files
