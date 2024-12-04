@@ -13,9 +13,22 @@
     <script src="./main.js" defer type="module"></script>
     <script src="/npmBundledScripts/checkUID.bundle.js"></script>
     <div class="container">
+        <button class="customization" id="cus-toggleMenu" style="display: none;">Open Customization Menu</button>
+        <div class="customization" id="cus-menu" style="display: none; outline-color: #fff; outline: 10px; ">
+            <label>Welcome to the color picker: </label> <br>
+            <label>Button color:</label>
+            <input type="color" id="cus-mainColor"> <br> <br>
+            <label>Main Text color: </label>
+            <input type="color" id="cus-mainTextColor"> <br> <br>
+            <label>Button Text color:</label>
+            <input type="color" id="cus-buttonTextColor"> <br> <br>
+            <label>Background color: </label>
+            <input type="color" id="cus-bgColor">  <br> 
+            <button class="game-link" id="cus-resetDefault">Reset to Default Colors</button>
+        </div>
         <img src='/code/img/favicon.ico' width=128px height=128px></img>
         <h1>Welcome to WebGFA</h1> <br>
-        <h2>CHECK THE <a href="/updates">UPDATES</a> PANEL</h2>
+        <h2><a href="/updates">UPDATES</a> PANEL</h2>
         <input type="text" id="searchG" placeholder="Search games...">
         <p>Please select a game to play:</p>
         <div class="game-links" id="game-links"></div>
@@ -33,8 +46,8 @@
             <h3>Premium Tools</h3>
             <div class="game-links" id="prem-tool-links"></div>
         </div>
-        <h3 id="admin" style="display: none;">Admin</h3>
-        <a href="/admin/" class="game-link" id="admin" style="display: none;">Admin Panel</a>
+        <h3 class="admin" style="display: none;">Admin</h3>
+        <a href="/admin/" class="game-link admin" style="display: none;">Admin Panel</a>
         <h3>Request things</h3>
         <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
         <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>

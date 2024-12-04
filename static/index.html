@@ -1,1 +1,30 @@
-WebGFA is f***ing broken. Leave me alone.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="icon" href="./code/img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/code/index/style.css">
+</head>
+<body>
+    <script src="./code/index/main.js" defer type="module"></script>
+    <div id="headerLogin">
+        <h2>Login</h2>
+    </div>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Login</button>
+    </form>
+    <button onclick="guestLogin()" id="guestLogin">Log in as a guest</button>
+    <p>THE GUEST FEATURE IS BACK! IF YOU WANT A REAL ACCOUNT (NORMAL ACCOUNTS ARE FREE NOW), YOU CAN PUT AN ACCOUNT INTO CONSIDERATION AT THIS <a href='/register'>LINK</a></p>
+    <!--<p>FOR THE GOOGLE ADS EMPLOYEES, USE USERNAME 'G-AD' AND PASSWORD 'G-AD'. ALL CAPS.
+        You should also know that WebGFA won't be having these ads on the login / gameselect page. The ads will only be placed inside games. So please take that into consideration.
+    </p>-->
+    <p id="alertText"></p>
+</body>
+</html>
