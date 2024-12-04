@@ -42,8 +42,8 @@ app.use((req, res, next) => {
 
     // Resolve the file path for HTML requests
     filePath = req.path.endsWith('.html')
-        ? path.join(__dirname, '../static', req.path)
-        : path.join(__dirname, '../static', req.path, 'index.html');
+        ? path.join('../static', req.path)
+        : path.join('../static', req.path, 'index.html');
         if (isHtmlRequest) {
             // Serve HTML file with injected scripts
             fs.readFile(filePath, 'utf8', (err, data) => {
