@@ -24,12 +24,14 @@ const excludedTags = {
 };
 
 app.use(async (req, res, next) => {
-    let oldReqPath = req.path
     req.path = normalizePath(req.path)
     const htmlRegex = /^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/;
-    const isHtmlRequest = req.path.match(htmlRegex);
-    console.log(req.path)
-    console.log(oldReqPath)
+    let isHtmlRequest;
+    if (req.path == '/') {
+        isHtmlRequest = true
+    } else {
+        isHtmlRequest = Boolean(req.path.match(htmlRegex));
+    }
     if (!isHtmlRequest && railway) {
         const externalUrl = `https://webgfa.online${req.path}`;
         if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
