@@ -31,7 +31,6 @@ async function saveEntireLocalStorageToFirebase() {
 
 // Function to monitor localStorage updates and save the entire localStorage
 function monitorLocalStorage() {
-    if (localStorage.getItem('user') == 'guest') return
     const originalSetItem = localStorage.setItem;
     localStorage.setItem = function (key, value) {
         originalSetItem.apply(this, arguments); // Keep original setItem functionality
@@ -44,6 +43,7 @@ function monitorLocalStorage() {
 
 // Auto-start monitoring localStorage when the page loads
 window.addEventListener('load', () => {
+    if (localStorage.getItem('user') == 'guest') return
     monitorLocalStorage();
     console.log('Monitoring Local Storage')
 });
