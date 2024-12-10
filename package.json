@@ -1,8 +1,8 @@
 {
   "name": "webgfa",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "3.2.4",
+  "description": "This is a game site made to play games! If you want to add any games, just use to form in the /gameselect code and submit. The website linked to this github is https://webgfa.com with other links being https://webgfa.org and https://webgfa.online",
+  "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "build": "webpack --mode production"
@@ -10,6 +10,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "firebase": "^10.11.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "babel-loader": "^9.1.3",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "webpack-cli": "^5.1.4",
+    "webpack": "^5.91.0"
   }
 }

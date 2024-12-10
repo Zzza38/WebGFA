@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -8,9 +8,9 @@ const PORT = process.env.PORT || 8080;
 const railway = process.env.RAILWAY_ENVIRONMENT_ID !== undefined;
 const DEBUG = railway == false;
 
-if (railway) console.log('Project in railway');
-else console.log('Project ran locally');
-
+if (railway) console.log('Project in railway')
+else console.log('Project ran locally')
+// List of JS files to inject dynamically
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
     "<script src='/code/universalCode/maincheck.js'></script>",
@@ -23,30 +23,35 @@ const excludedTags = {
     "index.html": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
-app.use(async (req, res, next) => {
-    let oldReqPath = req.path
-    req.path = normalizePath(req.path)
-    const htmlRegex = /^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/;
-    const isHtmlRequest = req.path.match(htmlRegex);
-    console.log(req.path)
-    console.log(oldReqPath)
+// Middleware to inject JS files and handle HTML responses
+app.use((req, res, next) => {
+    const isHtmlRequest = req.path.endsWith('.html') || req.path.endsWith('/');
+
+    // Redirect non-HTML requests to webgfa.online if in Railway
     if (!isHtmlRequest && railway) {
         const externalUrl = `https://webgfa.online${req.path}`;
         if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
         return res.redirect(externalUrl);
-    } else if (DEBUG && isHtmlRequest) console.log('HTML Request for: ' + req.path);
+    }
+
+    // Resolve the file path for HTML requests
+    let filePath = req.path.endsWith('/')
+        ? path.join(__dirname, '../static', req.path, 'index.html')
+        : path.join(__dirname, '../static', req.path);
 
     if (isHtmlRequest) {
-        if (req.path.endsWith('/') == false) return res.redirect(301, req.path + '/')
-        let filePath = req.path.endsWith('.html')
-            ? path.join(__dirname, '../static', req.path)
-            : path.join(__dirname, '../static', req.path, 'index.html');
-        
-        try {
-            const data = await fs.readFile(filePath, 'utf8');
+        // Serve HTML file with injected scripts
+        fs.readFile(filePath, 'utf8', (err, data) => {
+            if (err) {
+                console.error(`Error reading file: ${filePath}`, err);
+                return res.status(404).sendFile(path.join(__dirname, '../static', '404.html'));
+            }
+
+            // Inject the script tags before the closing </body> tag
             let injectedHtml = data.replace('</body>', () => {
                 let tags = [...extraTags];
 
+                // Remove excluded tags if needed
                 if (Object.keys(excludedTags).includes(req.path)) {
                     Object.entries(excludedTags).forEach(([key, value]) => {
                         if (key === req.path && tags.includes(value)) {
@@ -60,34 +65,19 @@ app.use(async (req, res, next) => {
             });
 
             if (DEBUG) console.log(`Sending modified HTML response for: ${req.path}`);
-            res.setHeader('Content-Type', 'text/html');
             res.send(injectedHtml);
-        } catch (err) {
-            console.error(`Error reading file: ${filePath}`, err);
-            return res.status(404).sendFile(path.join(__dirname, '../static', '404.html'));
-        }
+        });
     } else {
+        // Continue to the next middleware for static assets
         next();
     }
 });
 
+// Serve static files
 app.use(express.static(path.join(__dirname, '../static')));
 
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     if (DEBUG) console.log('Debug is on');
 });
-
-function normalizePath(reqPath) {
-    const trimmedPath = reqPath.replace(/\/+$/, ''); // Remove trailing slashes
-    const pathSegments = trimmedPath.split('/'); // Split the path into segments
-    const fileName = pathSegments.pop().replace(/\/+$/, ''); // Get the last segment (file name)
-    
-    // If the last segment is empty, return the path without the last segment
-    if (!fileName) {
-        return trimmedPath;
-    }
-    
-    // Reconstruct the path with the last segment
-    return `${pathSegments.join('/')}/${fileName}`;
-}
