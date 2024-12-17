@@ -33,7 +33,7 @@ app.use(async (req, res, next) => {
         isHtmlRequest = Boolean(req.path.match(htmlRegex));
     }
     if (!isHtmlRequest && railway) {
-        const externalUrl = `https://gamesarefun.store${req.path}`;
+        const externalUrl = `https://elaisveryfun.online${req.path}`;
         if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
         return res.redirect(externalUrl);
     } else if (DEBUG && isHtmlRequest) console.log('HTML Request for: ' + req.path);
