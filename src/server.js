@@ -24,44 +24,44 @@ const excludedTags = {
 };
 
 app.use(async (req, res, next) => {
-    req.path = normalizePath(req.path)
+    const reqPath = normalizePath(req.path)
     const htmlRegex = /^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/;
     let isHtmlRequest;
-    if (req.path == '/') {
+    if (reqPath == '/') {
         isHtmlRequest = true
     } else {
-        isHtmlRequest = Boolean(req.path.match(htmlRegex));
+        isHtmlRequest = Boolean(reqPath.match(htmlRegex));
     }
     if (!isHtmlRequest && railway) {
-        const externalUrl = `https://elaisveryfun.online${req.path}`;
+        const externalUrl = `https://elaisveryfun.online${reqPath}`;
         if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
         return res.redirect(externalUrl);
-    } else if (DEBUG && isHtmlRequest) console.log('HTML Request for: ' + req.path);
+    } else if (DEBUG && isHtmlRequest) console.log('HTML Request for: ' + reqPath);
 
     if (isHtmlRequest) {
-        if (req.path.endsWith('/') == false) return res.redirect(301, req.path + '/')
-        let filePath = req.path.endsWith('.html')
-            ? path.join(__dirname, '../static', req.path)
-            : path.join(__dirname, '../static', req.path, 'index.html');
+        if (!reqPath.endsWith('/')  && !reqPath.endsWith('.html')) return res.redirect(301, reqPath + '/')
+        let filePath = reqPath.endsWith('.html')
+            ? path.join(__dirname, '../static', reqPath)
+            : path.join(__dirname, '../static', reqPath, 'index.html');
         
         try {
             const data = await fs.readFile(filePath, 'utf8');
             let injectedHtml = data.replace('</body>', () => {
                 let tags = [...extraTags];
 
-                if (Object.keys(excludedTags).includes(req.path)) {
+                if (Object.keys(excludedTags).includes(reqPath)) {
                     Object.entries(excludedTags).forEach(([key, value]) => {
-                        if (key === req.path && tags.includes(value)) {
+                        if (key === reqPath && tags.includes(value)) {
                             tags = tags.filter(tag => tag !== value);
                         }
                     });
                 }
 
-                if (DEBUG) console.log(`Injecting HTML tags into ${req.path}`);
+                if (DEBUG) console.log(`Injecting HTML tags into ${reqPath}`);
                 return tags.join('') + '</body>';
             });
 
-            if (DEBUG) console.log(`Sending modified HTML response for: ${req.path}`);
+            if (DEBUG) console.log(`Sending modified HTML response for: ${reqPath}`);
             res.setHeader('Content-Type', 'text/html');
             res.send(injectedHtml);
         } catch (err) {
@@ -83,13 +83,11 @@ app.listen(PORT, () => {
 function normalizePath(reqPath) {
     const trimmedPath = reqPath.replace(/\/+$/, ''); // Remove trailing slashes
     const pathSegments = trimmedPath.split('/'); // Split the path into segments
-    const fileName = pathSegments.pop().replace(/\/+$/, ''); // Get the last segment (file name)
+    let fileName = '/' + pathSegments.pop().replace(/\/+$/, ''); // Get the last segment (file name)
     
-    // If the last segment is empty, return the path without the last segment
-    if (!fileName) {
-        return trimmedPath;
+    if (fileName == '/') {
+        fileName = '/index.html'
     }
-    
-    // Reconstruct the path with the last segment
-    return `${pathSegments.join('/')}/${fileName}`;
+
+    return pathSegments.join('/') + fileName;
 }
