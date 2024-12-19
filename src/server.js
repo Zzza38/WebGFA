@@ -19,8 +19,7 @@ const extraTags = [
 ];
 
 const excludedTags = {
-    "/": "<script src='/code/universalCode/maincheck.js'></script>",
-    "index.html": "<script src='/code/universalCode/maincheck.js'></script>"
+    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
 app.use(async (req, res, next) => {
