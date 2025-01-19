@@ -1,0 +1,9 @@
+HTTP server is running on port 8000
+Secure server is running on port 8080
+Debug is on
+HTML Request for: /index.html
+HTML Request for: /gameselect/
+HTML Request for: /games/flash/
+HTML Request for: /games/flash/
+HTML Request for: /index.html
+HTML Request for: /index.html
