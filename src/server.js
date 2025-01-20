@@ -36,8 +36,33 @@ function initializeFirebase() {
             console.log("Firebase Successfully Initialized Locally");
 
         } else {
-            console.error("Firebase Service Key Not Provided Locally");
-            return false;
+            const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
+            fs.access(filePath, fs.constants.F_OK, (err) => {
+                if (err) {
+                  console.error("Firebase Service Key Not Provided Locally");
+                  return false;
+                }
+              
+                // Read the file if it exists
+                fs.readFile(filePath, 'utf8', (err, data) => {
+                  if (err) {
+                    console.error('Error reading the file:', err);
+                    return;
+                  }
+              
+                  try {
+                    // Parse the JSON content
+                    const serviceAccount = JSON.parse(data);
+                    admin.initializeApp({
+                        credential: admin.credential.cert(serviceAccount),
+                        databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+                    });
+                    console.log("Firebase Successfully Initialized Locally");
+                  } catch (parseError) {
+                    console.error('Error parsing JSON:', parseError);
+                  }
+                });
+              });
         }
         return true;
     } catch (error) {
