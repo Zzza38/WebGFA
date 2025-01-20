@@ -109,9 +109,10 @@ const sshProxy = createProxyMiddleware({
     target: 'http://127.0.0.1:2222/ssh',
 });
 
-let passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
+async () => { let passwordDoc = await firestoreUtils.getDocument('users', 'usernames') }
 const USERNAME = 'zion';
 const PASSWORD = passwordDoc[USERNAME];
+
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
 
