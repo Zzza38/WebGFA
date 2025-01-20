@@ -8,7 +8,6 @@ const https = require('https');
 const http = require('http');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const admin = require("firebase-admin");
-const httpProxy = require("http-proxy");
 
 // Custom Modules
 const firestoreUtils = require("./functions/firestoreUtils.js");
@@ -19,7 +18,6 @@ const app = express();
 const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
 const DEBUG = true;
-const proxy = httpProxy.createProxyServer();
 
 // Firebase initialization logic
 function initializeFirebase() {
@@ -143,13 +141,7 @@ function basicAuth(req, res, next) {
 
 app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
-app.use("/remotedesktop", (req, res) => {
-    proxy.web(req, res, {
-        target: "http://192.168.1.185:3389",
-        ws: true, // Enable WebSocket for RDP compatibility
-        changeOrigin: true,
-    });
-});
+
 app.use(async (req, res, next) => {
     const reqPath = urlUtils.normalizePath(req.path);
     const params = req.query;
