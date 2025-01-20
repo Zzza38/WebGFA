@@ -1,19 +1,60 @@
+// DISCLAIMER: This code is only for my use. It will be hard to understand for others and adapt it to other sites.
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const https = require('https');
 const http = require('http');
 const { createProxyMiddleware } = require('http-proxy-middleware');
+const admin = require("firebase-admin");
+const firestoreUtils = require("./functions/firestoreUtils.js");
+const urlUtils = require("./functions/urlUtils.js");
 
 const app = express();
 const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
+const DEBUG = true;
 
-const railway = process.env.RAILWAY_ENVIRONMENT_ID !== undefined;
-const DEBUG = railway == false;
+console.log('Project ran locally');
 
-if (railway) console.log('Project in railway');
-else console.log('Project ran locally');
+// Firebase initialization logic
+function initializeFirebase() {
+    try {
+        let serviceAccount;
+        if (process.env.FIREBASE_PRIVATE_KEY_1 && process.env.FIREBASE_PRIVATE_KEY_2) {
+            serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+            });
+            console.log("Firebase Successfully Initialized Locally");
+        } else if (process.env.FIREBASE_PRIVATE_KEY) {
+            serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+            });
+            console.log("Firebase Successfully Initialized Locally");
+
+        } else {
+            console.error("Firebase Service Key Not Provided Locally");
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error("Error initializing Firebase:", error);
+        return false;
+    }
+}
+
+const firebaseInitialized = initializeFirebase();
+
+if (!firebaseInitialized) {
+    console.error('Could not initialize Firebase. Exiting.');
+    process.exit(1);
+}
+
+const db = admin.firestore();
+firestoreUtils.setDB(db);
 
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
@@ -41,10 +82,11 @@ function clearLogFile(filePath) {
 clearLogFile(logFilePath);
 
 const sshProxy = createProxyMiddleware({
-    target: 'http://127.0.0.1:2222/ssh', // Replace with your target URL
+    target: 'http://127.0.0.1:2222/ssh',
 });
-const USERNAME = 'zion'
-const PASSWORD = '797979'
+
+const USERNAME = 'zion';
+const PASSWORD = '797979';
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
 
@@ -53,43 +95,65 @@ function basicAuth(req, res, next) {
         return res.status(401).send('Authentication required.');
     }
 
-    // Decode the Authorization header
     const base64Credentials = authHeader.split(' ')[1];
     const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
     const [username, password] = credentials.split(':');
 
-    // Check credentials
     if (username === USERNAME && password === PASSWORD) {
-        return next(); // User is authenticated, proceed to the next middleware/route
+        return next();
     }
 
-    // If credentials are invalid
     res.setHeader('WWW-Authenticate', 'Basic realm="Secure Area"');
     return res.status(401).send('Invalid credentials.');
 }
 
-// Protected route
-app.get('/ssh/', basicAuth)
-
-// Use the proxy middleware
+app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 
 app.use(async (req, res, next) => {
-    const reqPath = normalizePath(req.path);
+    const reqPath = urlUtils.normalizePath(req.path);
+    const params = req.query;
     const htmlRegex = /^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/;
     let isHtmlRequest = reqPath === '/' || Boolean(reqPath.match(htmlRegex));
 
-    if (!isHtmlRequest && railway) {
-        const externalUrl = `https://elaisveryfun.online${reqPath}`;
-        if (DEBUG) console.log(`Redirecting non-HTML request to: ${externalUrl}`);
-        return res.redirect(externalUrl);
-    } else if (DEBUG && isHtmlRequest) {
+    if (DEBUG && isHtmlRequest) {
         console.log('HTML Request for: ' + reqPath);
     }
 
-    if (isHtmlRequest) {
-        if (!reqPath.endsWith('/') && !reqPath.endsWith('.html')) return res.redirect(301, reqPath + '/');
-        let filePath = reqPath.endsWith('.html')
+    if (reqPath.includes('/api')) {
+        try {
+            let doc;
+            let request;
+            switch (params.service) {
+                case 'firestoreGetDoc':
+                    doc = await firestoreUtils.getDocument(params.col, params.doc);
+                    res.send(doc);
+                    break;
+                case 'firestoreSetDoc':
+                    doc = await firestoreUtils.setDocument(params.col, params.doc, params.data);
+                    res.send(doc);
+                    break;
+                case 'firestoreUpdateDoc':
+                    doc = await firestoreUtils.updateDocument(params.col, params.doc, params.data);
+                    res.send(doc);
+                    break;
+                case 'firestoreDeleteDoc':
+                    doc = await firestoreUtils.deleteDocument(params.col, params.doc);
+                    res.send(doc);
+                    break;
+                default:
+                    res.status(400).send('Invalid service request');
+                    break;
+            }
+        } catch (error) {
+            console.error('Error handling API request:', error);
+            res.status(500).send('Internal Server Error');
+        }
+    } else if (isHtmlRequest) {
+        if (!reqPath.endsWith('/') && !reqPath.endsWith('.html')) {
+            return res.redirect(301, reqPath + '/');
+        }
+        const filePath = reqPath.endsWith('.html')
             ? path.join(__dirname, '../static', reqPath)
             : path.join(__dirname, '../static', reqPath, 'index.html');
 
@@ -140,17 +204,3 @@ async function startServer() {
 }
 
 startServer();
-
-function normalizePath(reqPath) {
-    const trimmedPath = reqPath.replace(/\/+$/, '');
-    const pathSegments = trimmedPath.split('/');
-    let fileName = '/' + pathSegments.pop().replace(/\/+$/, '');
-
-    if (fileName === '/') {
-        fileName = '/index.html';
-    } else if (reqPath.endsWith('/')) {
-        fileName += '/';
-    }
-
-    return pathSegments.join('/') + fileName;
-}

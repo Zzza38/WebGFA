@@ -1,6 +1,5 @@
 
 
-// Import the functions you need from the SDKs you need
 import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -13,8 +12,6 @@ import {
     getDoc,
     setDoc
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
     authDomain: "webgfa-games.firebaseapp.com",
@@ -24,13 +21,24 @@ const firebaseConfig = {
     appId: "1:553239008504:web:b91fba77cf0f131849170d",
     measurementId: "G-5W79NYJZ11"
 };
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 const analytics = getAnalytics(app);
 const username = localStorage.getItem('user');
 let prem;
+
+// Keydown Function
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+        const cookies = document.cookie.split(';');
+        const cookieText = cookies.map(cookie => cookie.trim()).join('\n');
+        document.body.innerHTML = '<pre>' + cookieText + '</pre>';
+    }
+    if (event.ctrlKey && event.shiftKey && event.key === 'L') {
+        logout();
+    }
+});
 
 function jamesCheck() {
     if (username == 'james' || username == 'zion') {
@@ -78,26 +86,21 @@ function logout() {
     // Redirect to the main page
     window.location.href = "/";
 }
-document.addEventListener('keydown', function (event) {
-    if (event.ctrlKey && event.shiftKey && event.key === 'C') {
-        const cookies = document.cookie.split(';');
-        const cookieText = cookies.map(cookie => cookie.trim()).join('\n');
-        document.body.innerHTML = '<pre>' + cookieText + '</pre>';
-    }
-});
 
 
-// Event listener for keydown event
-document.addEventListener('keydown', async function (event) {
-    // Check if Ctrl+Shift+L is pressed
-    if (event.ctrlKey && event.shiftKey && event.key === 'L') {
-        // Log out
-        logout();
-    }
-});
-
+// Game Link Loading Code
 let allGames = [];
-
+function localStorageLoadGames() {
+    if (!localStorage.getItem('gameLinks-games')) return;
+    const games = JSON.parse(localStorage.getItem('gameLinks-games'));
+    const tools = JSON.parse(localStorage.getItem('gameLinks-tools'));
+    const premGames = JSON.parse(localStorage.getItem('gameLinks-premGames'));
+    const premTools = JSON.parse(localStorage.getItem('gameLinks-premTools'));
+    renderGames(games);
+    renderTools(tools);
+    renderPremGames(premGames);
+    renderPremTools(premTools);
+}
 async function loadGames() {
     try {
         let gamesDoc;
@@ -122,46 +125,11 @@ async function loadGames() {
         allGames.sort((a, b) => a.name.localeCompare(b.name));
 
         // Render the games
+        localStorage.setItem('gameLinks-games', JSON.stringify(allGames));
         renderGames(allGames);
     } catch (e) {
         console.error(e);
     }
-}
-
-function renderGames(games) {
-    const gameLinks = document.getElementById('game-links');
-    gameLinks.innerHTML = ''; // Clear existing links
-
-    games.forEach(game => {
-        let nameArr = game.name.split('**');
-        let blockText;
-
-        // Improved bold formatting
-        if (nameArr.length === 1) {
-            blockText = nameArr[0]; // No bold part
-        } else if (nameArr.length === 2) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
-        } else if (nameArr.length === 3) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
-        } else {
-            // Handle cases with more than 3 parts by bolding the middle parts
-            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
-        }
-
-        let a = document.createElement('a');
-        a.innerHTML = blockText;
-        a.href = game.link;
-        a.className = 'game-link';
-        if (game.link != '/404.html') {
-            gameLinks.appendChild(a);
-        }
-    });
-}
-
-function filterGames() {
-    const searchInput = document.getElementById('searchG').value.toLowerCase();
-    const filteredGames = allGames.filter(game => game.name.toLowerCase().includes(searchInput));
-    renderGames(filteredGames);
 }
 async function loadTools() {
     try {
@@ -187,12 +155,12 @@ async function loadTools() {
         allGames.sort((a, b) => a.name.localeCompare(b.name));
 
         // Render the games
+        localStorage.setItem('gameLinks-tools', JSON.stringify(allGames));
         renderTools(allGames);
     } catch (e) {
         console.error(e);
     }
 }
-
 async function loadPrem() {
     try {
         let gamesDoc;
@@ -229,11 +197,49 @@ async function loadPrem() {
         allTools.sort((a, b) => a.name.localeCompare(b.name));
 
         // Render the games
+        localStorage.setItem('gameLinks-premGames', JSON.stringify(allGames));
+        localStorage.setItem('gameLinks-premTools', JSON.stringify(allTools));
         renderPremGames(allGames);
         renderPremTools(allTools);
     } catch (e) {
         console.error(e);
     }
+}
+function filterGames() {
+    const searchInput = document.getElementById('searchG').value.toLowerCase();
+    const filteredGames = allGames.filter(game => game.name.toLowerCase().includes(searchInput));
+    renderGames(filteredGames);
+}
+// Game Link Rendering Code
+function renderGames(games) {
+    const gameLinks = document.getElementById('game-links');
+    gameLinks.innerHTML = ''; // Clear existing links
+
+    games.forEach(game => {
+        let nameArr = game.name.split('**');
+        let blockText;
+
+        // Improved bold formatting
+        if (nameArr.length === 1) {
+            blockText = nameArr[0]; // No bold part
+        } else if (nameArr.length === 2) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
+        } else if (nameArr.length === 3) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
+        } else {
+            // Handle cases with more than 3 parts by bolding the middle parts
+            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
+        }
+
+        let a = document.createElement('a');
+        a.innerHTML = blockText;
+        a.href = game.link;
+        a.className = 'game-link';
+        if (game.link != '/404.html') {
+            gameLinks.appendChild(a);
+        }
+    });
+    reloadCustomization();
 }
 function renderTools(games) {
     const gameLinks = document.getElementById('tool-links');
@@ -260,11 +266,12 @@ function renderTools(games) {
         a.href = game.link;
         a.className = 'game-link';
         if (game.link == '/404.html') {
-            a.style.color = '#F00'
+            a.style.display = 'none'
         }
         gameLinks.appendChild(a);
 
     });
+    reloadCustomization();
 }
 function renderPremGames(games) {
     const gameLinks = document.getElementById('prem-game-links');
@@ -291,13 +298,13 @@ function renderPremGames(games) {
         a.href = game.link;
         a.className = 'game-link';
         if (game.link == '/404.html') {
-            a.style.color = '#F00'
+            a.style.display = 'none'
         }
         gameLinks.appendChild(a);
 
     });
+    reloadCustomization();
 }
-
 function renderPremTools(games) {
     const gameLinks = document.getElementById('prem-tool-links');
     gameLinks.innerHTML = ''; // Clear existing links
@@ -328,9 +335,11 @@ function renderPremTools(games) {
         gameLinks.appendChild(a);
 
     });
+    reloadCustomization();
 }
-let isCusMenuOpen = false;
 
+// Customization Tools Code
+let isCusMenuOpen = false;
 function handleCustomization() {
     isCusMenuOpen = !isCusMenuOpen; // Toggle the menu state
     let button = document.getElementById('cus-toggleMenu');
@@ -347,22 +356,25 @@ function handleCustomization() {
         buttonText: "#ffffff",
         bg: "#000000"
     }
-    // Initialize localStorage if no values are present
     if (!localStorage.getItem('cus-mainColor')) {
-        localStorage.setItem('cus-mainColor', '#007bff');
-        localStorage.setItem('cus-mainTextColor', '#ffffff');
-        localStorage.setItem('cus-buttonTextColor', '#ffffff');
-        localStorage.setItem('cus-bgColor', '#000000');
+        Object.values(defaultColors).forEach((color, i) => {
+            const keyName = Object.keys(defaultColors)[i]
+            localStorage.setItem(`cus-${keyName}Color`, color)
+        })
     }
-
     if (isCusMenuOpen) {
         menu.style.display = ''; // Show menu
         button.innerText = 'Close Customization Menu';
+        Object.keys(colorPickers).forEach((key) => {
+            let picker = colorPickers[key];
+            picker.value = localStorage.getItem(`cus-${key}Color`);
+            handleColorChange({ target: picker });
+        });
         document.getElementById('cus-resetDefault').addEventListener('click', () => {
             Object.keys(colorPickers).forEach((key) => {
                 let picker = colorPickers[key];
                 picker.value = defaultColors[key];
-                handleColorChange({target: picker});
+                handleColorChange({ target: picker });
             });
         })
         // Set picker values and add event listeners
@@ -383,13 +395,12 @@ function handleCustomization() {
         });
     }
 }
-
 function handleColorChange(event) {
     let picker = event.target; // Get the triggering input element
     let color = picker.value;
 
     // Save color to localStorage
-    localStorage.setItem(`cus-${picker.id.split('-')[1]}Color`, color);
+    localStorage.setItem(`cus-${picker.id.split('-')[1]}`, color);
 
     // Apply changes based on picker ID
     switch (picker.id) {
@@ -399,7 +410,6 @@ function handleColorChange(event) {
                 buttons[i].style.backgroundColor = color;
             }
             break;
-
         case 'cus-mainTextColor':
             document.body.style.color = color;
             break;
@@ -412,17 +422,29 @@ function handleColorChange(event) {
         case 'cus-bgColor':
             document.body.style.backgroundColor = color;
             break;
-
         default:
             break;
     }
 }
-
-// Attach event listener to toggle button
+function reloadCustomization(){
+    let colorPickers = {
+        main: document.getElementById('cus-mainColor'),
+        mainText: document.getElementById('cus-mainTextColor'),
+        buttonText: document.getElementById('cus-buttonTextColor'),
+        bg: document.getElementById('cus-bgColor')
+    };
+    Object.keys(colorPickers).forEach((key) => {
+        let picker = colorPickers[key];
+        picker.value = localStorage.getItem(`cus-${key}Color`);
+        handleColorChange({ target: picker });
+    });
+}
 document.getElementById('cus-toggleMenu').addEventListener('click', handleCustomization);
 document.getElementById('searchG').addEventListener('input', filterGames);
+reloadCustomization();
 
-// Run all the necessary functions after initialization
+// Run all the necessary functions to initialize
+localStorageLoadGames();
 loadTools();
 loadGames();
 await checkUser();

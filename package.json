@@ -12,7 +12,10 @@
   "dependencies": {
     "express": "^4.21.1",
     "firebase": "^10.11.1",
-    "http-proxy-middleware": "^3.0.3"
+    "http-proxy-middleware": "^3.0.3",
+    "@genkit-ai/googleai": "^0.9.12",
+    "firebase-admin": "^13.0.2",
+    "genkit": "^0.9.12"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",
@@ -22,6 +25,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.29.1",
     "webpack": "^5.91.0",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "concurrently": "^9.1.0"
   }
 }
