@@ -71,7 +71,8 @@ function initializeFirebase() {
     }
 }
 
-const firebaseInitialized = initializeFirebase();
+async () => {
+const firebaseInitialized = await initializeFirebase();
 
 if (!firebaseInitialized) {
     console.error('Could not initialize Firebase. Exiting.');
@@ -80,7 +81,7 @@ if (!firebaseInitialized) {
 
 const db = admin.firestore();
 firestoreUtils.setDB(db);
-
+}
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
     "<script src='/code/universalCode/maincheck.js'></script>",
