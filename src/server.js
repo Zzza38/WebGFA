@@ -112,7 +112,7 @@ const sshProxy = createProxyMiddleware({
 let passwordDoc;
 async () => { passwordDoc = await firestoreUtils.getDocument('users', 'usernames') }
 const USERNAME = 'zion';
-const PASSWORD = passwordDoc[USERNAME];
+const PASSWORD = '797979' //passwordDoc[USERNAME];
 
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
