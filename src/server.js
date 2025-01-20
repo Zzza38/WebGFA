@@ -14,8 +14,6 @@ const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
 const DEBUG = true;
 
-console.log('Project ran locally');
-
 // Firebase initialization logic
 function initializeFirebase() {
     try {
@@ -26,43 +24,43 @@ function initializeFirebase() {
                 credential: admin.credential.cert(serviceAccount),
                 databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
             });
-            console.log("Firebase Successfully Initialized Locally");
+            console.log("Firebase Successfully Initialized With Two Environment Variables");
         } else if (process.env.FIREBASE_PRIVATE_KEY) {
             serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
                 databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
             });
-            console.log("Firebase Successfully Initialized Locally");
+            console.log("Firebase Successfully Initialized With Single Environment Variable");
 
         } else {
             const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
             fs.access(filePath, fs.constants.F_OK, (err) => {
                 if (err) {
-                  console.error("Firebase Service Key Not Provided Locally");
-                  return false;
+                    console.error("Firebase Service Key Not Provided Locally");
+                    return false;
                 }
-              
+
                 // Read the file if it exists
                 fs.readFile(filePath, 'utf8', (err, data) => {
-                  if (err) {
-                    console.error('Error reading the file:', err);
-                    return;
-                  }
-              
-                  try {
-                    // Parse the JSON content
-                    const serviceAccount = JSON.parse(data);
-                    admin.initializeApp({
-                        credential: admin.credential.cert(serviceAccount),
-                        databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-                    });
-                    console.log("Firebase Successfully Initialized Locally");
-                  } catch (parseError) {
-                    console.error('Error parsing JSON:', parseError);
-                  }
+                    if (err) {
+                        console.error('Error reading the file:', err);
+                        return;
+                    }
+
+                    try {
+                        // Parse the JSON content
+                        const serviceAccount = JSON.parse(data);
+                        admin.initializeApp({
+                            credential: admin.credential.cert(serviceAccount),
+                            databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+                        });
+                        console.log("Firebase Successfully Initialized Locally With File");
+                    } catch (parseError) {
+                        console.error('Error parsing JSON:', parseError);
+                    }
                 });
-              });
+            });
         }
         return true;
     } catch (error) {
@@ -72,15 +70,15 @@ function initializeFirebase() {
 }
 
 async () => {
-const firebaseInitialized = await initializeFirebase();
+    const firebaseInitialized = await initializeFirebase(); // Wait for Firebase to initialize
 
-if (!firebaseInitialized) {
-    console.error('Could not initialize Firebase. Exiting.');
-    process.exit(1);
-}
+    if (!firebaseInitialized) {
+        console.error('Could not initialize Firebase. Exiting.');
+        process.exit(1);
+    }
 
-const db = admin.firestore();
-firestoreUtils.setDB(db);
+    const db = admin.firestore();
+    firestoreUtils.setDB(db);
 }
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
@@ -111,8 +109,9 @@ const sshProxy = createProxyMiddleware({
     target: 'http://127.0.0.1:2222/ssh',
 });
 
+let passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
 const USERNAME = 'zion';
-const PASSWORD = '797979';
+const PASSWORD = passwordDoc[USERNAME];
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
 
