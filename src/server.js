@@ -10,9 +10,6 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const admin = require("firebase-admin");
 const { exec } = require('child_process');
 
-// TEST: THE FOLLOWING CODE IS FOR TESTING PURPOSES ONLY. IT WILL BE REMOVED LATER.
-exec('cd /home/zion && mkdir test')
-// END TESTING CODE
 // Custom Modules
 const firestoreUtils = require("./functions/firestoreUtils.js");
 const urlUtils = require("./functions/urlUtils.js");
