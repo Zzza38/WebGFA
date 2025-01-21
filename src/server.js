@@ -142,37 +142,20 @@ function basicAuth(req, res, next) {
 
 app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
-app.post('/webhook', express.json({ type: 'application/json' }), (request, response) => {
+app.post('/webhook/github', express.json({ type: 'application/json' }), (request, response) => {
     // Respond immediately to acknowledge receipt
     response.status(202).send('Accepted');
-  
-    // Extract the secret to identify the source of the webhook
-    const secret = request.body.secret;
-    // Use a switch statement to handle different webhook sources
-    switch (secret) {
-      case 'github-webgfa': // GitHub webhook logic
-        const githubEvent = request.headers['x-github-event'];
-        console.log(`Received GitHub event: ${githubEvent}`);
-        if (githubEvent === 'push') {
-          console.log('Received push event from GitHub, updating server...');
-          exec('cd /home/zion/WebGFA && git pull && sudo systemctl restart webgfa.service');
-          // Add GitHub push-specific handling logic here
-        } else {
-          console.log(`Unhandled GitHub event: ${githubEvent}`);
-        }
-        break;
-  
-      case 'another-service':
-        console.log('Received webhook from another service...');
-        console.log('Payload:', request.body);
-        // Add logic to handle this service's webhook
-        break;
-  
-      default: // Unknown secret
-        console.log(`Unhandled webhook with secret: ${secret}`);
-        break;
+
+    const githubEvent = request.headers['x-github-event'];
+    console.log(`Received GitHub event: ${githubEvent}`);
+    if (githubEvent === 'push') {
+        console.log('Received push event from GitHub, updating server...');
+        exec('cd /home/zion/WebGFA && git pull && sudo systemctl restart webgfa.service');
+        // Add GitHub push-specific handling logic here
+    } else {
+        console.log(`Unhandled GitHub event: ${githubEvent}`);
     }
-  });
+});
 app.use(async (req, res, next) => {
     const reqPath = urlUtils.normalizePath(req.path);
     const params = req.query;
