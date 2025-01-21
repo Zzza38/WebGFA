@@ -150,8 +150,14 @@ app.post('/webhook/github', express.json({ type: 'application/json' }), (request
     console.log(`Received GitHub event: ${githubEvent}`);
     if (githubEvent === 'push') {
         console.log('Received push event from GitHub, updating server...');
-        const { exec } = require('child_process');
-        exec('cd /home/zion/WebGFA && git pull && sudo systemctl restart webgfa.service', (err, stdout, stderr) => { if (err) console.error(err); else console.log(stdout); });
+        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa.service', (error, stdout, stderr) => {
+            if (error) {
+              console.error(`exec error: ${error}`);
+              return;
+            }
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
+          });
     } else {
         console.log(`Unhandled GitHub event: ${githubEvent}`);
     }
