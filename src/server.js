@@ -116,9 +116,12 @@ const sshProxy = createProxyMiddleware({
 });
 
 let passwordDoc;
-async () => { passwordDoc = await firestoreUtils.getDocument('users', 'usernames') }
-const USERNAME = 'zion';
-const PASSWORD = '797979' //passwordDoc[USERNAME];
+let USERNAME = 'zion';
+let PASSWORD;
+async () => {
+    passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
+    PASSWORD = passwordDoc[USERNAME];
+}
 
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -152,12 +155,12 @@ app.post('/webhook/github', express.json({ type: 'application/json' }), (request
         console.log('Received push event from GitHub, updating server...');
         exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa.service', (error, stdout, stderr) => {
             if (error) {
-              console.error(`exec error: ${error}`);
-              return;
+                console.error(`exec error: ${error}`);
+                return;
             }
             console.log(`stdout: ${stdout}`);
             console.log(`stderr: ${stderr}`);
-          });
+        });
     } else {
         console.log(`Unhandled GitHub event: ${githubEvent}`);
     }
