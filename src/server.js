@@ -148,7 +148,6 @@ app.post('/webhook', express.json({ type: 'application/json' }), (request, respo
   
     // Extract the secret to identify the source of the webhook
     const secret = request.body.secret;
-    console.log(`Received webhook with secret: ${secret}`);
     // Use a switch statement to handle different webhook sources
     switch (secret) {
       case 'github-webgfa': // GitHub webhook logic
@@ -259,7 +258,7 @@ async function startServer() {
             cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem'),
         };
         https.createServer(sslOptions, app).listen(HTTPS_PORT, () => {
-            console.log(`Secure server is running on port ${HTTPS_PORT}`);
+            console.log(`HTTPS server is running on port ${HTTPS_PORT}`);
             if (DEBUG) console.log('Debug is on');
         });
     } catch (err) {
