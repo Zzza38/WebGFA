@@ -151,7 +151,7 @@ app.post('/webhook', express.json({ type: 'application/json' }), (request, respo
   
     // Extract the secret to identify the source of the webhook
     const secret = request.body.secret;
-  
+    console.log(`Received webhook with secret: ${secret}`);
     // Use a switch statement to handle different webhook sources
     switch (secret) {
       case 'github-webgfa': // GitHub webhook logic
