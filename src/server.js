@@ -281,5 +281,4 @@ async function updateTable(jsonObject, filePath, oldTable = null) {
     // Write file asynchronously
     const csvContent = table.map(row => row.join(',')).join('\n');
     await fs.writeFile(filePath, csvContent, 'utf8'); // Changed to async write
-    console.log(`Table updated and saved to ${filePath}`);
 }

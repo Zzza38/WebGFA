@@ -1,5 +1,5 @@
 const path = window.location.pathname;
-const username = localStorage.getItem('username');
+const username = localStorage.getItem('user');
 const UID = localStorage.getItem('UID');
 
 fetch('/webhook/webgfa', {
