@@ -27,7 +27,8 @@ const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
     "<script src='/code/universalCode/maincheck.js'></script>",
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
-    "<script src='/code/universalCode/autoSave.js' type='module'></script>"
+    "<script src='/code/universalCode/autoSave.js' type='module'></script>",
+    "<script src='/code/universalCode/dataSender.js''></script>",
 ];
 
 const excludedTags = {
@@ -46,6 +47,7 @@ app.use(express.json({ type: 'application/json' }));
 app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
+app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
@@ -54,19 +56,19 @@ app.use(handleMainRequest);
 (async () => {
     try {
         clearLogFile(logFilePath);
-        
+
         // Initialize Firebase
         await initializeFirebase();
         console.log('Firebase initialized successfully');
-        
+
         // Set up Firestore
         firestoreUtils.setDB(admin.firestore());
-        
+
         // Load credentials
         const passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
         PASSWORD = passwordDoc[USERNAME];
         console.log('Credentials loaded successfully');
-        
+
         // Start servers
         startServer();
     } catch (error) {
@@ -133,14 +135,14 @@ function clearLogFile(filePath) {
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader) return sendAuthChallenge(res);
-    
+
     const [username, password] = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
     (username === USERNAME && password === PASSWORD) ? next() : sendAuthChallenge(res);
 }
 
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
-    
+
     if (reqPath.includes('/api')) {
         await handleApiRequest(req, res);
     } else if (isHtmlRequest(reqPath)) {
@@ -153,11 +155,19 @@ async function handleMainRequest(req, res, next) {
 async function handleGitHubWebhook(req, res) {
     res.status(202).send('Accepted');
     if (req.headers['x-github-event'] === 'push') {
-        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa.service', 
+        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa.service',
             (error, stdout, stderr) => console.log(error ? `Exec error: ${error}` : `Output: ${stdout}${stderr}`));
     }
 }
-
+let oldTable = null;
+async function handleWebGFAWebhook(req, res) {
+    res.status(202).send('Accepted');
+    let body = res.body;
+    body = JSON.parse(body);
+    const humanReadableDate = new Date().toLocaleString();
+    body['Date'] = humanReadableDate;
+    updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable);
+}
 async function startServer() {
     try {
         http.createServer(app).listen(HTTP_PORT, () => console.log(`HTTP on ${HTTP_PORT}`));
@@ -191,7 +201,7 @@ async function handleApiRequest(req, res) {
             'firestoreUpdateDoc': () => firestoreUtils.updateDocument(col, doc, data),
             'firestoreDeleteDoc': () => firestoreUtils.deleteDocument(col, doc)
         }[service];
-        
+
         handler ? res.send(await handler()) : res.status(400).send('Invalid service');
     } catch (error) {
         console.error('API error:', error);
@@ -203,14 +213,43 @@ async function serveHtmlFile(reqPath, res) {
     try {
         const fullPath = path.join(__dirname, '../static', reqPath.endsWith('.html') ? reqPath : reqPath + '/index.html');
         let html = await fs.readFile(fullPath, 'utf8');
-        
-        const filteredTags = extraTags.filter(tag => 
-            !Object.entries(excludedTags).some(([path, excluded]) => 
+
+        const filteredTags = extraTags.filter(tag =>
+            !Object.entries(excludedTags).some(([path, excluded]) =>
                 reqPath === path && tag === excluded));
-        
+
         res.set('Content-Type', 'text/html').send(html.replace('</body>', filteredTags.join('') + '</body>'));
     } catch (error) {
         console.error('File serve error:', error);
         res.status(404).sendFile(path.join(__dirname, '../static/404.html'));
     }
+}
+function updateTable(jsonObject, filePath, oldTable = null) {
+    let table = oldTable || [];
+    let headers = table.length > 0 ? table[0] : [];
+
+    // Check for new keys in the JSON object and add them to headers
+    const newKeys = Object.keys(jsonObject).filter(key => !headers.includes(key));
+    if (newKeys.length > 0) {
+        headers.push(...newKeys);
+        if (table.length > 0) {
+            // Update existing rows with empty values for new headers
+            table.slice(1).forEach(row => {
+                newKeys.forEach(() => row.push(''));
+            });
+        }
+        table[0] = headers; // Update headers in the table
+    }
+
+    // Create a new row with values in the correct order
+    const newRow = headers.map(header => jsonObject[header] || '');
+    table.push(newRow);
+
+    // Convert the table to a string in CSV format
+    const csvContent = table.map(row => row.join(',')).join('\n');
+
+    // Write the updated table to the file
+    fs.writeFileSync(filePath, csvContent, 'utf8');
+
+    console.log(`Table updated and saved to ${filePath}`);
 }

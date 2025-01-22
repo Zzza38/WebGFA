@@ -3,3 +3,4 @@ old files
 .vscode
 data/firebasePrivateKey.json
 server.log
+webgfa.csv
