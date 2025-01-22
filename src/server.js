@@ -174,7 +174,7 @@ async function handleWebGFAWebhook(req, res) {
         if (typeof body === 'string') body = JSON.parse(body);
         const humanReadableDate = new Date().toLocaleString();
         body['Date'] = humanReadableDate;
-        await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable); // Added await
+        oldTable = await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable); // Added await
     } catch (error) {
         console.error('Webhook processing error:', error);
     }
@@ -281,4 +281,5 @@ async function updateTable(jsonObject, filePath, oldTable = null) {
     // Write file asynchronously
     const csvContent = table.map(row => row.join(',')).join('\n');
     await fs.writeFile(filePath, csvContent, 'utf8'); // Changed to async write
+    return table;
 }
