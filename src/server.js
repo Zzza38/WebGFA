@@ -53,6 +53,7 @@ app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
+app.use('/webgfa.csv', handleCSV)
 app.use(handleMainRequest);  // This will now handle all HTML requests
 
 /////////////////////////////////////////////////////////////
@@ -178,6 +179,11 @@ async function handleWebGFAWebhook(req, res) {
     } catch (error) {
         console.error('Webhook processing error:', error);
     }
+}
+async function sendCSV(req, res) {
+    await fs.access(fullPath, fs.constants.F_OK);
+    let csv = await fs.readFile(fullPath, 'utf8');
+    res.set('Content-Type', 'text/text').send(csv)
 }
 
 async function startServer() {
