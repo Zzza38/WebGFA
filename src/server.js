@@ -52,19 +52,33 @@ app.use(handleMainRequest);
 //                   SERVER INITIALIZATION                 //
 /////////////////////////////////////////////////////////////
 (async () => {
-    clearLogFile(logFilePath);
-    const firebaseInitialized = await initializeFirebase();
-    
-    if (!firebaseInitialized) {
-        console.error('Could not initialize Firebase. Exiting.');
+    try {
+        clearLogFile(logFilePath);
+        const firebaseInitialized = await initializeFirebase();
+        
+        if (!firebaseInitialized) {
+            console.error('Firebase initialization failed. Check credentials.');
+            process.exit(1);
+        }
+
+        // Initialize Firestore with proper admin instance
+        const db = admin.firestore();
+        firestoreUtils.setDB(db);
+        console.log('Firestore initialized successfully');
+
+        // Verify database connection works
+        const passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
+        if (!passwordDoc) {
+            throw new Error('Failed to fetch credentials document');
+        }
+        PASSWORD = passwordDoc[USERNAME];
+        console.log('Credentials verified successfully');
+        
+        startServer();
+    } catch (error) {
+        console.error('Critical initialization error:', error);
         process.exit(1);
     }
-
-    const passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
-    PASSWORD = passwordDoc[USERNAME];
-    firestoreUtils.setDB(admin.firestore());
-    
-    startServer();
 })();
 
 /////////////////////////////////////////////////////////////
