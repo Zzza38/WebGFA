@@ -234,10 +234,6 @@ async function serveHtmlFile(reqPath, res) {
         // 2. Verify file existence first
         await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
-
-        // 3. Debug logging for path matching
-        console.log(`Serving: ${fullPath}`);
-        console.log(`Request path: ${reqPath}`);
         
         // 4. Improved exclusion logic
         const filteredTags = extraTags.filter(tag => {
@@ -247,8 +243,6 @@ async function serveHtmlFile(reqPath, res) {
             });
             return !shouldExclude;
         });
-
-        console.log(`Injecting tags:`, filteredTags);
 
         // 5. Handle cases where </body> tag might be missing
         if (!html.includes('</body>')) {

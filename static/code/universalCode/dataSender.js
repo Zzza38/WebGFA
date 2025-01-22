@@ -2,7 +2,7 @@ const path = window.location.pathname;
 const username = localStorage.getItem('username');
 const UID = localStorage.getItem('UID');
 
-fetch('/webhooks/webgfa', {
+fetch('/webhook/webgfa', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
