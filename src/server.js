@@ -183,7 +183,7 @@ async function handleWebGFAWebhook(req, res) {
 async function sendCSV(req, res) {
     await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
     let csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
-    res.set('Content-Type', 'text/text').send(csv)
+    res.set('Content-Type', 'text/csv').send(csv)
 }
 
 async function startServer() {
