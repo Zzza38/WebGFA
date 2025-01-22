@@ -70,24 +70,48 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 //                     CORE FUNCTIONS                      //
 /////////////////////////////////////////////////////////////
-function initializeFirebase() {
+async function initializeFirebase() {
     try {
+        // Try environment variables first
         if (process.env.FIREBASE_PRIVATE_KEY_1 && process.env.FIREBASE_PRIVATE_KEY_2) {
-            const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2);
-            admin.initializeApp({ credential: admin.credential.cert(serviceAccount), databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com" });
+            const serviceAccount = JSON.parse(
+                process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2
+            );
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+            });
             console.log("Firebase initialized with environment variables");
             return true;
         }
-        
-        const localKeyPath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
-        fs.readFile(localKeyPath, 'utf8').then(data => {
-            admin.initializeApp({ credential: admin.credential.cert(JSON.parse(data)), databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com" });
+
+        // Try single environment variable
+        if (process.env.FIREBASE_PRIVATE_KEY) {
+            const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+            });
+            console.log("Firebase initialized with single environment variable");
+            return true;
+        }
+
+        // Try local file
+        const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
+        try {
+            await fs.access(filePath, fs.constants.F_OK);
+            const data = await fs.readFile(filePath, 'utf8');
+            const serviceAccount = JSON.parse(data);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+            });
             console.log("Firebase initialized with local file");
             return true;
-        }).catch(() => {
-            console.error("Firebase initialization failed - no credentials found");
+        } catch (fileError) {
+            console.error("Firebase initialization failed - no valid credentials found");
             return false;
-        });
+        }
     } catch (error) {
         console.error("Firebase initialization error:", error);
         return false;
