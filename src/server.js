@@ -28,11 +28,11 @@ const extraTags = [
     "<script src='/code/universalCode/maincheck.js'></script>",
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
     "<script src='/code/universalCode/autoSave.js' type='module'></script>",
-    "<script src='/code/universalCode/dataSender.js''></script>",
+    "<script src='/code/universalCode/dataSender.js'></script>", // Fixed extra quote
 ];
 
 const excludedTags = {
-    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
+    "/": "<script src='/code/universalCode/maincheck.js'></script>" // Changed to root path
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
@@ -82,7 +82,6 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 async function initializeFirebase() {
     try {
-        // Try environment variables first
         if (process.env.FIREBASE_PRIVATE_KEY_1 && process.env.FIREBASE_PRIVATE_KEY_2) {
             const serviceAccount = JSON.parse(
                 process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2
@@ -95,7 +94,6 @@ async function initializeFirebase() {
             return true;
         }
 
-        // Try single environment variable
         if (process.env.FIREBASE_PRIVATE_KEY) {
             const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
             admin.initializeApp({
@@ -106,7 +104,6 @@ async function initializeFirebase() {
             return true;
         }
 
-        // Try local file
         const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
         try {
             await fs.access(filePath, fs.constants.F_OK);
@@ -134,9 +131,13 @@ function clearLogFile(filePath) {
 
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
-    if (!authHeader) return sendAuthChallenge(res);
+    if (!authHeader || !authHeader.startsWith('Basic ')) return sendAuthChallenge(res);
+    
+    const encoded = authHeader.split(' ')[1];
+    if (!encoded) return sendAuthChallenge(res);
 
-    const [username, password] = Buffer.from(authHeader.split(' ')[1], 'base64').toString().split(':');
+    const decoded = Buffer.from(encoded, 'base64').toString();
+    const [username, password] = decoded.split(':');
     (username === USERNAME && password === PASSWORD) ? next() : sendAuthChallenge(res);
 }
 
@@ -159,15 +160,21 @@ async function handleGitHubWebhook(req, res) {
             (error, stdout, stderr) => console.log(error ? `Exec error: ${error}` : `Output: ${stdout}${stderr}`));
     }
 }
+
 let oldTable = null;
 async function handleWebGFAWebhook(req, res) {
     res.status(202).send('Accepted');
-    let body = res.body;
-    body = JSON.parse(body);
-    const humanReadableDate = new Date().toLocaleString();
-    body['Date'] = humanReadableDate;
-    updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable);
+    try {
+        let body = req.body; // Fixed req.body usage
+        if (typeof body === 'string') body = JSON.parse(body);
+        const humanReadableDate = new Date().toLocaleString();
+        body['Date'] = humanReadableDate;
+        await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable); // Added await
+    } catch (error) {
+        console.error('Webhook processing error:', error);
+    }
 }
+
 async function startServer() {
     try {
         http.createServer(app).listen(HTTP_PORT, () => console.log(`HTTP on ${HTTP_PORT}`));
@@ -224,32 +231,29 @@ async function serveHtmlFile(reqPath, res) {
         res.status(404).sendFile(path.join(__dirname, '../static/404.html'));
     }
 }
-function updateTable(jsonObject, filePath, oldTable = null) {
+
+async function updateTable(jsonObject, filePath, oldTable = null) {
     let table = oldTable || [];
     let headers = table.length > 0 ? table[0] : [];
 
-    // Check for new keys in the JSON object and add them to headers
+    // Check for new keys
     const newKeys = Object.keys(jsonObject).filter(key => !headers.includes(key));
     if (newKeys.length > 0) {
         headers.push(...newKeys);
         if (table.length > 0) {
-            // Update existing rows with empty values for new headers
             table.slice(1).forEach(row => {
                 newKeys.forEach(() => row.push(''));
             });
         }
-        table[0] = headers; // Update headers in the table
+        table[0] = headers;
     }
 
-    // Create a new row with values in the correct order
+    // Create new row
     const newRow = headers.map(header => jsonObject[header] || '');
     table.push(newRow);
 
-    // Convert the table to a string in CSV format
+    // Write file asynchronously
     const csvContent = table.map(row => row.join(',')).join('\n');
-
-    // Write the updated table to the file
-    fs.writeFileSync(filePath, csvContent, 'utf8');
-
+    await fs.writeFile(filePath, csvContent, 'utf8'); // Changed to async write
     console.log(`Table updated and saved to ${filePath}`);
 }
