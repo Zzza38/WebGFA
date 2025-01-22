@@ -218,14 +218,41 @@ async function handleApiRequest(req, res) {
 
 async function serveHtmlFile(reqPath, res) {
     try {
-        const fullPath = path.join(__dirname, '../static', reqPath.endsWith('.html') ? reqPath : reqPath + '/index.html');
+        // 1. Handle path normalization consistently
+        const normalizedPath = reqPath.endsWith('/') ? reqPath : `${reqPath}/`;
+        const fullPath = path.join(
+            __dirname, 
+            '../static', 
+            reqPath.endsWith('.html') ? reqPath : `${normalizedPath}index.html`
+        );
+
+        // 2. Verify file existence first
+        await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
 
-        const filteredTags = extraTags.filter(tag =>
-            !Object.entries(excludedTags).some(([path, excluded]) =>
-                reqPath === path && tag === excluded));
+        // 3. Debug logging for path matching
+        console.log(`Serving: ${fullPath}`);
+        console.log(`Request path: ${reqPath}`);
+        
+        // 4. Improved exclusion logic
+        const filteredTags = extraTags.filter(tag => {
+            const shouldExclude = Object.entries(excludedTags).some(([pathKey, excludedTag]) => {
+                const isMatchingPath = reqPath === pathKey || normalizedPath === pathKey;
+                return isMatchingPath && tag === excludedTag;
+            });
+            return !shouldExclude;
+        });
 
-        res.set('Content-Type', 'text/html').send(html.replace('</body>', filteredTags.join('') + '</body>'));
+        console.log(`Injecting tags:`, filteredTags);
+
+        // 5. Handle cases where </body> tag might be missing
+        if (!html.includes('</body>')) {
+            html += filteredTags.join('');
+        } else {
+            html = html.replace('</body>', filteredTags.join('') + '</body>');
+        }
+
+        res.set('Content-Type', 'text/html').send(html);
     } catch (error) {
         console.error('File serve error:', error);
         res.status(404).sendFile(path.join(__dirname, '../static/404.html'));
