@@ -40,7 +40,12 @@ const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
-app.use(express.static(path.join(__dirname, '../static')));
+// Configure static middleware to NOT serve HTML files
+app.use(express.static(path.join(__dirname, '../static'), {
+    index: false,
+    extensions: ['html']
+}));
+
 app.use(express.json({ type: 'application/json' }));
 
 // Routes
@@ -48,7 +53,7 @@ app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.use(handleMainRequest);
+app.use(handleMainRequest);  // This will now handle all HTML requests
 
 /////////////////////////////////////////////////////////////
 //                   SERVER INITIALIZATION                 //
