@@ -53,7 +53,7 @@ app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.use('/webgfa.csv', handleCSV)
+app.use('/webgfa.csv', sendCSV)
 app.use(handleMainRequest);  // This will now handle all HTML requests
 
 /////////////////////////////////////////////////////////////
