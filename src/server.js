@@ -28,30 +28,28 @@ const extraTags = [
     "<script src='/code/universalCode/maincheck.js'></script>",
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
     "<script src='/code/universalCode/autoSave.js' type='module'></script>",
-    "<script src='/code/universalCode/dataSender.js'></script>", // Fixed extra quote
+    "<script src='/code/universalCode/dataSender.js'></script>",
 ];
 
 const excludedTags = {
-    "/": "<script src='/code/universalCode/maincheck.js'></script>" // Changed to root path
+    "/": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
 const interstellarProxy = createProxyMiddleware({
     target: 'http://127.0.0.1:3000/interstellar',
-    changeOrigin: true, // Optional: changes the origin of the host header to the target URL
+    changeOrigin: true,
     router: function(req) {
-      // Check if the host is 'inter.learnis.site'
-      if (req.headers.host === 'inter.learnis.site') {
-        return 'http://127.0.0.1:3000/interstellar';
-      }
-      // Otherwise, return null or undefined to skip proxying
-      return null;
+        if (req.headers.host === 'inter.learnis.site') {
+            return 'http://127.0.0.1:3000/interstellar';
+        }
+        return null;
     }
 });
+
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
-// Configure static middleware to NOT serve HTML files
 app.use(express.static(path.join(__dirname, '../static'), {
     index: false,
     extensions: ['html']
@@ -65,28 +63,23 @@ app.use('/ssh/', sshProxy);
 app.use('/interstellar/', interstellarProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.use(handleMainRequest);  // This will now handle all HTML requests
+app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
 //                   SERVER INITIALIZATION                 //
 /////////////////////////////////////////////////////////////
 (async () => {
     try {
-        clearLogFile(logFilePath);
-
-        // Initialize Firebase
+        await clearLogFile(logFilePath);
         await initializeFirebase();
         console.log('Firebase initialized successfully');
 
-        // Set up Firestore
         firestoreUtils.setDB(admin.firestore());
 
-        // Load credentials
         const passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
         PASSWORD = passwordDoc[USERNAME];
         console.log('Credentials loaded successfully');
 
-        // Start servers
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -100,25 +93,35 @@ app.use(handleMainRequest);  // This will now handle all HTML requests
 async function initializeFirebase() {
     try {
         if (process.env.FIREBASE_PRIVATE_KEY_1 && process.env.FIREBASE_PRIVATE_KEY_2) {
-            const serviceAccount = JSON.parse(
-                process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2
-            );
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
-                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-            });
-            console.log("Firebase initialized with environment variables");
-            return true;
+            try {
+                const serviceAccount = JSON.parse(
+                    process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2
+                );
+                admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccount),
+                    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+                });
+                console.log("Firebase initialized with environment variables");
+                return true;
+            } catch (error) {
+                console.error("Invalid Firebase environment variables format");
+                return false;
+            }
         }
 
         if (process.env.FIREBASE_PRIVATE_KEY) {
-            const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
-                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-            });
-            console.log("Firebase initialized with single environment variable");
-            return true;
+            try {
+                const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
+                admin.initializeApp({
+                    credential: admin.credential.cert(serviceAccount),
+                    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
+                });
+                console.log("Firebase initialized with single environment variable");
+                return true;
+            } catch (error) {
+                console.error("Invalid Firebase environment variable format");
+                return false;
+            }
         }
 
         const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
@@ -142,8 +145,13 @@ async function initializeFirebase() {
     }
 }
 
-function clearLogFile(filePath) {
-    fs.writeFile(filePath, '').then(() => console.log('Cleared log file')).catch(err => console.error('Log clear error:', err));
+async function clearLogFile(filePath) {
+    try {
+        await fs.writeFile(filePath, '');
+        console.log('Cleared log file');
+    } catch (err) {
+        console.error('Log clear error:', err);
+    }
 }
 
 function basicAuth(req, res, next) {
@@ -182,27 +190,37 @@ let oldTable = null;
 async function handleWebGFAWebhook(req, res) {
     res.status(202).send('Accepted');
     try {
-        let body = req.body; // Fixed req.body usage
+        let body = req.body;
         if (typeof body === 'string') body = JSON.parse(body);
         const humanReadableDate = new Date().toLocaleString();
         body['Date'] = humanReadableDate;
-        oldTable = await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable); // Added await
+        oldTable = await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable);
     } catch (error) {
         console.error('Webhook processing error:', error);
     }
 }
 
-async function startServer() {
-    try {
-        http.createServer(app).listen(HTTP_PORT, () => console.log(`HTTP on ${HTTP_PORT}`));
-        const sslOptions = {
-            key: await fs.readFile('/etc/letsencrypt/live/learnis.site/privkey.pem'),
-            cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem')
-        };
-        https.createServer(sslOptions, app).listen(HTTPS_PORT, () => console.log(`HTTPS on ${HTTPS_PORT}${DEBUG ? ' (DEBUG)' : ''}`));
-    } catch (err) {
-        console.error('HTTPS startup failed:', err);
-    }
+function startServer() {
+    // HTTP to HTTPS redirect
+    const httpApp = express();
+    httpApp.get('*', (req, res) => {
+        res.redirect(301, `https://${req.headers.host}${req.url}`);
+    });
+    http.createServer(httpApp).listen(HTTP_PORT, () => console.log(`HTTP redirecting to HTTPS on ${HTTP_PORT}`));
+
+    // HTTPS server
+    (async () => {
+        try {
+            const sslOptions = {
+                key: await fs.readFile('/etc/letsencrypt/live/learnis.site/privkey.pem'),
+                cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem')
+            };
+            https.createServer(sslOptions, app).listen(HTTPS_PORT, () => 
+                console.log(`HTTPS on ${HTTPS_PORT}${DEBUG ? ' (DEBUG)' : ''}`));
+        } catch (err) {
+            console.error('HTTPS startup failed:', err);
+        }
+    })();
 }
 
 /////////////////////////////////////////////////////////////
@@ -239,29 +257,29 @@ async function handleApiRequest(req, res) {
 }
 
 async function serveHtmlFile(reqPath, res) {
+    const staticDir = path.resolve(__dirname, '../static');
     try {
-        // 1. Handle path normalization consistently
         const normalizedPath = reqPath.endsWith('/') ? reqPath : `${reqPath}/`;
-        const fullPath = path.join(
-            __dirname,
-            '../static',
+        const fullPath = path.resolve(
+            staticDir,
             reqPath.endsWith('.html') ? reqPath : `${normalizedPath}index.html`
         );
 
-        // 2. Verify file existence first
+        // Prevent directory traversal
+        if (!fullPath.startsWith(staticDir)) {
+            throw new Error('Invalid path');
+        }
+
         await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
 
-        // 4. Improved exclusion logic
         const filteredTags = extraTags.filter(tag => {
-            const shouldExclude = Object.entries(excludedTags).some(([pathKey, excludedTag]) => {
+            return !Object.entries(excludedTags).some(([pathKey, excludedTag]) => {
                 const isMatchingPath = reqPath === pathKey || normalizedPath === pathKey;
                 return isMatchingPath && tag === excludedTag;
             });
-            return !shouldExclude;
         });
 
-        // 5. Handle cases where </body> tag might be missing
         if (!html.includes('</body>')) {
             html += filteredTags.join('');
         } else {
@@ -271,7 +289,13 @@ async function serveHtmlFile(reqPath, res) {
         res.set('Content-Type', 'text/html').send(html);
     } catch (error) {
         console.error('File serve error:', error);
-        res.status(404).sendFile(path.join(__dirname, '../static/404.html'));
+        res.status(404);
+        try {
+            await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
+            res.sendFile(path.join(staticDir, '404.html'));
+        } catch {
+            res.type('txt').send('Not found');
+        }
     }
 }
 
@@ -291,12 +315,16 @@ async function updateTable(jsonObject, filePath, oldTable = null) {
         table[0] = headers;
     }
 
-    // Create new row
-    const newRow = headers.map(header => jsonObject[header] || '');
+    // Create new row with CSV escaping
+    const newRow = headers.map(header => {
+        const value = jsonObject[header] || '';
+        return `"${value.toString().replace(/"/g, '""')}"`;
+    });
+
     table.push(newRow);
 
-    // Write file asynchronously
+    // Write file
     const csvContent = table.map(row => row.join(',')).join('\n');
-    await fs.writeFile(filePath, csvContent, 'utf8'); // Changed to async write
+    await fs.writeFile(filePath, csvContent, 'utf8');
     return table;
 }
