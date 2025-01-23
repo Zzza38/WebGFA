@@ -36,8 +36,18 @@ const excludedTags = {
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
-const interstellarProxy = createProxyMiddleware({ target: 'http://127.0.0.1:3000' });
-
+const interstellarProxy = createProxyMiddleware({
+    target: 'http://127.0.0.1:3000/interstellar',
+    changeOrigin: true, // Optional: changes the origin of the host header to the target URL
+    router: function(req) {
+      // Check if the host is 'inter.learnis.site'
+      if (req.headers.host === 'inter.learnis.site') {
+        return 'http://127.0.0.1:3000/interstellar';
+      }
+      // Otherwise, return null or undefined to skip proxying
+      return null;
+    }
+});
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
