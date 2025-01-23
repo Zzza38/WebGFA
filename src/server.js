@@ -32,7 +32,7 @@ const extraTags = [
 ];
 
 const excludedTags = {
-    "/": "<script src='/code/universalCode/maincheck.js'></script>"
+    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
@@ -40,7 +40,6 @@ const interstellarProxy = createProxyMiddleware({
     target: 'http://127.0.0.1:3000/interstellar',
     changeOrigin: true,
     router: function(req) {
-        console.log(req.headers.host)
         if (req.headers.host === 'inter.learnis.site') {
             return 'http://127.0.0.1:3000/interstellar';
         }
