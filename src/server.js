@@ -40,6 +40,7 @@ const interstellarProxy = createProxyMiddleware({
     target: 'http://127.0.0.1:3000/interstellar',
     changeOrigin: true,
     router: function(req) {
+        console.log(req.headers.host)
         if (req.headers.host === 'inter.learnis.site') {
             return 'http://127.0.0.1:3000/interstellar';
         }
