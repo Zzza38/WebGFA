@@ -32,7 +32,8 @@ const extraTags = [
 ];
 
 const excludedTags = {
-    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
+    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>",
+    "/register/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
