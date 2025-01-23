@@ -36,6 +36,7 @@ const excludedTags = {
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
+const interstellarProxy = createProxyMiddleware({ target: 'http://127.0.0.1:3000' });
 
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
@@ -51,9 +52,9 @@ app.use(express.json({ type: 'application/json' }));
 // Routes
 app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
+app.use('/interstellar/', interstellarProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.use('/webgfa.csv', sendCSV)
 app.use(handleMainRequest);  // This will now handle all HTML requests
 
 /////////////////////////////////////////////////////////////
@@ -138,7 +139,7 @@ function clearLogFile(filePath) {
 function basicAuth(req, res, next) {
     const authHeader = req.headers['authorization'];
     if (!authHeader || !authHeader.startsWith('Basic ')) return sendAuthChallenge(res);
-    
+
     const encoded = authHeader.split(' ')[1];
     if (!encoded) return sendAuthChallenge(res);
 
@@ -180,11 +181,6 @@ async function handleWebGFAWebhook(req, res) {
         console.error('Webhook processing error:', error);
     }
 }
-async function sendCSV(req, res) {
-    await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
-    let csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
-    res.set('Content-Type', 'text/csv').send(csv)
-}
 
 async function startServer() {
     try {
@@ -217,7 +213,12 @@ async function handleApiRequest(req, res) {
             'firestoreGetDoc': () => firestoreUtils.getDocument(col, doc),
             'firestoreSetDoc': () => firestoreUtils.setDocument(col, doc, data),
             'firestoreUpdateDoc': () => firestoreUtils.updateDocument(col, doc, data),
-            'firestoreDeleteDoc': () => firestoreUtils.deleteDocument(col, doc)
+            'firestoreDeleteDoc': () => firestoreUtils.deleteDocument(col, doc),
+            'getCSV': async () => {
+                await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
+                let csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
+                res.set('Content-Type', 'text/csv').send(csv);
+            }
         }[service];
 
         handler ? res.send(await handler()) : res.status(400).send('Invalid service');
@@ -232,15 +233,15 @@ async function serveHtmlFile(reqPath, res) {
         // 1. Handle path normalization consistently
         const normalizedPath = reqPath.endsWith('/') ? reqPath : `${reqPath}/`;
         const fullPath = path.join(
-            __dirname, 
-            '../static', 
+            __dirname,
+            '../static',
             reqPath.endsWith('.html') ? reqPath : `${normalizedPath}index.html`
         );
 
         // 2. Verify file existence first
         await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
-        
+
         // 4. Improved exclusion logic
         const filteredTags = extraTags.filter(tag => {
             const shouldExclude = Object.entries(excludedTags).some(([pathKey, excludedTag]) => {
