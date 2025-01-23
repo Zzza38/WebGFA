@@ -259,13 +259,17 @@ async function handleApiRequest(req, res) {
 async function serveHtmlFile(reqPath, res) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
-        const normalizedPath = reqPath.endsWith('/') ? reqPath : `${reqPath}/`;
-        const fullPath = path.resolve(
-            staticDir,
-            reqPath.endsWith('.html') ? reqPath : `${normalizedPath}index.html`
-        );
+        // Remove leading slash and handle root path
+        const safePath = reqPath === '/' ? '' : reqPath.replace(/^\//, '');
+        const normalizedPath = safePath.endsWith('/') ? safePath : `${safePath}/`;
+        
+        const file = reqPath.endsWith('.html') 
+            ? safePath 
+            : path.join(normalizedPath, 'index.html');
 
-        // Prevent directory traversal
+        const fullPath = path.resolve(staticDir, file);
+
+        // Security check
         if (!fullPath.startsWith(staticDir)) {
             throw new Error('Invalid path');
         }
