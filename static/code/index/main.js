@@ -1,85 +1,55 @@
 if (localStorage.getItem('loggedIn')) {
     window.location.href = '/gameselect/';
 }
-// Import Firebase
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"; // Import Firestore modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-    authDomain: "webgfa-games.firebaseapp.com",
-    projectId: "webgfa-games",
-    storageBucket: "webgfa-games.appspot.com",
-    messagingSenderId: "553239008504",
-    appId: "1:553239008504:web:b91fba77cf0f131849170d",
-    measurementId: "G-5W79NYJZ11"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-//const analytics = getAnalytics(app);
-const firestore = getFirestore(app);
-// Reference the form and the alertText
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
-// If the user wants to log in as a guest, a button calls this function to log in as a guest. Will be removed on 4/1/24
 function guestLogin() {
-    document.cookie = "loggedIn=true; path=/";
-    document.cookie = `user=guest; path=/`;
-    document.cookie = `pass=guest; path=/`;
-    localStorage.setItem('loggedIn', true);
-    localStorage.setItem('user', 'guest');
-    localStorage.setItem('pass', 'guest');
-
-    // Redirect to the /gameselect page
-    window.location.href = "/gameselect";
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ username: 'guest', password: 'guest' })
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            return response.text();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
 }
 window.guestLogin = guestLogin;
-form.addEventListener('submit', async function (event) {
-    event.preventDefault(); // Prevent the form from submitting
 
-    // Get the username and password values from the form
+form.addEventListener('submit', function (event) {
+    event.preventDefault();
     const username = form.username.value;
     const password = form.password.value;
 
-    console.log('Attempting login with username:', username, 'and password:', password);
-
-    try {
-        // Reference to the document containing usernames
-        const usernamesRef = doc(firestore, 'users', 'usernames');
-
-        // Get the document snapshot
-        const usernamesDoc = await getDoc(usernamesRef);
-
-        console.log('Retrieved usernames document:', usernamesDoc.data());
-
-        if (usernamesDoc.exists()) {
-            const usernamesData = usernamesDoc.data();
-
-            // Check if the entered username exists and retrieve the associated password
-            if (usernamesData.hasOwnProperty(username)) {
-                const storedPassword = usernamesData[username];
-                if (password === storedPassword) {
-                    console.log('Login successful for user:', username);
-                    localStorage.setItem('loggedIn', true)
-                    localStorage.setItem('user', username)
-                    localStorage.setItem('pass', password)
-                    // Redirect to the /gameselect page
-                    window.location.href = "/gameselect/";
-                } else {
-                    alertText.textContent = 'Incorrect password for user: ' + username;
-                }
-            } else {
-                alertText.textContent = 'User not found: ' + username;
-            }
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ username, password })
+    })
+    .then(response => {
+        if (response.redirected) {
+            window.location.href = response.url;
         } else {
-            alertText.textContent = 'Usernames document does not exist';
+            return response.text();
         }
-    } catch (error) {
-        console.error('Error fetching usernames document:', error);
-        // Display error message
-        alertText.textContent = 'An error occurred while attempting to login. If you wish to report this error, here is the error code: ' + error;
-    }
+    })
+    .then(errorMsg => {
+        if (errorMsg) alertText.textContent = errorMsg;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alertText.textContent = 'Connection error';
+    });
 });

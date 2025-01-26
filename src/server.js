@@ -7,9 +7,8 @@ const fs = require('fs').promises;
 const https = require('https');
 const http = require('http');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const admin = require("firebase-admin");
 const { exec } = require('child_process');
-const firestoreUtils = require("./functions/firestoreUtils.js");
+const db = require("./data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
 
 /////////////////////////////////////////////////////////////
@@ -21,12 +20,11 @@ const HTTP_PORT = 8000;
 const DEBUG = true;
 const logFilePath = path.resolve(__dirname, '../server.log');
 const USERNAME = 'zion';
-let PASSWORD;
+const PASSWORD = db.users.usernames[USERNAME];
 
 const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
     "<script src='/code/universalCode/maincheck.js'></script>",
-    "<script src='/code/universalCode/firestore.js' type='module'></script>",
     "<script src='/code/universalCode/autoSave.js' type='module'></script>",
     "<script src='/code/universalCode/dataSender.js'></script>",
 ];
@@ -37,20 +35,16 @@ const excludedTags = {
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
-// Updated Interstellar proxy configuration
 const interstellarProxy = createProxyMiddleware({
-    target: 'http://127.0.0.1:3000', // Default target (required)
+    target: 'http://127.0.0.1:3000',
     changeOrigin: true,
     router: (req) => {
-        // Only proxy requests with specific host
         if (req.headers.host === 'inter.learnis.site') {
             return 'http://127.0.0.1:3000';
         }
-        return null; // Don't proxy other requests
+        return null;
     },
-    pathFilter: (pathname, req) => {
-        return req.headers.host === 'inter.learnis.site';
-    }
+    pathFilter: (pathname, req) => req.headers.host === 'inter.learnis.site'
 });
 
 /////////////////////////////////////////////////////////////
@@ -62,6 +56,7 @@ app.use(express.static(path.join(__dirname, '../static'), {
 }));
 
 app.use(express.json({ type: 'application/json' }));
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use(interstellarProxy);
@@ -69,6 +64,7 @@ app.get('/ssh/', basicAuth);
 app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
+app.post('/login', handleLogin);
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
@@ -77,15 +73,7 @@ app.use(handleMainRequest);
 (async () => {
     try {
         await clearLogFile(logFilePath);
-        await initializeFirebase();
-        console.log('Firebase initialized successfully');
-
-        firestoreUtils.setDB(admin.firestore());
-
-        const passwordDoc = await firestoreUtils.getDocument('users', 'usernames');
-        PASSWORD = passwordDoc[USERNAME];
         console.log('Credentials loaded successfully');
-
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -96,61 +84,6 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 //                     CORE FUNCTIONS                      //
 /////////////////////////////////////////////////////////////
-async function initializeFirebase() {
-    try {
-        if (process.env.FIREBASE_PRIVATE_KEY_1 && process.env.FIREBASE_PRIVATE_KEY_2) {
-            try {
-                const serviceAccount = JSON.parse(
-                    process.env.FIREBASE_PRIVATE_KEY_1 + process.env.FIREBASE_PRIVATE_KEY_2
-                );
-                admin.initializeApp({
-                    credential: admin.credential.cert(serviceAccount),
-                    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-                });
-                console.log("Firebase initialized with environment variables");
-                return true;
-            } catch (error) {
-                console.error("Invalid Firebase environment variables format");
-                return false;
-            }
-        }
-
-        if (process.env.FIREBASE_PRIVATE_KEY) {
-            try {
-                const serviceAccount = JSON.parse(process.env.FIREBASE_PRIVATE_KEY);
-                admin.initializeApp({
-                    credential: admin.credential.cert(serviceAccount),
-                    databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-                });
-                console.log("Firebase initialized with single environment variable");
-                return true;
-            } catch (error) {
-                console.error("Invalid Firebase environment variable format");
-                return false;
-            }
-        }
-
-        const filePath = path.resolve(__dirname, '../data/firebasePrivateKey.json');
-        try {
-            await fs.access(filePath, fs.constants.F_OK);
-            const data = await fs.readFile(filePath, 'utf8');
-            const serviceAccount = JSON.parse(data);
-            admin.initializeApp({
-                credential: admin.credential.cert(serviceAccount),
-                databaseURL: "https://webgfa-games-default-rtdb.firebaseio.com"
-            });
-            console.log("Firebase initialized with local file");
-            return true;
-        } catch (fileError) {
-            console.error("Firebase initialization failed - no valid credentials found");
-            return false;
-        }
-    } catch (error) {
-        console.error("Firebase initialization error:", error);
-        return false;
-    }
-}
-
 async function clearLogFile(filePath) {
     try {
         await fs.writeFile(filePath, '');
@@ -182,6 +115,20 @@ async function handleMainRequest(req, res, next) {
     } else {
         next();
     }
+}
+
+async function handleLogin(req, res) {
+    const { username, password } = req.body;
+    
+    if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
+        // Set login cookies
+        res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
+        res.cookie('user', username, { secure: true });
+        res.cookie('pass', password, { secure: true });
+        return res.redirect('/gameselect/');
+    }
+    
+    res.status(401).send('Invalid credentials');
 }
 
 async function handleGitHubWebhook(req, res) {
@@ -242,16 +189,20 @@ function isHtmlRequest(path) {
 
 async function handleApiRequest(req, res) {
     try {
-        const { service, col, doc, data } = req.query;
+        const service = req.query.service; 
         const handler = {
-            'firestoreGetDoc': () => firestoreUtils.getDocument(col, doc),
-            'firestoreSetDoc': () => firestoreUtils.setDocument(col, doc, data),
-            'firestoreUpdateDoc': () => firestoreUtils.updateDocument(col, doc, data),
-            'firestoreDeleteDoc': () => firestoreUtils.deleteDocument(col, doc),
             'getCSV': async () => {
                 await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
                 let csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
                 res.set('Content-Type', 'text/csv').send(csv);
+            },
+            'checkLogin': async () => {
+                const { username, password } = req.query;
+                if (db['users']['usernames'][username] === password) {
+                    res.send('success');
+                } else {
+                    res.status(401).send('failure');
+                }
             }
         }[service];
 

@@ -4,3 +4,5 @@ old files
 data/firebasePrivateKey.json
 server.log
 webgfa.csv
+data/firestore_backup.json
+data/database.json
