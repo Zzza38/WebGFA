@@ -15,6 +15,9 @@ function guestLogin() {
     })
     .then(response => {
         if (response.redirected) {
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('user', 'guest');
+            localStorage.setItem('pass', 'guest');
             window.location.href = response.url;
         } else {
             return response.text();

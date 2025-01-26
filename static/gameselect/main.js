@@ -350,18 +350,7 @@ function handleCustomization() {
         buttonText: document.getElementById('cus-buttonTextColor'),
         bg: document.getElementById('cus-bgColor')
     };
-    let defaultColors = {
-        main: "#007bff",
-        mainText: "#ffffff",
-        buttonText: "#ffffff",
-        bg: "#000000"
-    }
-    if (!localStorage.getItem('cus-mainColor')) {
-        Object.values(defaultColors).forEach((color, i) => {
-            const keyName = Object.keys(defaultColors)[i]
-            localStorage.setItem(`cus-${keyName}Color`, color)
-        })
-    }
+
     if (isCusMenuOpen) {
         menu.style.display = ''; // Show menu
         button.innerText = 'Close Customization Menu';
@@ -433,6 +422,18 @@ function reloadCustomization(){
         buttonText: document.getElementById('cus-buttonTextColor'),
         bg: document.getElementById('cus-bgColor')
     };
+    let defaultColors = {
+        main: "#007bff",
+        mainText: "#ffffff",
+        buttonText: "#ffffff",
+        bg: "#000000"
+    }
+    if (!localStorage.getItem('cus-mainColor')) {
+        Object.values(defaultColors).forEach((color, i) => {
+            const keyName = Object.keys(defaultColors)[i]
+            localStorage.setItem(`cus-${keyName}Color`, color)
+        })
+    }
     Object.keys(colorPickers).forEach((key) => {
         let picker = colorPickers[key];
         picker.value = localStorage.getItem(`cus-${key}Color`);
