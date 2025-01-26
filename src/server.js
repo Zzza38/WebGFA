@@ -27,6 +27,7 @@ const extraTags = [
     "<script src='/code/universalCode/maincheck.js'></script>",
     "<script src='/code/universalCode/autoSave.js' type='module'></script>",
     "<script src='/code/universalCode/dataSender.js'></script>",
+    "<script src='/code/universalCode/firestore.js'></script>"
 ];
 
 const excludedTags = {
