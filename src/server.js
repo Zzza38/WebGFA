@@ -8,7 +8,7 @@ const https = require('https');
 const http = require('http');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { exec } = require('child_process');
-const db = require("./data/database.json");
+const db = require("../data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
 
 /////////////////////////////////////////////////////////////
