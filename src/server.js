@@ -26,16 +26,13 @@ const PASSWORD = db.users.usernames[USERNAME];
 const extraTags = [
     // non module tags
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
-    "<script src='/code/universalCode/maincheck.js'></script>",
     "<script src='/code/universalCode/dataSender.js'></script>",
     // module tags
     "<script src='/code/universalCode/autoSave.js' type='module'></script>",
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
 ];
 
-const excludedTags = {
-    "/index.html": "<script src='/code/universalCode/maincheck.js'></script>",
-};
+const excludedTags = {};
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
 const interstellarProxy = createProxyMiddleware({
