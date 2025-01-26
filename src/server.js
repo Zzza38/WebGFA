@@ -64,8 +64,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Authentication middleware
 app.use((req, res, next) => {
-    const allowedPaths = ['/', '/login', '/register'];
-    if (allowedPaths.includes(req.path)) return next();
+    let reqPath = urlUtils.normalizePath(req.path);
+    const allowedPaths = ['/index.html', '/login', '/register/index.html'];
+    if (allowedPaths.includes(reqPath)) return next();
 
     const loggedIn = req.cookies.loggedIn === 'true';
     const username = req.cookies.user;
@@ -151,7 +152,7 @@ async function handleLogin(req, res) {
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
-        return res.redirect('/gameselect/');
+        return res.redirect('/gameselect/index.html');
     }
     
     res.status(401).send('Invalid credentials');
