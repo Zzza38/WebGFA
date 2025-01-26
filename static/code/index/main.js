@@ -40,6 +40,9 @@ form.addEventListener('submit', function (event) {
     })
     .then(response => {
         if (response.redirected) {
+            localStorage.setItem('loggedIn', 'true');
+            localStorage.setItem('user', username);
+            localStorage.setItem('pass', password);
             window.location.href = response.url;
         } else {
             return response.text();
