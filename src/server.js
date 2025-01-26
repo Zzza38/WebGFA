@@ -10,6 +10,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 const { exec } = require('child_process');
 const db = require("../data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
+const cookieParser = require('cookie-parser');
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -34,7 +35,6 @@ const extraTags = [
 
 const excludedTags = {
     "/index.html": "<script src='/code/universalCode/maincheck.js'></script>",
-    "/register/index.html": "<script src='/code/universalCode/maincheck.js'></script>"
 };
 
 const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
@@ -53,6 +53,7 @@ const interstellarProxy = createProxyMiddleware({
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../static'), {
     index: false,
     extensions: ['html']
@@ -60,6 +61,28 @@ app.use(express.static(path.join(__dirname, '../static'), {
 
 app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
+
+// Authentication middleware
+app.use((req, res, next) => {
+    const allowedPaths = ['/', '/login', '/register'];
+    if (allowedPaths.includes(req.path)) return next();
+
+    const loggedIn = req.cookies.loggedIn === 'true';
+    const username = req.cookies.user;
+    const password = req.cookies.pass;
+
+    if (!loggedIn || !username || !password) return res.redirect('/');
+
+    const validPassword = db.users.usernames[username];
+    if (validPassword !== password) {
+        res.clearCookie('loggedIn');
+        res.clearCookie('user');
+        res.clearCookie('pass');
+        return res.redirect('/');
+    }
+
+    next();
+});
 
 // Routes
 app.use(interstellarProxy);
