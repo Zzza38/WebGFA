@@ -28,7 +28,6 @@ const extraTags = [
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
     "<script src='/code/universalCode/dataSender.js'></script>",
     // module tags
-    "<script src='/code/universalCode/autoSave.js' type='module'></script>",
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
 ];
 
@@ -178,12 +177,10 @@ async function handleWebGFAWebhook(req, res) {
 }
 
 function startServer() {
-    // HTTP to HTTPS redirect
-    const httpApp = express();
-    httpApp.get('*', (req, res) => {
-        res.redirect(301, `https://${req.headers.host}${req.url}`);
-    });
-    http.createServer(httpApp).listen(HTTP_PORT, () => console.log(`HTTP redirecting to HTTPS on ${HTTP_PORT}`));
+    // HTTP traffic to be same as HTTPS
+    http.createServer(app).listen(HTTP_PORT, () => 
+        console.log(`HTTP server running on port ${HTTP_PORT}`)
+    );
 
     // HTTPS server
     (async () => {
