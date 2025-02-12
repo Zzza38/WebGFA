@@ -344,6 +344,12 @@ function handleCustomization() {
     isCusMenuOpen = !isCusMenuOpen; // Toggle the menu state
     let button = document.getElementById('cus-toggleMenu');
     let menu = document.getElementById('cus-menu');
+    let defaultColors = {
+        main: "#007bff",
+        mainText: "#ffffff",
+        buttonText: "#ffffff",
+        bg: "#000000"
+    }
     let colorPickers = {
         main: document.getElementById('cus-mainColor'),
         mainText: document.getElementById('cus-mainTextColor'),
