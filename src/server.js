@@ -33,19 +33,6 @@ const extraTags = [
 
 const excludedTags = {};
 
-const sshProxy = createProxyMiddleware({ target: 'http://127.0.0.1:2222/ssh' });
-const interstellarProxy = createProxyMiddleware({
-    target: 'http://127.0.0.1:3000',
-    changeOrigin: true,
-    router: (req) => {
-        if (req.headers.host === 'inter.learnis.site') {
-            return 'http://127.0.0.1:3000';
-        }
-        return null;
-    },
-    pathFilter: (pathname, req) => req.headers.host === 'inter.learnis.site'
-});
-
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
@@ -82,9 +69,6 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use(interstellarProxy);
-app.get('/ssh/', basicAuth);
-app.use('/ssh/', sshProxy);
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.post('/login', handleLogin);
