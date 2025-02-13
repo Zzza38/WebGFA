@@ -45,13 +45,10 @@ app.use(express.static(path.join(__dirname, '../static'), {
 app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Not using authentication for GitHub webhook
-app.post('/webhook/github', handleGitHubWebhook);
-
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/register/index.html'];
+    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github'];
     if (allowedPaths.includes(reqPath)) return next();
 
     const loggedIn = req.cookies.loggedIn === 'true';
@@ -71,7 +68,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes with authentication
+app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.post('/login', handleLogin);
 app.use(handleMainRequest);
@@ -174,9 +171,6 @@ function startServer() {
 /////////////////////////////////////////////////////////////
 //                  HELPER FUNCTIONS                       //
 /////////////////////////////////////////////////////////////
-function sendAuthChallenge(res) {
-    res.set('WWW-Authenticate', 'Basic realm="Secure Area"').status(401).send('Authentication required');
-}
 
 function isHtmlRequest(path) {
     return path === '/' || Boolean(path.match(/^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/));
