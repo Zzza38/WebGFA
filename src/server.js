@@ -45,6 +45,9 @@ app.use(express.static(path.join(__dirname, '../static'), {
 app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
+// Not using authentication for GitHub webhook
+app.post('/webhook/github', handleGitHubWebhook);
+
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
@@ -68,8 +71,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-app.post('/webhook/github', handleGitHubWebhook);
+// Routes with authentication
 app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.post('/login', handleLogin);
 app.use(handleMainRequest);
@@ -100,18 +102,6 @@ async function clearLogFile(filePath) {
     }
 }
 
-function basicAuth(req, res, next) {
-    const authHeader = req.headers['authorization'];
-    if (!authHeader || !authHeader.startsWith('Basic ')) return sendAuthChallenge(res);
-
-    const encoded = authHeader.split(' ')[1];
-    if (!encoded) return sendAuthChallenge(res);
-
-    const decoded = Buffer.from(encoded, 'base64').toString();
-    const [username, password] = decoded.split(':');
-    (username === USERNAME && password === PASSWORD) ? next() : sendAuthChallenge(res);
-}
-
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
 
@@ -132,7 +122,7 @@ async function handleLogin(req, res) {
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
-        return res.redirect('/gameselect/index.html');
+        return res.redirect('/gameselect/');
     }
     
     res.status(401).send('Invalid credentials');
