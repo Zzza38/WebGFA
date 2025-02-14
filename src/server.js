@@ -11,6 +11,7 @@ const { exec } = require('child_process');
 const db = require("../data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
 const cookieParser = require('cookie-parser');
+const crypto = require("crypto");
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -119,6 +120,7 @@ async function handleLogin(req, res) {
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
+        res.cookie('uid', generateUID(), { secure: true});
         return res.redirect('/gameselect/');
     }
     
@@ -171,7 +173,15 @@ function startServer() {
 /////////////////////////////////////////////////////////////
 //                  HELPER FUNCTIONS                       //
 /////////////////////////////////////////////////////////////
-
+function generateUID() {
+    const hex1 = crypto.randomBytes(2).toString("hex"); // 4 chars
+    const hex2 = crypto.randomBytes(2).toString("hex"); // 4 chars
+    const hex3 = crypto.randomBytes(1).toString("hex"); // 2 chars
+    const hex4 = crypto.randomBytes(2).toString("hex"); // 4 chars
+    const hex5 = crypto.randomBytes(3).toString("hex"); // 6 chars
+    
+    return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
+}
 function isHtmlRequest(path) {
     return path === '/' || Boolean(path.match(/^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/));
 }
