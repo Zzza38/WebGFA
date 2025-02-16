@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github'];
+    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github', '/test'];
     if (allowedPaths.includes(reqPath)) return next();
 
     const loggedIn = req.cookies.loggedIn === 'true';
