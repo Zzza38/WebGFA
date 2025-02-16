@@ -113,6 +113,8 @@ async function handleMainRequest(req, res, next) {
 }
 
 async function handleLogin(req, res) {
+    // debug, should be removed soon
+    console.log('Login request:', req.body);
     const { username, password } = req.body;
     
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
