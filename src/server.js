@@ -72,6 +72,7 @@ app.use((req, res, next) => {
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.post('/login', handleLogin);
+app.post('/test', (req, res) => res.send('Test successful'));
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
