@@ -127,7 +127,7 @@ async function handleLogin(req, res) {
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
         res.cookie('uid', uid, { secure: true});
-        db.users.sessionID[username] = uid
+        //db.users.sessionID[username] = uid
         return res.redirect('/gameselect/');
     }
     
