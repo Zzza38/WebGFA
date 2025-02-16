@@ -119,10 +119,10 @@ async function handleLoginTest(req, res) {
 async function handleLogin(req, res) {
     console.log('login recieved')
     const { username, password } = req.body;
-    return null;
+
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
         // Set login cookies
-        const uid = generateUID()
+        const uid = 1234//generateUID()
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
