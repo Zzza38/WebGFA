@@ -115,7 +115,7 @@ async function handleMainRequest(req, res, next) {
 
 async function handleLogin(req, res) {
     // debug, should be removed soon
-    console.log('Login request:', req.body);
+    console.log('/login request received');
     const { username, password } = req.body;
     
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
