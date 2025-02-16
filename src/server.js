@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github', '/test'];
+    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github'];
     if (allowedPaths.includes(reqPath)) return next();
 
     const loggedIn = req.cookies.loggedIn === 'true';
@@ -71,8 +71,7 @@ app.use((req, res, next) => {
 
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.post('/login', handleLogin);
-app.post('/test', (req, res) => res.send('Test successful'));
+app.post('/login', handleLoginTest);
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
@@ -113,9 +112,10 @@ async function handleMainRequest(req, res, next) {
     }
 }
 
+async function handleLoginTest(req, res) { 
+    res.send('Login test successful');
+}
 async function handleLogin(req, res) {
-    // debug, should be removed soon
-    console.log('/login request received');
     const { username, password } = req.body;
     
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
