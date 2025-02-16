@@ -113,9 +113,11 @@ async function handleMainRequest(req, res, next) {
 }
 
 async function handleLoginTest(req, res) { 
-    res.send('Login test successful');
+    console.log('login test recieved')
+    handleLogin(req, res);
 }
 async function handleLogin(req, res) {
+    console.log('login recieved')
     const { username, password } = req.body;
     
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
