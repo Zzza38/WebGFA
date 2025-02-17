@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
     const sessionID = req.cookies.uid;
     if (!Object.keys(db.users.sessionID).includes(sessionID)) return res.redirect('/');
-    
+
     next();
 });
 
@@ -102,6 +102,7 @@ async function clearLogFile(filePath) {
 
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
+    const sessionId = req.cookies.uid;
     const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
 
     if (isHtmlRequest(reqPath)) {
@@ -174,7 +175,7 @@ function isHtmlRequest(path) {
 async function handleApiRequest(req, res) {
     try {
         // Extract 'service' from the request body (POST request)
-        const { service, payload } = req.body;
+        const { service } = req.body;
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
