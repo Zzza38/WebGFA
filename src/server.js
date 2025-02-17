@@ -18,6 +18,8 @@ const logUtils = require('./functions/logFileUtils.js');
 /////////////////////////////////////////////////////////////
 
 // Log file handling
+if (!fs.existsSync(path.resolve(__dirname, '../log'))) fs.mkdirSync(path.resolve(__dirname, '../log'), { recursive: true });
+
 try {
     logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
     console.log('Copied ../server.log to ../log/' + logUtils.getLogFileName('../server.log'));
