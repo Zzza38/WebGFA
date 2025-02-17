@@ -5,7 +5,7 @@ const path = require('path');
 
 function generateLogFileName() {
     const date = new Date();
-    return `webgfa-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${date.getHours()}-${date.getMinutes()}.log`;
+    return `webgfa-${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}--${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}.log`;
 }
 function getLogFileName(file) {
     if (!file) return null;
