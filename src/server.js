@@ -18,7 +18,11 @@ const logUtils = require('./functions/logFileUtils.js');
 /////////////////////////////////////////////////////////////
 
 // Log file handling
-//logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+try {
+logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+} catch (error) {
+    console.error('The copy log code is fucked:', error);
+}
 console.log("--NAME-START--");
 console.log(logUtils.generateLogFileName());
 console.log("--NAME-END--");
@@ -120,7 +124,7 @@ async function handleMainRequest(req, res, next) {
 async function handleLogin(req, res) {
     const { username, password } = req.body;
 
-    if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
+    if (db.users.usernames[username] === password) {
         // Set login cookies
         const uid = generateUID()
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });

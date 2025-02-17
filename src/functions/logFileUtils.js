@@ -9,7 +9,9 @@ function generateLogFileName() {
 }
 function getLogFileName(file) {
     if (!file) return null;
-    let fileData = fs.readFileSync(path.join(__dirname, file))
+    let filePath = path.join(__dirname, file);
+    console.log(filePath);
+    let fileData = fs.readFileSync(filePath);
     const logFileName = fileData.toString().match(/console\.log\("--NAME-START--"\);\s*console\.log\((.*?)\);\s*console\.log\("--NAME-END--"\);/);
     return logFileName ? logFileName[1] : 'webgfa-unknown.log';
 }
