@@ -6,9 +6,8 @@ const path = require('path');
 const fs = require('fs').promises;
 const https = require('https');
 const http = require('http');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const { exec } = require('child_process');
-const db = require("../data/database.json");
+let db = require("../data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
@@ -21,8 +20,6 @@ const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
 const DEBUG = true;
 const logFilePath = path.resolve(__dirname, '../server.log');
-const USERNAME = 'zion';
-const PASSWORD = db.users.usernames[USERNAME];
 
 const extraTags = [
     // non module tags
@@ -127,7 +124,8 @@ async function handleLogin(req, res) {
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
         res.cookie('uid', uid, { secure: true});
-        //db.users.sessionID[username] = uid
+        db.users.sessionID[username] = uid;
+        writeDatabaseChanges();
         return res.redirect('/gameselect/');
     }
     
@@ -188,6 +186,14 @@ function generateUID() {
     const hex5 = crypto.randomBytes(3).toString("hex"); // 6 chars
     
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
+}
+async function writeDatabaseChanges() {
+    try {
+        await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
+        console.log('Database changes written successfully');
+    } catch (error) {
+        console.error('Error writing database changes:', error);
+    }
 }
 function isHtmlRequest(path) {
     return path === '/' || Boolean(path.match(/^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/));
