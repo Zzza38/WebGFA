@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/webhook/webgfa', handleWebGFAWebhook);
-app.post('/login', handleLoginTest);
+app.post('/login', handleLogin);
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
@@ -109,10 +109,6 @@ async function handleMainRequest(req, res, next) {
     }
 }
 
-async function handleLoginTest(req, res) { 
-    console.log('login test recieved')
-    handleLogin(req, res);
-}
 async function handleLogin(req, res) {
     console.log('login recieved')
     const { username, password } = req.body;
