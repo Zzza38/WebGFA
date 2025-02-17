@@ -1,32 +1,4 @@
-
-
-import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import {
-    getAnalytics
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-const firebaseConfig = {
-    apiKey: "AIzaSyAMOJV2z02dLtMb8X1uWDGkDx6ysrzBcUo",
-    authDomain: "webgfa-games.firebaseapp.com",
-    projectId: "webgfa-games",
-    storageBucket: "webgfa-games.appspot.com",
-    messagingSenderId: "553239008504",
-    appId: "1:553239008504:web:b91fba77cf0f131849170d",
-    measurementId: "G-5W79NYJZ11"
-};
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
-const analytics = getAnalytics(app);
 const username = localStorage.getItem('user');
-let prem;
 
 // Keydown Function
 document.addEventListener('keydown', function (event) {
@@ -40,49 +12,25 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-function jamesCheck() {
-    if (username == 'james' || username == 'zion') {
-        const jamesAddUser = document.getElementById("jamesAddUser");
-        if (jamesAddUser) {
-            jamesAddUser.style.display = "block";
-        }
-    }
-}
-
 function adminCheck() {
     if (username == 'zion') {
         let admin = document.getElementsByClassName('admin');
         for (let i = 0; i < admin.length; i++) {
             const element = admin[i];
             element.style.display = ''
-
         }
     }
 }
-
-async function checkUser() {
-    try {
-        const docRef = doc(firestore, 'users', 'usernames');
-        const permissionsDocRef = doc(firestore, 'users', 'permissions');
-        let docSnap = await getDoc(docRef); // Renaming variable to docSnap
-        let per = await getDoc(permissionsDocRef);
-        let permissions = per.data();
-        prem = String(permissions[username]).includes('prem');
-        console.log(`User prem = ${prem}`)
-        let userData = docSnap.data(); // Using userData instead of doc
-        let users = Object.keys(userData); // Now using userData instead of doc
-        if (users.indexOf(username) === -1) {
-            logout();
-        }
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-function logout() {
-    localStorage.removeItem('loggedIn');
-    localStorage.removeItem('pass');
-    localStorage.removeItem('user');
+async function logout() {
+    await fetch('/api/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            'service': 'logout'
+        })
+    });
     // Redirect to the main page
     window.location.href = "/";
 }
@@ -94,22 +42,30 @@ function localStorageLoadGames() {
     if (!localStorage.getItem('gameLinks-games')) return;
     const games = JSON.parse(localStorage.getItem('gameLinks-games'));
     const tools = JSON.parse(localStorage.getItem('gameLinks-tools'));
-    const premGames = JSON.parse(localStorage.getItem('gameLinks-premGames'));
-    const premTools = JSON.parse(localStorage.getItem('gameLinks-premTools'));
     renderGames(games);
     renderTools(tools);
-    renderPremGames(premGames);
-    renderPremTools(premTools);
 }
 async function loadGames() {
     try {
-        let gamesDoc;
-        const gamesRef = doc(firestore, "data", "games");
+        const response = await fetch('/api/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                service: 'getGames'
+            })
+        });
 
-        // Get the document
-        gamesDoc = await getDoc(gamesRef);
-        gamesDoc = gamesDoc.data();
-        console.log(gamesDoc);
+        if (!response.ok) {  // Check if the response status is OK (2xx)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Assuming the server returns a JSON response
+        const gamesDoc = await response.json();
+        
+        // Do something with the games data
+        console.log(gamesDoc); // Or whatever processing you need
 
         // Get names and links
         let names = Object.keys(gamesDoc);
@@ -133,78 +89,44 @@ async function loadGames() {
 }
 async function loadTools() {
     try {
-        let gamesDoc;
-        const gamesRef = doc(firestore, "data", "tools");
+        const response = await fetch('/api/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                service: 'getTools'
+            })
+        });
 
-        // Get the document
-        gamesDoc = await getDoc(gamesRef);
-        gamesDoc = gamesDoc.data();
-        console.log(gamesDoc);
+        if (!response.ok) {  // Check if the response status is OK (2xx)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Assuming the server returns a JSON response
+        const toolsDoc = await response.json();
 
         // Get names and links
-        let names = Object.keys(gamesDoc);
-        let links = Object.values(gamesDoc);
+        let names = Object.keys(toolsDoc);
+        let links = Object.values(toolsDoc);
 
         // Combine names and links into a single array of objects
-        allGames = names.map((name, index) => ({
+        let allTools = names.map((name, index) => ({
             name,
             link: links[index]
         }));
 
         // Sort the combined array alphabetically by name
-        allGames.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Render the games
-        localStorage.setItem('gameLinks-tools', JSON.stringify(allGames));
-        renderTools(allGames);
-    } catch (e) {
-        console.error(e);
-    }
-}
-async function loadPrem() {
-    try {
-        let gamesDoc;
-        const gamesRef = doc(firestore, "data", "premiumGames");
-        let toolsDoc;
-        const toolsRef = doc(firestore, "data", "premiumTools");
-
-        // Get the document
-        gamesDoc = await getDoc(gamesRef);
-        gamesDoc = gamesDoc.data();
-        console.log(gamesDoc);
-        toolsDoc = await getDoc(toolsRef);
-        toolsDoc = toolsDoc.data();
-        console.log(toolsDoc);
-
-        // Get names and links
-        let gnames = Object.keys(gamesDoc);
-        let glinks = Object.values(gamesDoc);
-        let tnames = Object.keys(toolsDoc);
-        let tlinks = Object.values(toolsDoc);
-
-        // Combine names and links into a single array of objects
-        let allGames = gnames.map((name, index) => ({
-            name,
-            link: glinks[index]
-        }));
-        let allTools = tnames.map((name, index) => ({
-            name,
-            link: tlinks[index]
-        }));
-
-        // Sort the combined array alphabetically by name
-        allGames.sort((a, b) => a.name.localeCompare(b.name));
         allTools.sort((a, b) => a.name.localeCompare(b.name));
 
-        // Render the games
-        localStorage.setItem('gameLinks-premGames', JSON.stringify(allGames));
-        localStorage.setItem('gameLinks-premTools', JSON.stringify(allTools));
-        renderPremGames(allGames);
-        renderPremTools(allTools);
+        // Render the tools
+        localStorage.setItem('gameLinks-tools', JSON.stringify(allTools));
+        renderTools(allTools);
     } catch (e) {
         console.error(e);
     }
 }
+
 function filterGames() {
     const searchInput = document.getElementById('searchG').value.toLowerCase();
     const filteredGames = allGames.filter(game => game.name.toLowerCase().includes(searchInput));
@@ -273,70 +195,7 @@ function renderTools(games) {
     });
     reloadCustomization();
 }
-function renderPremGames(games) {
-    const gameLinks = document.getElementById('prem-game-links');
-    gameLinks.innerHTML = ''; // Clear existing links
 
-    games.forEach(game => {
-        let nameArr = game.name.split('**');
-        let blockText;
-
-        // Improved bold formatting
-        if (nameArr.length === 1) {
-            blockText = nameArr[0]; // No bold part
-        } else if (nameArr.length === 2) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
-        } else if (nameArr.length === 3) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
-        } else {
-            // Handle cases with more than 3 parts by bolding the middle parts
-            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
-        }
-
-        let a = document.createElement('a');
-        a.innerHTML = blockText;
-        a.href = game.link;
-        a.className = 'game-link';
-        if (game.link == '/404.html') {
-            a.style.display = 'none'
-        }
-        gameLinks.appendChild(a);
-
-    });
-    reloadCustomization();
-}
-function renderPremTools(games) {
-    const gameLinks = document.getElementById('prem-tool-links');
-    gameLinks.innerHTML = ''; // Clear existing links
-
-    games.forEach(game => {
-        let nameArr = game.name.split('**');
-        let blockText;
-
-        // Improved bold formatting
-        if (nameArr.length === 1) {
-            blockText = nameArr[0]; // No bold part
-        } else if (nameArr.length === 2) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
-        } else if (nameArr.length === 3) {
-            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
-        } else {
-            // Handle cases with more than 3 parts by bolding the middle parts
-            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
-        }
-
-        let a = document.createElement('a');
-        a.innerHTML = blockText;
-        a.href = game.link;
-        a.className = 'game-link';
-        if (game.link == '/404.html') {
-            a.style.color = '#F00'
-        }
-        gameLinks.appendChild(a);
-
-    });
-    reloadCustomization();
-}
 
 // Customization Tools Code
 let isCusMenuOpen = false;
@@ -434,7 +293,8 @@ function reloadCustomization(){
         buttonText: "#ffffff",
         bg: "#000000"
     }
-    if (!localStorage.getItem('cus-mainColor')) {
+    // glitch occured where all colors were set to 000, so to reset them we need to check if they are the same
+    if (!localStorage.getItem('cus-mainColor') || localStorage.getItem('cus-mainColor') === localStorage.getItem('cus-bgColor')) {
         Object.values(defaultColors).forEach((color, i) => {
             const keyName = Object.keys(defaultColors)[i]
             localStorage.setItem(`cus-${keyName}Color`, color)
@@ -454,12 +314,4 @@ reloadCustomization();
 localStorageLoadGames();
 loadTools();
 loadGames();
-await checkUser();
-if (prem) {
-    loadPrem();
-} else {
-    const element = document.getElementById('prem')
-    element.style.display = 'none'
-}
 adminCheck();
-jamesCheck();

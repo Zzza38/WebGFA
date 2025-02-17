@@ -1,41 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<link rel="icon" href="/code/img/favicon.ico">
-<title>Top Bar</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
-        body {
-             font-family: 'Ubuntu', sans-serif;
-            text-align: center;
-            background-color: #000; /* Set background color to black */
-            color: #FFF;
-            margin: 0;
-            padding: 0;
-        }
-        img{
-          width: 32px;
-          height: 32px;
-        }
-		button{
-			 border: 0px;
-		     padding: 0px;
-			 background-color: #000;
-			 margin: 10vw;
-			 margin-top: 25px;
-		}
-</style>
+  <link rel="icon" href="/code/img/favicon.ico">
+  <title>Top Bar</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+    body {
+      font-family: 'Ubuntu', sans-serif;
+      text-align: center;
+      background-color: #000;
+      /* Set background color to black */
+      color: #FFF;
+      margin: 0;
+      padding: 0;
+    }
+
+    img {
+      width: 32px;
+      height: 32px;
+    }
+
+    button {
+      border: 0px;
+      padding: 0px;
+      background-color: #000;
+      margin: 10vw;
+      margin-top: 25px;
+    }
+  </style>
 </head>
+
 <body>
-  <button id='backward' onclick='sendMessage("b")'><img src=/code/media/left.png'></img></button>
+  <button id='backward' onclick='sendMessage("b")'><img src='/code/media/left.png'></img></button>
   <button id='forward' onclick='sendMessage("f")'><img src='/code/media/right.png'></img></button>
   <button id='reload' onclick='sendMessage("r")'><img src='/code/media/reload.png'></img></button>
   <button id='home' onclick='sendMessage("h")'><img src='/code/media/home.png'></img></button>
   <button id='devTools' onclick='sendMessage("s")'><img src='/code/media/devTools.png'></button>
-	<script>
-        function sendMessage(action) {
-            parent.postMessage({ action: action }, '*');
-        }
-    </script>
+  <script>
+    function sendMessage(action) {
+      parent.postMessage({ action: action }, '*');
+    }
+  </script>
 </body>
+
 </html>

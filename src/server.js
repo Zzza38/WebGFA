@@ -4,7 +4,6 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
-const https = require('https');
 const http = require('http');
 const { exec } = require('child_process');
 let db = require("../data/database.json");
@@ -18,7 +17,7 @@ const logUtils = require('./functions/logFileUtils.js');
 /////////////////////////////////////////////////////////////
 
 // Log file handling
-fs.mkdir(path.resolve(__dirname, '../log'), { recursive: true }).catch(() => {});
+fs.mkdir(path.resolve(__dirname, '../log'), { recursive: true }).catch(() => { });
 try {
     logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
     console.log('Copied ../server.log to ../log/' + logUtils.getLogFileName('../server.log'));
@@ -59,29 +58,21 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/register/index.html', '/webhook/github'];
+    const allowedPaths = ['/index.html', '/login', '/webhook/'];
     if (allowedPaths.includes(reqPath)) return next();
 
-    const loggedIn = req.cookies.loggedIn === 'true';
-    const username = req.cookies.user;
-    const password = req.cookies.pass;
-
-    if (!loggedIn || !username || !password) return res.redirect('/');
-
-    const validPassword = db.users.usernames[username];
-    if (validPassword !== password) {
-        res.clearCookie('loggedIn');
-        res.clearCookie('user');
-        res.clearCookie('pass');
-        return res.redirect('/');
-    }
-
+    const sessionID = req.cookies.uid;
+    if (!Object.keys(db.users.sessionID).includes(sessionID)) return res.redirect('/');
+    
     next();
 });
 
+// Post Requests
 app.post('/webhook/github', handleGitHubWebhook);
-app.post('/webhook/webgfa', handleWebGFAWebhook);
 app.post('/login', handleLogin);
+app.post('/api', handleApiRequest);
+
+// Get Requests
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////
@@ -90,7 +81,6 @@ app.use(handleMainRequest);
 (async () => {
     try {
         await clearLogFile(logFilePath);
-        console.log('Credentials loaded successfully');
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -112,11 +102,18 @@ async function clearLogFile(filePath) {
 
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
+    const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
 
-    if (reqPath.includes('/api')) {
-        await handleApiRequest(req, res);
-    } else if (isHtmlRequest(reqPath)) {
+    if (isHtmlRequest(reqPath)) {
         await serveHtmlFile(reqPath, res);
+        const humanReadableDate = new Date().toLocaleString();
+        let body = {}
+        body['Path'] = reqPath;
+        body['Username'] = user;
+        body['UID'] = db.users.sessionID[user];
+        body['Date'] = humanReadableDate;
+        const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
+        oldTable = await updateTable(body, csvFilePath, oldTable);
     } else {
         next();
     }
@@ -128,10 +125,7 @@ async function handleLogin(req, res) {
     if (db.users.usernames[username] === password) {
         // Set login cookies
         const uid = generateUID()
-        res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
-        res.cookie('user', username, { secure: true });
-        res.cookie('pass', password, { secure: true });
-        res.cookie('uid', uid, { secure: true });
+        res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
         writeDatabaseChanges();
         return res.redirect('/gameselect/');
@@ -143,45 +137,15 @@ async function handleLogin(req, res) {
 async function handleGitHubWebhook(req, res) {
     res.status(202).send('Accepted');
     if (req.headers['x-github-event'] === 'push') {
-        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa.service',
+        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa',
             (error, stdout, stderr) => console.log(error ? `Exec error: ${error}` : `Output: ${stdout}${stderr}`));
     }
 }
 
-let oldTable = null;
-async function handleWebGFAWebhook(req, res) {
-    res.status(202).send('Accepted');
-    try {
-        let { body } = req;
-        if (typeof body === 'string') body = JSON.parse(body);
-        const humanReadableDate = new Date().toLocaleString();
-        body['Date'] = humanReadableDate;
-        const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
-        oldTable = await updateTable(body, csvFilePath, oldTable);
-    } catch (error) {
-        console.error('Webhook processing error:', error);
-    }
-}
-
 function startServer() {
-    // HTTP traffic to be same as HTTPS
     http.createServer(app).listen(HTTP_PORT, () =>
         console.log(`HTTP server running on port ${HTTP_PORT}`)
     );
-
-    // HTTPS server
-    (async () => {
-        try {
-            const sslOptions = {
-                key: await fs.readFile('/etc/letsencrypt/live/learnis.site/privkey.pem'),
-                cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem')
-            };
-            https.createServer(sslOptions, app).listen(HTTPS_PORT, () =>
-                console.log(`HTTPS on ${HTTPS_PORT}`));
-        } catch (err) {
-            console.error('HTTPS startup failed:', err);
-        }
-    })();
 }
 
 /////////////////////////////////////////////////////////////
@@ -209,24 +173,61 @@ function isHtmlRequest(path) {
 
 async function handleApiRequest(req, res) {
     try {
-        const { service } = req.query.service;
+        // Extract 'service' from the request body (POST request)
+        const { service, payload } = req.body;
+        if (!service) return res.status(400).send('Missing service parameter');
+
+        const sessionId = req.cookies.uid;
+        const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
+
+        //b Validate user exists
+        if (!user) return res.status(401).send('Unauthorized');
+
         const handler = {
             'getCSV': async () => {
-                await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
-                let csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
-                res.set('Content-Type', 'text/csv').send(csv);
-            },
-            'checkLogin': async () => {
-                const { username, password } = req.query;
-                if (db['users']['usernames'][username] === password) {
-                    res.send('success');
-                } else {
-                    res.status(401).send('failure');
+                // Check permissions (make sure user has admin rights to get the csv)
+                if (!db.users.permissions[user]?.includes('admin')) {
+                    return res.status(403).send('Forbidden');
                 }
+
+                try {
+                    const csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
+                    res.set('Content-Type', 'text/csv').send(csv);
+                } catch (error) {
+                    if (error.code === 'ENOENT') {
+                        return res.status(404).send('File not found');
+                    }
+                    throw error;
+                }
+            },
+            'getGames': async () => {
+                const base = db.data.games;
+                const premium = db.users.permissions[user].includes('prem')
+                    ? db.data.premiumGames
+                    : [];
+                res.json([...base, ...premium]);
+            },
+            'getTools': async () => {
+                const base = db.data.tools;
+                const premium = db.users.permissions[user].includes('prem')
+                    ? db.data.premiumTools
+                    : [];
+                res.json([...base, ...premium]);
+            },
+            'logout': async () => {
+                // Clear session cookie
+                res.clearCookie('uid');
+                delete db.users.sessionID[user];
+                writeDatabaseChanges();
+                res.redirect('/');
             }
         }[service];
 
-        handler ? res.send(await handler()) : res.status(400).send('Invalid service');
+        if (handler) {
+            await handler();
+        } else {
+            res.status(400).send('Invalid service');
+        }
     } catch (error) {
         console.error('API error:', error);
         res.status(500).send('Server error');
@@ -280,6 +281,7 @@ async function serveHtmlFile(reqPath, res) {
     }
 }
 
+let oldTable = null;
 async function updateTable(jsonObject, filePath, oldTable = null) {
     let table = oldTable || [];
     let headers = table.length > 0 ? table[0] : [];
