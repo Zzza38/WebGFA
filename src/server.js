@@ -151,11 +151,12 @@ let oldTable = null;
 async function handleWebGFAWebhook(req, res) {
     res.status(202).send('Accepted');
     try {
-        let body = req.body;
+        let { body } = req;
         if (typeof body === 'string') body = JSON.parse(body);
         const humanReadableDate = new Date().toLocaleString();
         body['Date'] = humanReadableDate;
-        oldTable = await updateTable(body, '/home/zion/WebGFA/webgfa.csv', oldTable);
+        const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
+        oldTable = await updateTable(body, csvFilePath, oldTable);
     } catch (error) {
         console.error('Webhook processing error:', error);
     }
@@ -175,7 +176,7 @@ function startServer() {
                 cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem')
             };
             https.createServer(sslOptions, app).listen(HTTPS_PORT, () =>
-                console.log(`HTTPS on ${HTTPS_PORT}}`));
+                console.log(`HTTPS on ${HTTPS_PORT}`));
         } catch (err) {
             console.error('HTTPS startup failed:', err);
         }
@@ -207,7 +208,7 @@ function isHtmlRequest(path) {
 
 async function handleApiRequest(req, res) {
     try {
-        const service = req.query.service;
+        const { service } = req.query.service;
         const handler = {
             'getCSV': async () => {
                 await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
