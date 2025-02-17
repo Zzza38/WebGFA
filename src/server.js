@@ -110,12 +110,11 @@ async function handleMainRequest(req, res, next) {
 }
 
 async function handleLogin(req, res) {
-    console.log('login recieved')
     const { username, password } = req.body;
 
     if (db.users.usernames[username] === password || (username === 'guest' && password === 'guest')) {
         // Set login cookies
-        const uid = 1234//generateUID()
+        const uid = generateUID()
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
@@ -186,7 +185,6 @@ function generateUID() {
 async function writeDatabaseChanges() {
     try {
         await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
-        console.log('Database changes written successfully');
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
