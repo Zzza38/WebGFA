@@ -1,8 +1,10 @@
+# ignore folders that are auto created and can be regenerated
 node_modules
-old files
-.vscode
+
+# hide private files
 data/firebasePrivateKey.json
 server.log
+log/
 webgfa.csv
 data/firestore_backup.json
 data/database.json

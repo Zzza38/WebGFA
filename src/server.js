@@ -11,10 +11,18 @@ let db = require("../data/database.json");
 const urlUtils = require("./functions/urlUtils.js");
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
+const logUtils = require('./functions/logFileUtils.js');
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
 /////////////////////////////////////////////////////////////
+
+// Log file handling
+logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+console.log("--NAME-START--");
+console.log(logUtils.generateLogFileName());
+console.log("--NAME-END--");
+
 const app = express();
 const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
