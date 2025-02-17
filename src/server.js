@@ -18,7 +18,7 @@ const logUtils = require('./functions/logFileUtils.js');
 /////////////////////////////////////////////////////////////
 
 // Log file handling
-logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+//logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
 console.log("--NAME-START--");
 console.log(logUtils.generateLogFileName());
 console.log("--NAME-END--");
