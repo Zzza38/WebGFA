@@ -1,20 +1,20 @@
 function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
     }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+    return "";
 }
 
-if (localStorage.getItem('loggedIn') && getCookie('user')) {
+if (getCookie('sessionID')) {
     window.location.href = '/gameselect/';
 }
 
@@ -29,19 +29,19 @@ function guestLogin() {
         },
         body: new URLSearchParams({ username: 'guest', password: 'guest' })
     })
-    .then(response => {
-        if (response.redirected) {
-            localStorage.setItem('loggedIn', 'true');
-            localStorage.setItem('user', 'guest');
-            localStorage.setItem('pass', 'guest');
-            window.location.href = response.url;
-        } else {
-            return response.text();
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+        .then(response => {
+            if (response.redirected) {
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('user', 'guest');
+                localStorage.setItem('pass', 'guest');
+                window.location.href = response.url;
+            } else {
+                return response.text();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 }
 window.guestLogin = guestLogin;
 
@@ -57,21 +57,21 @@ form.addEventListener('submit', function (event) {
         },
         body: new URLSearchParams({ username, password })
     })
-    .then(response => {
-        if (response.redirected) {
-            localStorage.setItem('loggedIn', 'true');
-            localStorage.setItem('user', username);
-            localStorage.setItem('pass', password);
-            window.location.href = response.url;
-        } else {
-            return response.text();
-        }
-    })
-    .then(errorMsg => {
-        if (errorMsg) alertText.textContent = errorMsg;
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alertText.textContent = 'Connection error';
-    });
+        .then(response => {
+            if (response.redirected) {
+                localStorage.setItem('loggedIn', 'true');
+                localStorage.setItem('user', username);
+                localStorage.setItem('pass', password);
+                window.location.href = response.url;
+            } else {
+                return response.text();
+            }
+        })
+        .then(errorMsg => {
+            if (errorMsg) alertText.textContent = errorMsg;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alertText.textContent = 'Connection error';
+        });
 });
