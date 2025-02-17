@@ -19,7 +19,8 @@ const logUtils = require('./functions/logFileUtils.js');
 
 // Log file handling
 try {
-logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+    logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
+    console.log('Copied ../server.log to ../log/' + logUtils.getLogFileName('../server.log'));
 } catch (error) {
     console.error('The copy log code is fucked:', error);
 }
@@ -30,7 +31,6 @@ console.log("--NAME-END--");
 const app = express();
 const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
-const DEBUG = true;
 const logFilePath = path.resolve(__dirname, '../server.log');
 
 const extraTags = [
@@ -130,12 +130,12 @@ async function handleLogin(req, res) {
         res.cookie('loggedIn', 'true', { httpOnly: true, secure: true });
         res.cookie('user', username, { secure: true });
         res.cookie('pass', password, { secure: true });
-        res.cookie('uid', uid, { secure: true});
+        res.cookie('uid', uid, { secure: true });
         db.users.sessionID[username] = uid;
         writeDatabaseChanges();
         return res.redirect('/gameselect/');
     }
-    
+
     res.status(401).send('Invalid credentials');
 }
 
@@ -163,7 +163,7 @@ async function handleWebGFAWebhook(req, res) {
 
 function startServer() {
     // HTTP traffic to be same as HTTPS
-    http.createServer(app).listen(HTTP_PORT, () => 
+    http.createServer(app).listen(HTTP_PORT, () =>
         console.log(`HTTP server running on port ${HTTP_PORT}`)
     );
 
@@ -174,8 +174,8 @@ function startServer() {
                 key: await fs.readFile('/etc/letsencrypt/live/learnis.site/privkey.pem'),
                 cert: await fs.readFile('/etc/letsencrypt/live/learnis.site/fullchain.pem')
             };
-            https.createServer(sslOptions, app).listen(HTTPS_PORT, () => 
-                console.log(`HTTPS on ${HTTPS_PORT}${DEBUG ? ' (DEBUG)' : ''}`));
+            https.createServer(sslOptions, app).listen(HTTPS_PORT, () =>
+                console.log(`HTTPS on ${HTTPS_PORT}}`));
         } catch (err) {
             console.error('HTTPS startup failed:', err);
         }
@@ -191,7 +191,7 @@ function generateUID() {
     const hex3 = crypto.randomBytes(1).toString("hex"); // 2 chars
     const hex4 = crypto.randomBytes(2).toString("hex"); // 4 chars
     const hex5 = crypto.randomBytes(3).toString("hex"); // 6 chars
-    
+
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
 }
 async function writeDatabaseChanges() {
@@ -207,7 +207,7 @@ function isHtmlRequest(path) {
 
 async function handleApiRequest(req, res) {
     try {
-        const service = req.query.service; 
+        const service = req.query.service;
         const handler = {
             'getCSV': async () => {
                 await fs.access('/home/zion/WebGFA/webgfa.csv', fs.constants.F_OK);
@@ -237,9 +237,9 @@ async function serveHtmlFile(reqPath, res) {
         // Remove leading slash and handle root path
         const safePath = reqPath === '/' ? '' : reqPath.replace(/^\//, '');
         const normalizedPath = safePath.endsWith('/') ? safePath : `${safePath}/`;
-        
-        const file = reqPath.endsWith('.html') 
-            ? safePath 
+
+        const file = reqPath.endsWith('.html')
+            ? safePath
             : path.join(normalizedPath, 'index.html');
 
         const fullPath = path.resolve(staticDir, file);
