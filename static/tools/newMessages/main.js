@@ -41,7 +41,8 @@ async function loadMessages() {
                 service: 'get-messages'
             })
         });
-        const messages = await response.json();
+        const messagesObject = await response.json();
+        const messages = Object.values(messagesObject);
         displayMessages(messages);
     } catch (error) {
         console.error('Error loading messages:', error);
@@ -51,12 +52,6 @@ async function loadMessages() {
 function displayMessages(messages) {
     const chatBox = document.getElementById('chatBox');
     const wasScrolledBottom = isScrolledBottom(chatBox);
-    
-    if (!Array.isArray(messages)) {
-        console.error('Expected messages to be an array, but got:', typeof messages);
-        console.log('Messages:', messages);
-        return;
-    }
 
     chatBox.innerHTML = messages.map(message => `
         <div class="message ${message.user === currentUser ? 'own' : ''}" data-id="${message.id}">
