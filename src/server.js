@@ -199,18 +199,22 @@ async function handleApiRequest(req, res) {
                 }
             },
             'getGames': async () => {
-                const base = db.data.games;
-                const premium = db.users.permissions[user] ? db.users.permissions[user].includes('prem') : false
-                    ? db.data.premiumGames
-                    : [];
-                res.json([...base, ...premium]);
+                const base = db.data.games || {};
+                const premium = db.users.permissions[user]?.includes('prem')
+                    ? db.data.premiumGames || {}
+                    : {};
+
+                res.json({ ...base, ...premium });
+
             },
             'getTools': async () => {
-                const base = db.data.tools;
-                const premium = db.users.permissions[user] ? db.users.permissions[user].includes('prem') : false
-                    ? db.data.premiumTools
-                    : [];
-                res.json([...base, ...premium]);
+                const base = db.data.tools || {};
+                const premium = db.users.permissions[user]?.includes('prem')
+                    ? db.data.premiumTools || {}
+                    : {};
+
+                res.json({ ...base, ...premium });
+
             },
             'logout': async () => {
                 // Clear session cookie
