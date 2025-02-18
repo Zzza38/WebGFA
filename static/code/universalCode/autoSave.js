@@ -45,10 +45,10 @@ function sendData() {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: {
+        body: JSON.stringify({
             service: 'save',
-            data: JSON.stringify(data)
-        }
+            data
+        })
     });
     if (response.ok) {
         console.log('Data saved successfully');
