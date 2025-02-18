@@ -161,8 +161,11 @@ function generateUID() {
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
 }
 async function writeDatabaseChanges() {
+    console.log('Writing database changes');
     try {
         await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
+        const error = new Error();
+        console.log(error.stack);
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
@@ -259,6 +262,7 @@ async function handleApiRequest(req, res) {
                 message.message = content;
                 message.timestamp = new Date().toISOString();
                 message.edited = true;
+                console.log(db)
                 writeDatabaseChanges();
                 res.json(message);
                 messageEmitter.emit('message', messageData);
@@ -273,6 +277,7 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 db.messages[id].content = '[deleted]';
+                console.log(db)
                 writeDatabaseChanges();
                 res.json({ success: true });
                 messageEmitter.emit('message', messageData);
