@@ -52,6 +52,12 @@ function displayMessages(messages) {
     const chatBox = document.getElementById('chatBox');
     const wasScrolledBottom = isScrolledBottom(chatBox);
     
+    if (!Array.isArray(messages)) {
+        console.error('Expected messages to be an array, but got:', typeof messages);
+        console.log('Messages:', messages);
+        return;
+    }
+
     chatBox.innerHTML = messages.map(message => `
         <div class="message ${message.user === currentUser ? 'own' : ''}" data-id="${message.id}">
             <div class="message-header">
