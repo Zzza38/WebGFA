@@ -26,7 +26,7 @@ async function fetchCurrentUser() {
                 service: 'get-user'
             })
         });
-        if (response.ok) currentUser = await response.text();
+        if (response.ok) currentUser = await response.json(); currentUser = currentUser['user']
     } catch (error) {
         console.error('Error fetching user:', error);
     }

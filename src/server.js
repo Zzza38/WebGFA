@@ -226,13 +226,12 @@ async function handleApiRequest(req, res) {
             // Messaging API
             'send-message': async () => {
                 const { content } = req.body;
-                const message = content;
-                if (!message) return res.status(400).send('Missing content');
+                if (!content) return res.status(400).send('Missing content');
 
                 const id = Object.keys(db.messages).length + 1;
                 const messageData = {
                     id,
-                    message,
+                    content,
                     user,
                     timestamp: new Date().toISOString(),
                     edited: false
