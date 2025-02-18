@@ -24,9 +24,6 @@ try {
 } catch (error) {
     console.error('Error when copying log file:', error);
 }
-console.log("--NAME-START--");
-console.log(logUtils.generateLogFileName());
-console.log("--NAME-END--");
 
 const app = express();
 const HTTP_PORT = 8000;
@@ -78,6 +75,9 @@ app.use(handleMainRequest);
 (async () => {
     try {
         await clearLogFile(logFilePath);
+        console.log("--NAME-START--");
+        console.log(logUtils.generateLogFileName());
+        console.log("--NAME-END--");
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -200,14 +200,14 @@ async function handleApiRequest(req, res) {
             },
             'getGames': async () => {
                 const base = db.data.games;
-                const premium = db.users.permissions[user].includes('prem')
+                const premium = db.users.permissions[user] ? db.users.permissions[user].includes('prem') : false
                     ? db.data.premiumGames
                     : [];
                 res.json([...base, ...premium]);
             },
             'getTools': async () => {
                 const base = db.data.tools;
-                const premium = db.users.permissions[user].includes('prem')
+                const premium = db.users.permissions[user] ? db.users.permissions[user].includes('prem') : false
                     ? db.data.premiumTools
                     : [];
                 res.json([...base, ...premium]);
