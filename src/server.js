@@ -126,7 +126,7 @@ async function handleLogin(req, res) {
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
         writeDatabaseChanges();
-        return res.status(200).redirect('/gameselect');
+        return res.status(200).send('Login successful');
     }
 
     res.status(401).send('Invalid credentials');
