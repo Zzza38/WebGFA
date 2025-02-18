@@ -164,11 +164,8 @@ function generateUID() {
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
 }
 async function writeDatabaseChanges() {
-    console.log('Writing database changes');
     try {
         await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
-        let dbCheck = await fs.access(path.resolve(__dirname, '../data/database.json'), fs.constants.F_OK);
-        console.log(dbCheck);
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
