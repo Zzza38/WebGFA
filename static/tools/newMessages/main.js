@@ -18,7 +18,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchCurrentUser() {
     try {
-        const response = await fetch('/api/get-user', { credentials: 'include' });
+        const response = await fetch('/api/get-user', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}) // Empty body for POST
+        });
         if (response.ok) currentUser = await response.text();
     } catch (error) {
         console.error('Error fetching user:', error);
@@ -27,7 +32,11 @@ async function fetchCurrentUser() {
 
 async function loadMessages() {
     try {
-        const response = await fetch('/api/get-messages');
+        const response = await fetch('/api/get-messages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({}) // Empty body for POST
+        });
         const messages = await response.json();
         displayMessages(messages);
     } catch (error) {

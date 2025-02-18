@@ -122,7 +122,7 @@ async function handleLogin(req, res) {
 
     if (db.users.usernames[username] === password) {
         // Set login cookies
-        const uid = generateUID()
+        const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
         writeDatabaseChanges();
@@ -275,6 +275,13 @@ async function handleApiRequest(req, res) {
             },
             'get-user': async () => {
                 res.json({ user });
+            },
+            'save': async () => {
+                const { data } = req.body;
+                if (!data) return res.status(400).send('Missing data');
+                if (user === 'guest') return res.status(403).send('Forbidden for guests');
+                db.users.save[user] = data;
+                writeDatabaseChanges();
             }
 
         }[service];
