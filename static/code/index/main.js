@@ -67,3 +67,7 @@ form.addEventListener('submit', function (event) {
             alertText.textContent = 'Connection error';
         });
 });
+
+if (localStorage.getItem('loggedIn')) {
+    window.location.href = '/gameselect/';
+}
