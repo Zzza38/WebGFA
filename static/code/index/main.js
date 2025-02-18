@@ -30,11 +30,9 @@ function guestLogin() {
         body: new URLSearchParams({ username: 'guest', password: 'guest' })
     })
         .then(response => {
-            if (response.redirected) {
+            if (response.ok) {
                 localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('user', 'guest');
-                localStorage.setItem('pass', 'guest');
-                window.location.href = response.url;
+                window.location.href = '/gameselect/';
             } else {
                 return response.text();
             }
