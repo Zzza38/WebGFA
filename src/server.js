@@ -34,8 +34,6 @@ const messageEmitter = new EventEmitter();
 const extraTags = [
     // non module tags
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
-    // module tags
-    "<script src='/code/universalCode/firestore.js' type='module'></script>",
 ];
 
 const excludedTags = {};
@@ -303,7 +301,7 @@ async function handleApiRequest(req, res) {
                 res.set('Connection', 'keep-alive');
 
                 const sendUpdate = () => {
-                    res.json(db.messages)
+                    res.write("Update\n\n");
                 }
 
                 messageEmitter.on('message', sendUpdate);
