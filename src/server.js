@@ -279,7 +279,7 @@ async function handleApiRequest(req, res) {
 
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
-                db.messages[id].content = '[deleted]';
+                delete db.messages[id];
                 writeDatabaseChanges();
                 res.json({ success: true });
                 messageEmitter.emit('message');
