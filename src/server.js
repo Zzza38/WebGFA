@@ -29,14 +29,12 @@ console.log(logUtils.generateLogFileName());
 console.log("--NAME-END--");
 
 const app = express();
-const HTTPS_PORT = process.env.PORT || 8080;
 const HTTP_PORT = 8000;
 const logFilePath = path.resolve(__dirname, '../server.log');
 
 const extraTags = [
     // non module tags
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
-    "<script src='/code/universalCode/dataSender.js'></script>",
     // module tags
     "<script src='/code/universalCode/firestore.js' type='module'></script>",
 ];
@@ -58,7 +56,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/webhook/'];
+    const allowedPaths = ['/index.html', '/login', '/webhook/github'];
     if (allowedPaths.includes(reqPath)) return next();
 
     const sessionID = req.cookies.uid;
@@ -221,7 +219,61 @@ async function handleApiRequest(req, res) {
                 delete db.users.sessionID[user];
                 writeDatabaseChanges();
                 res.redirect('/');
+            },
+            // Messaging API
+            'send-message': async () => {
+                const { content } = req.body;
+                const message = content;
+                if (!message) return res.status(400).send('Missing content');
+
+                const id = Object.keys(db.messages).length + 1;
+                const messageData = {
+                    id,
+                    message,
+                    user,
+                    timestamp: new Date().toISOString(),
+                    edited: false
+                };
+
+                db.messages[id] = messageData;
+                writeDatabaseChanges();
+                res.json(messageData);
+            },
+            'edit-message': async () => {
+                const { id, content } = req.body;
+                if (!id || !content) return res.status(400).send('Missing id or content');
+
+                const message = db.messages[id];
+                if (!message) return res.status(404).send('Message not found');
+
+                if (message.user !== user) return res.status(403).send('Forbidden');
+
+                message.message = content;
+                message.timestamp = new Date().toISOString();
+                message.edited = true;
+                writeDatabaseChanges();
+                res.json(message);
+            },
+            'delete-message': async () => {
+                const { id } = req.body;
+                if (!id) return res.status(400).send('Missing id');
+
+                const message = db.messages[id];
+                if (!message) return res.status(404).send('Message not found');
+
+                if (message.user !== user) return res.status(403).send('Forbidden');
+
+                delete db.messages[id];
+                writeDatabaseChanges();
+                res.json({ success: true });
+            },
+            'get-messages': async () => {
+                res.json(db.messages);
+            },
+            'get-user': async () => {
+                res.json({ user });
             }
+
         }[service];
 
         if (handler) {
