@@ -14,10 +14,6 @@ function getCookie(cname) {
     return "";
 }
 
-if (getCookie('sessionID')) {
-    window.location.href = '/gameselect/';
-}
-
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
@@ -56,11 +52,9 @@ form.addEventListener('submit', function (event) {
         body: new URLSearchParams({ username, password })
     })
         .then(response => {
-            if (response.redirected) {
+            if (response.ok) {
                 localStorage.setItem('loggedIn', 'true');
-                localStorage.setItem('user', username);
-                localStorage.setItem('pass', password);
-                window.location.href = response.url;
+                window.location.href = '/gameselect/';
             } else {
                 return response.text();
             }

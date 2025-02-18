@@ -61,6 +61,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/index.html', (req, res) => {
+    res.redirect('/gameselect/');
+});
 // Post Requests
 app.post('/webhook/github', handleGitHubWebhook);
 app.post('/login', handleLogin);
