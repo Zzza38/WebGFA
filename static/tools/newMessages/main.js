@@ -18,11 +18,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchCurrentUser() {
     try {
-        const response = await fetch('/api/get-user', {
+        const response = await fetch('/api/', {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}) // Empty body for POST
+            body: {
+                service: 'get-user'
+            }
         });
         if (response.ok) currentUser = await response.text();
     } catch (error) {
@@ -32,10 +34,12 @@ async function fetchCurrentUser() {
 
 async function loadMessages() {
     try {
-        const response = await fetch('/api/get-messages', {
+        const response = await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}) // Empty body for POST
+            body: {
+                service: 'get-messages'
+            }
         });
         const messages = await response.json();
         displayMessages(messages);
@@ -72,10 +76,13 @@ function displayMessages(messages) {
 
 async function sendMessage(content) {
     try {
-        await fetch('/api/send-message', {
+        await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content })
+            body: {
+                service: 'send-message',
+                content
+            }
         });
     } catch (error) {
         console.error('Error sending message:', error);
@@ -120,10 +127,14 @@ function cancelEdit(messageDiv, contentDiv) {
 
 async function editMessage(messageId, newContent) {
     try {
-        await fetch('/api/edit-message', {
+        await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messageId, content: newContent })
+            body: {
+                service: 'edit-message',
+                id: messageId,
+                content: newContent
+            }
         });
         loadMessages();
     } catch (error) {
@@ -136,10 +147,13 @@ async function editMessage(messageId, newContent) {
 async function deleteMessage(messageId) {
     if (!confirm('Delete this message permanently?')) return;
     try {
-        await fetch('/api/delete-message', {
+        await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ messageId })
+            body: {
+                service: 'delete-message',
+                id: messageId
+            }
         });
         loadMessages();
     } catch (error) {
