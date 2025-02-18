@@ -174,7 +174,10 @@ function isHtmlRequest(path) {
 async function handleApiRequest(req, res) {
     try {
         // Extract 'service' from the request body (POST request)
-        const { service } = req.body;
+        let { service } = req.body;
+        // If the method is GET, extract 'service' from the query parameters
+        if (req.method === 'GET') service = req.query.service;
+
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
