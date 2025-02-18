@@ -69,6 +69,7 @@ app.post('/login', handleLogin);
 app.post('/api', handleApiRequest);
 
 // Get Requests
+app.use('/api', handleApiRequest);
 app.use(handleMainRequest);
 
 /////////////////////////////////////////////////////////////

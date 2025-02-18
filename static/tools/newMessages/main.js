@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchCurrentUser();
     loadMessages();
 
-    const eventSource = new EventSource('/api/updates');
+    const eventSource = new EventSource('/api/?service=updates');
     eventSource.onmessage = () => loadMessages();
 
     document.getElementById('messageForm').addEventListener('submit', async (e) => {
