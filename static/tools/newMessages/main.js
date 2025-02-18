@@ -4,7 +4,9 @@ let isEditing = false;
 document.addEventListener('DOMContentLoaded', async () => {
     await fetchCurrentUser();
     loadMessages();
-    setInterval(loadMessages, 3000);
+
+    const eventSource = new EventSource('/api/updates');
+    eventSource.onmessage = () => loadMessages();
 
     document.getElementById('messageForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -61,14 +63,14 @@ function displayMessages(messages) {
                     ${new Date(message.timestamp).toLocaleTimeString()}
                     ${message.edited ? '<span class="message-edited">(edited)</span>' : ''}
                 </span>
+                ${message.user === currentUser ? `
+                    <div class="message-actions">
+                        <button class="action-button" onclick="startEdit('${message.id}')">Edit</button>
+                        <button class="action-button" onclick="deleteMessage('${message.id}')">Delete</button>
+                    </div>
+                ` : ''}
             </div>
             <div class="message-content">${message.content}</div>
-            ${message.user === currentUser ? `
-                <div class="message-actions">
-                    <button class="action-button" onclick="startEdit('${message.id}')">Edit</button>
-                    <button class="action-button" onclick="deleteMessage('${message.id}')">Delete</button>
-                </div>
-            ` : ''}
         </div>
     `).join('');
 

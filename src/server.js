@@ -11,6 +11,7 @@ const urlUtils = require("./functions/urlUtils.js");
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
 const logUtils = require('./functions/logFileUtils.js');
+const EventEmitter = require('events');
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -28,6 +29,7 @@ try {
 const app = express();
 const HTTP_PORT = 8000;
 const logFilePath = path.resolve(__dirname, '../server.log');
+const messageEmitter = new EventEmitter();
 
 const extraTags = [
     // non module tags
@@ -178,10 +180,13 @@ async function handleApiRequest(req, res) {
         const sessionId = req.cookies.uid;
         const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
 
-        //b Validate user exists
+        // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
 
-        const handler = {
+        // Variables for across multiple handlers
+        let message = false;
+
+        const postHandler = {
             'getCSV': async () => {
                 // Check permissions (make sure user has admin rights to get the csv)
                 if (!db.users.permissions[user]?.includes('admin')) {
@@ -240,6 +245,8 @@ async function handleApiRequest(req, res) {
                 db.messages[id] = messageData;
                 writeDatabaseChanges();
                 res.json(messageData);
+                message = true;
+                messageEmitter.emit('message', messageData);
             },
             'edit-message': async () => {
                 const { id, content } = req.body;
@@ -255,6 +262,7 @@ async function handleApiRequest(req, res) {
                 message.edited = true;
                 writeDatabaseChanges();
                 res.json(message);
+                messageEmitter.emit('message', messageData);
             },
             'delete-message': async () => {
                 const { id } = req.body;
@@ -268,6 +276,7 @@ async function handleApiRequest(req, res) {
                 delete db.messages[id];
                 writeDatabaseChanges();
                 res.json({ success: true });
+                messageEmitter.emit('message', messageData);
             },
             'get-messages': async () => {
                 res.json(db.messages);
@@ -284,11 +293,30 @@ async function handleApiRequest(req, res) {
             }
 
         }[service];
+        const getHandler = {
+            'updates': async () => {
+                res.set('Content-Type', 'text/event-stream');
+                res.set('Cache-Control', 'no-cache');
+                res.set('Connection', 'keep-alive');
 
-        if (handler) {
-            await handler();
+                const sendUpdate = () => {
+                    res.json(db.messages)
+                }
+
+                messageEmitter.on('message', sendUpdate);
+
+                req.on('close', () => {
+                    res.end();
+                });
+            },
+        }[service];
+
+        if (req.method === 'POST' && postHandler) {
+            await postHandler();
+        } else if (req.method === 'GET' && getHandler) {
+            await getHandler();
         } else {
-            res.status(400).send('Invalid service');
+            res.status(400).send('Invalid service / method for service');
         }
     } catch (error) {
         console.error('API error:', error);
