@@ -258,7 +258,6 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 message.content = content;
-                message.timestamp = new Date().toISOString();
                 message.edited = true;
                 writeDatabaseChanges();
                 res.json(message);
