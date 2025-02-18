@@ -14,7 +14,7 @@ function getLogFileName(file) {
     // So we need the ../ to go up one directory
     let filePath = path.join(__dirname, '../', file);
     let fileData = fs.readFileSync(filePath);
-    const logFileName = fileData.toString().match(/console\.log\("--NAME-START--"\);\s*console\.log\((.*?)\);\s*console\.log\("--NAME-END--"\);/);
+    const logFileName = fileData.toString().match(/--NAME-START--\s*(.*?)\s*--NAME-END--/);
     return logFileName ? logFileName[1] : 'webgfa-unknown.log';
 }
 function copyLogFile(oldLog, newLog) {
