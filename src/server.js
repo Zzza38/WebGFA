@@ -60,8 +60,7 @@ app.use((req, res, next) => {
     if (allowedPaths.includes(reqPath)) return next();
 
     const sessionID = req.cookies.uid;
-    if (!Object.keys(db.users.sessionID).includes(sessionID)) return res.redirect('/');
-
+    if (!Object.keys(db.users.sessionID).includes(sessionID)) return res.status(401).redirect('/');
     next();
 });
 
@@ -127,7 +126,7 @@ async function handleLogin(req, res) {
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
         writeDatabaseChanges();
-        return res.redirect('/gameselect/');
+        return res.status(200).redirect('/gameselect');
     }
 
     res.status(401).send('Invalid credentials');
