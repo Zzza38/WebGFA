@@ -78,7 +78,6 @@ const username = fetch('/api', {
 
 if (username === 'guest') {
     console.error('Cannot save data for guest user');
-    return;
 } else {
     let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
 }
