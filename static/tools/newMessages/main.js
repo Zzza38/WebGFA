@@ -22,9 +22,9 @@ async function fetchCurrentUser() {
             method: 'POST',
             credentials: 'include',
             headers: { 'Content-Type': 'application/json' },
-            body: {
+            body: JSON.stringify({
                 service: 'get-user'
-            }
+            })
         });
         if (response.ok) currentUser = await response.text();
     } catch (error) {
@@ -37,9 +37,9 @@ async function loadMessages() {
         const response = await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: {
+            body: JSON.stringify({
                 service: 'get-messages'
-            }
+            })
         });
         const messages = await response.json();
         displayMessages(messages);
@@ -79,10 +79,10 @@ async function sendMessage(content) {
         await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: {
+            body: JSON.stringify({
                 service: 'send-message',
                 content
-            }
+            })
         });
     } catch (error) {
         console.error('Error sending message:', error);
@@ -130,11 +130,11 @@ async function editMessage(messageId, newContent) {
         await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: {
+            body: JSON.stringify({
                 service: 'edit-message',
                 id: messageId,
                 content: newContent
-            }
+            })
         });
         loadMessages();
     } catch (error) {
@@ -150,10 +150,10 @@ async function deleteMessage(messageId) {
         await fetch('/api/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: {
+            body: JSON.stringify({
                 service: 'delete-message',
                 id: messageId
-            }
+            })
         });
         loadMessages();
     } catch (error) {
