@@ -85,6 +85,7 @@ async function sendMessage(content) {
                 content
             })
         });
+        loadMessages();
     } catch (error) {
         console.error('Error sending message:', error);
     }
