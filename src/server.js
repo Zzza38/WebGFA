@@ -177,8 +177,7 @@ function isHtmlRequest(path) {
 async function handleApiRequest(req, res) {
     try {
         // Extract 'service' from the URL
-        let service = req.path.split('/')[2];
-        console.log(req.path.split('/'))
+        let service = req.path.split('/')[1];
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
