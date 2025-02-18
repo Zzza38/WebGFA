@@ -164,8 +164,8 @@ async function writeDatabaseChanges() {
     console.log('Writing database changes');
     try {
         await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
-        const error = new Error();
-        console.log(error.stack);
+        let dbCheck = await fs.access(path.resolve(__dirname, '../data/database.json'), fs.constants.F_OK);
+        console.log(dbCheck);
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
@@ -248,7 +248,7 @@ async function handleApiRequest(req, res) {
                 db.messages[id] = messageData;
                 writeDatabaseChanges();
                 res.json(messageData);
-                messageEmitter.emit('message', messageData);
+                messageEmitter.emit('message');
             },
             'edit-message': async () => {
                 const { id, content } = req.body;
@@ -262,10 +262,9 @@ async function handleApiRequest(req, res) {
                 message.message = content;
                 message.timestamp = new Date().toISOString();
                 message.edited = true;
-                console.log(db)
                 writeDatabaseChanges();
                 res.json(message);
-                messageEmitter.emit('message', messageData);
+                messageEmitter.emit('message');
             },
             'delete-message': async () => {
                 const { id } = req.body;
@@ -277,10 +276,9 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 db.messages[id].content = '[deleted]';
-                console.log(db)
                 writeDatabaseChanges();
                 res.json({ success: true });
-                messageEmitter.emit('message', messageData);
+                messageEmitter.emit('message');
             },
             'get-messages': async () => {
                 res.json(db.messages);
