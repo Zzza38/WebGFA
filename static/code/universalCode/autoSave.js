@@ -62,9 +62,9 @@ const username = fetch('/api', {
     headers: {
         'Content-Type': 'application/json'
     },
-    body: {
+    body: JSON.stringify({
         service: 'get-user'
-    }
+    })
 }).then(response => {
     if (response.ok) {
         return response.json();
