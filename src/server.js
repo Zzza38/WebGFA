@@ -34,6 +34,7 @@ const messageEmitter = new EventEmitter();
 const extraTags = [
     // non module tags
     "<script src='/code/universalCode/aboutblankcloak.js'></script>",
+    "<script src='/code/universalCode/autoSave.js'></script>",
 ];
 
 const excludedTags = {};
@@ -237,6 +238,7 @@ async function handleApiRequest(req, res) {
             'send-message': async () => {
                 const { content } = req.body;
                 if (!content) return res.status(400).send('Missing content');
+                if (user === 'guest') return res.status(403).send('Forbidden for guests');
 
                 const id = Object.keys(db.messages).length + 1;
                 const messageData = {
@@ -294,8 +296,11 @@ async function handleApiRequest(req, res) {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
                 db.users.save[user] = data;
                 writeDatabaseChanges();
+            },
+            'get-save': async () => {
+                if (user === 'guest') return res.status(403).send('Forbidden for guests');
+                res.json({ data: db.users.save[user] });
             }
-
         }[service];
         const getHandler = {
             'updates': async () => {

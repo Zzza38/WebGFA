@@ -1,28 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Messaging</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="connectContainer">
-        <select id="pThreads"></select> <button id="deleteThread">Delete Option</button>
-        <input id="docId"> <button id="connect">Connect To Thread</button>
+    <div class="container">
+        <h1>Chat Room</h1>
+        <div class="chat-box" id="chatBox"></div>
+        <form id="messageForm" class="message-form">
+            <input type="text" id="messageInput" placeholder="Type a message..." required>
+            <button type="submit" id="send">Send</button>
+        </form>
     </div>
-    <div id="messageContainer"></div>
-    <script src='main.js' type="module"></script>
-    <script>
-        window.scrollTo({
-            top: 0
-        });
-		if (localStorage.getItem('user') === 'guest') {
-    location.href = '/code/universalCode/toolDisabled.html?txt=Messaging%20is%20disabled%20for%20Guests.%20Please%20request%20a%20real%20account%20to%20use%20this%20tool.'
-		}
-    </script>
-
+    <script src="main.js"></script>
 </body>
-
 </html>

@@ -52,9 +52,33 @@ function sendData() {
     });
     if (response.ok) {
         console.log('Data saved successfully');
-    } else {    
+    } else {
         console.error('Failed to save data:', response.status, response.statusText);
     }
 }
 
-let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
+const username = fetch('/api', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: {
+        service: 'get-user'
+    }
+}).then(response => {
+    if (response.ok) {
+        return response.json();
+    }
+    throw new Error('Failed to fetch user');
+}).then(data => {
+    return data.user;
+}).catch(error => {
+    console.error('Error fetching user:', error);
+});
+
+if (username === 'guest') {
+    console.error('Cannot save data for guest user');
+    return;
+} else {
+    let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
+}

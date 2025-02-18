@@ -15,7 +15,7 @@ function AB() {
       const doc = popup.document
       // Creates a iframe to the website.
       const iframe = doc.createElement('iframe');
-      const {style} = iframe;
+      const { style } = iframe;
       const link = doc.createElement('link');
       const script = doc.createElement('script');
       let name;
@@ -48,17 +48,6 @@ function AB() {
     }
   }
 }
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
-async function ABLoop() {
-  for (let index = 0; index < 1; index++) {
-    AB(); // Call the AB function
-    await sleep(10); // Wait for 100 milliseconds
-  }
-}
-
-ABLoop(); // Run the loop
-
+AB();
 
