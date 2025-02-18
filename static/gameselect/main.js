@@ -22,14 +22,8 @@ function adminCheck() {
     }
 }
 async function logout() {
-    await fetch('/api/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            'service': 'logout'
-        })
+    await fetch('/api/logout', {
+        method: 'POST'
     });
     // Redirect to the main page
     window.location.href = "/";
@@ -47,14 +41,8 @@ function localStorageLoadGames() {
 }
 async function loadGames() {
     try {
-        const response = await fetch('/api/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                service: 'getGames'
-            })
+        const response = await fetch('/api/getGames', {
+            method: 'POST'
         });
 
         if (!response.ok) {  // Check if the response status is OK (2xx)
@@ -63,7 +51,7 @@ async function loadGames() {
 
         // Assuming the server returns a JSON response
         const gamesDoc = await response.json();
-        
+
         // Do something with the games data
         console.log(gamesDoc); // Or whatever processing you need
 
@@ -89,14 +77,8 @@ async function loadGames() {
 }
 async function loadTools() {
     try {
-        const response = await fetch('/api/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                service: 'getTools'
-            })
+        const response = await fetch('/api/getTools', {
+            method: 'POST'
         });
 
         if (!response.ok) {  // Check if the response status is OK (2xx)
@@ -280,7 +262,7 @@ function handleColorChange(event) {
             break;
     }
 }
-function reloadCustomization(){
+function reloadCustomization() {
     let colorPickers = {
         main: document.getElementById('cus-mainColor'),
         mainText: document.getElementById('cus-mainTextColor'),

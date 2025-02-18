@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchCurrentUser();
     loadMessages();
 
-    const eventSource = new EventSource('/api/?service=updates');
+    const eventSource = new EventSource('/api/updates');
     eventSource.onmessage = () => loadMessages();
 
     if (currentUser === 'guest') {
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('messageForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         if (isEditing) return;
-        
+
         const input = document.getElementById('messageInput');
         await sendMessage(input.value);
         input.value = '';
@@ -24,13 +24,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchCurrentUser() {
     try {
-        const response = await fetch('/api/', {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                service: 'get-user'
-            })
+        const response = await fetch('/api/get-user', {
+            method: 'POST'
         });
         if (response.ok) currentUser = await response.json(); currentUser = currentUser['user']
     } catch (error) {
@@ -40,12 +35,8 @@ async function fetchCurrentUser() {
 
 async function loadMessages() {
     try {
-        const response = await fetch('/api/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                service: 'get-messages'
-            })
+        const response = await fetch('/api/get-messages', {
+            method: 'POST'
         });
         const messagesObject = await response.json();
         const messages = Object.values(messagesObject);
@@ -64,7 +55,7 @@ function displayMessages(messages) {
             <div class="message-header">
                 <span class="message-user">${message.user}</span>
                 <span class="message-time">
-                    ${new Date(message.timestamp).toLocaleTimeString()}
+                    ${(d=new Date(message.timestamp),n=new Date(),y=new Date(n.setDate(n.getDate()-1)),d.toDateString()==n.toDateString()?"Today":d.toDateString()==y.toDateString()?"Yesterday":`${d.toLocaleString('en-US',{month:'short'})} ${d.getDate()}${d.getFullYear()!==n.getFullYear()?`, ${d.getFullYear()}`:''}`)} at ${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     ${message.edited ? '<span class="message-edited">(edited)</span>' : ''}
                 </span>
                 ${message.user === currentUser ? `
@@ -83,13 +74,10 @@ function displayMessages(messages) {
 
 async function sendMessage(content) {
     try {
-        await fetch('/api/', {
+        await fetch('/api/send-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                service: 'send-message',
-                content
-            })
+            body: JSON.stringify({ content })
         });
         loadMessages();
     } catch (error) {
@@ -106,7 +94,7 @@ function startEdit(messageId) {
     const input = document.createElement('input');
     input.value = originalContent;
     input.className = 'edit-input';
-    
+
     const saveButton = document.createElement('button');
     saveButton.textContent = 'Save';
     saveButton.className = 'action-button';
@@ -135,11 +123,10 @@ function cancelEdit(messageDiv, contentDiv) {
 
 async function editMessage(messageId, newContent) {
     try {
-        await fetch('/api/', {
+        await fetch('/api/edit-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                service: 'edit-message',
                 id: messageId,
                 content: newContent
             })
@@ -155,11 +142,10 @@ async function editMessage(messageId, newContent) {
 async function deleteMessage(messageId) {
     if (!confirm('Delete this message permanently?')) return;
     try {
-        await fetch('/api/', {
+        await fetch('/api/delete-message', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                service: 'delete-message',
                 id: messageId
             })
         });
