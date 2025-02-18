@@ -186,9 +186,6 @@ async function handleApiRequest(req, res) {
         // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
 
-        // Variables for across multiple handlers
-        let message = false;
-
         const postHandler = {
             'getCSV': async () => {
                 // Check permissions (make sure user has admin rights to get the csv)
@@ -248,7 +245,6 @@ async function handleApiRequest(req, res) {
                 db.messages[id] = messageData;
                 writeDatabaseChanges();
                 res.json(messageData);
-                message = true;
                 messageEmitter.emit('message', messageData);
             },
             'edit-message': async () => {
