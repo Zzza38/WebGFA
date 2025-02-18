@@ -40,15 +40,12 @@ function importStorageData(data) {
 
 function sendData() {
     let data = exportStorageData();
-    let response = fetch('/api', {
+    let response = fetch('/api/save', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            service: 'save',
-            data
-        })
+        body: JSON.stringify({ data })
     });
     if (response.ok) {
         console.log('Data saved successfully');
@@ -57,14 +54,8 @@ function sendData() {
     }
 }
 
-const username = fetch('/api', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        service: 'get-user'
-    })
+const username = fetch('/api/get-user', {
+    method: 'POST'
 }).then(response => {
     if (response.ok) {
         return response.json();

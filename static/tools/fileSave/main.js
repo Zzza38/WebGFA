@@ -1,9 +1,5 @@
-const username = fetch('/api/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        service: 'get-user',
-    }),
+const username = fetch('/api/get-user', {
+    method: 'POST'
 }).then(response => {
     if (response.ok) {
         return response.json();
@@ -15,12 +11,8 @@ const username = fetch('/api/', {
     console.error('Error fetching user:', error);
 });
 
-const saveData = fetch('/api/', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-        service: 'save-data',
-    }),
+const saveData = fetch('/api/save-data', {
+    method: 'POST'
 }).then(response => {
     if (response.ok) {
         return response.json();

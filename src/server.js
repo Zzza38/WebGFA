@@ -176,10 +176,8 @@ function isHtmlRequest(path) {
 
 async function handleApiRequest(req, res) {
     try {
-        // Extract 'service' from the request body (POST request)
-        let { service } = req.body;
-        // If the method is GET, extract 'service' from the query parameters
-        if (req.method === 'GET') service = req.query.service;
+        // Extract 'service' from the URL
+        let service = req.path.split('/')[2];
 
         if (!service) return res.status(400).send('Missing service parameter');
 
@@ -260,7 +258,7 @@ async function handleApiRequest(req, res) {
 
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
-                message.message = content;
+                message.content = content;
                 message.timestamp = new Date().toISOString();
                 message.edited = true;
                 writeDatabaseChanges();
