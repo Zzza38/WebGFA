@@ -8,3 +8,4 @@ log/
 webgfa.csv
 data/firestore_backup.json
 data/database.json
+data/database-copy.json
