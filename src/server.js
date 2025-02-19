@@ -359,15 +359,14 @@ async function serveHtmlFile(reqPath, res) {
             html = html.replace('</body>', filteredTags.join('') + '</body>');
         }
 
-        res.set('Content-Type', 'text/html').send(html);
+        return res.set('Content-Type', 'text/html').send(html);
     } catch (error) {
-        console.error('File serve error:', error);
         res.status(404);
         try {
             await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
-            res.sendFile(path.join(staticDir, '404.html'));
+            return res.sendFile(path.join(staticDir, '404.html'));
         } catch {
-            res.type('txt').send('Not found');
+            return res.type('txt').send('Not found');
         }
     }
 }
