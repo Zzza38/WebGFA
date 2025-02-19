@@ -329,7 +329,7 @@ async function serveHtmlFile(reqPath, res) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
         const normalizedPath = urlUtils.normalizePath(reqPath);
-
+        console.log(normalizedPath)
         const fullPath = path.resolve(staticDir, file);
 
         // Security check
@@ -337,7 +337,6 @@ async function serveHtmlFile(reqPath, res) {
             throw new Error('Invalid path');
         }
 
-        await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
 
         const filteredTags = extraTags.filter(tag => {
