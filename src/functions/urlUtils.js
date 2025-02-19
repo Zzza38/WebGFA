@@ -4,9 +4,13 @@ function normalizePath(reqPath) {
     const pathSegments = trimmedPath.split('/'); // Split the path into segments
     let fileName = '/' + pathSegments.pop().replace(/\/+$/, ''); // Get the last segment (file name)
 
-    if (reqPath.endsWith('/')) { fileName = '/index.html' }
+    if (reqPath === '/') {
+        fileName = '/index.html'
+    } else if (reqPath.endsWith('/')) {
+        fileName += 'index.html';
+    }
     return pathSegments.join('/') + fileName;
 }
-module.exports = {
+module.exports = { 
     normalizePath
 }
