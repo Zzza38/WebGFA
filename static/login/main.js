@@ -28,7 +28,7 @@ function guestLogin() {
         .then(response => {
             if (response.ok) {
                 localStorage.setItem('loggedIn', 'true');
-                window.location.href = '/gameselect/';
+                window.location.href = '/';
             } else {
                 return response.text();
             }
@@ -54,7 +54,7 @@ form.addEventListener('submit', function (event) {
         .then(response => {
             if (response.ok) {
                 localStorage.setItem('loggedIn', 'true');
-                window.location.href = '/gameselect/';
+                window.location.href = '/';
             } else {
                 return response.text();
             }
@@ -69,5 +69,5 @@ form.addEventListener('submit', function (event) {
 });
 
 if (localStorage.getItem('loggedIn')) {
-    window.location.href = '/gameselect/';
+    window.location.href = '/';
 }

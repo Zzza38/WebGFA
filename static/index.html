@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="icon" href="./code/img/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/code/index/style.css">
+    <title>Game Navigation</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/code/img/favicon.ico" type="image/x-icon">
 </head>
 <body>
-    <script src="/code/index/main.js" type="module"></script>
-    <div id="headerLogin">
-        <h2>Login</h2>
+    <script src="main.js" defer type="module"></script>
+    <div class="container">
+        <!-- Disable Customization Temporary -->
+        <button class="customization game-link" id="cus-toggleMenu" style="display: none;">Open Customization Menu</button>
+        <div class="customization" id="cus-menu" style="display: none; outline-color: #fff; outline: 10px; ">
+            <label>Button color:</label>
+            <input type="color" id="cus-mainColor"> <br> <br>
+            <label>Main Text color: </label>
+            <input type="color" id="cus-mainTextColor"> <br> <br>
+            <label>Button Text color:</label>
+            <input type="color" id="cus-buttonTextColor"> <br> <br>
+            <label>Background color: </label>
+            <input type="color" id="cus-bgColor">  <br> 
+            <button class="game-link" id="cus-resetDefault">Reset to Default Colors</button>
+        </div>
+        <img src='/code/img/favicon.ico' width=128px height=128px></img>
+        <h1>Welcome to WebGFA</h1> <br>
+        <input type="text" id="searchG" placeholder="Search games...">
+        <p>Please select a game to play:</p>
+        <div class="game-links" id="game-links"></div>
+        <h3>Tools</h3>
+        <div class="game-links" id="tool-links"></div>
+        <h3>Request things</h3>
+        <a href="https://forms.gle/Vuzi7YvcTzgpc5VC8" class="game-link">Request a game</a>
+        <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
+        <a href="https://forms.gle/XFzTnrQPuziy826t8" class="game-link">Report something broken</a>
+        <p>Log out is CTRL+SHIFT+L</p>
     </div>
-
-    <form id="loginForm">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required><br><br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
-        <button type="submit">Login</button>
-    </form>
-    <button onclick="guestLogin()" id="guestLogin">Log in as a guest</button>
-    <p id="alertText"></p>
+    </div>
 </body>
+
 </html>

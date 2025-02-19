@@ -26,7 +26,7 @@ async function logout() {
         method: 'POST'
     });
     // Redirect to the main page
-    window.location.href = "/";
+    window.location.href = "/login";
 }
 
 
