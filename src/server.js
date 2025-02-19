@@ -60,7 +60,7 @@ app.use((req, res, next) => {
     });
 
     const sessionID = req.cookies.uid;
-    if (!Object.values(db.users.sessionID).includes(sessionID)) return res.status(401).redirect('/login');
+    if (!Object.values(db.users.sessionID).includes(sessionID)) return res.status(401);
     next();
 });
 
