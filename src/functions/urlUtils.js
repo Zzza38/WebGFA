@@ -7,7 +7,7 @@ function normalizePath(reqPath) {
     if (reqPath === '/') {
         fileName = '/index.html'
     } else if (reqPath.endsWith('/')) {
-        fileName += 'index.html';
+        fileName += '/index.html';
     }
     return pathSegments.join('/') + fileName;
 }
