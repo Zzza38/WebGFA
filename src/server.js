@@ -54,6 +54,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
+    console.log(req.path, reqPath);
     const allowedPaths = ['/login', '/webhook'];
     allowedPaths.forEach(path => {
         if (reqPath.startsWith(path)) return next()
