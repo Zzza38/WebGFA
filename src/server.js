@@ -328,13 +328,7 @@ async function handleApiRequest(req, res) {
 async function serveHtmlFile(reqPath, res) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
-        // Remove leading slash and handle root path
-        const safePath = reqPath === '/' ? '' : reqPath.replace(/^\//, '');
-        const normalizedPath = safePath.endsWith('/') ? safePath : `${safePath}/`;
-
-        const file = reqPath.endsWith('.html')
-            ? safePath
-            : path.join(normalizedPath, 'index.html');
+        const normalizedPath = urlUtils.normalizePath(reqPath);
 
         const fullPath = path.resolve(staticDir, file);
 
