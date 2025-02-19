@@ -54,8 +54,10 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/login', '/login/index.html', '/webhook/github'];
-    if (allowedPaths.includes(reqPath)) return next();
+    const allowedPaths = ['/login', '/webhook'];
+    allowedPaths.forEach(path => {
+        if (reqPath.startsWith(path)) return next()
+    });
 
     const sessionID = req.cookies.uid;
     if (!Object.values(db.users.sessionID).includes(sessionID)) return res.status(401).redirect('/login');
