@@ -157,7 +157,7 @@ function startServer() {
 async function startDependencies() {
     let processes = [];
 
-    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: "3000" }}));
+    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: process.platform === 'win32' ? true : '/bin/bash', env: { ...process.env, PORT: "3000" }}));
 
     processes.forEach(proc => {
         proc.on("exit", code => console.log(`Child exited with code ${code}`));
@@ -206,7 +206,7 @@ async function handleApiRequest(req, res) {
                 }
 
                 try {
-                    const csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
+                    const csv = await fs.readFile('../webgfa.csv', 'utf8');
                     res.set('Content-Type', 'text/csv').send(csv);
                 } catch (error) {
                     if (error.code === 'ENOENT') {

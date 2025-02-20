@@ -1,4 +1,11 @@
 const { exec } = require('child_process');
 
-exec('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
-exec('npm install', { cwd: './Interstellar'});
+function pipe(proc) {
+    proc.stdout.pipe(process.stdout);
+    proc.stderr.pipe(process.stderr);
+}
+
+// Interstellar
+pipe(exec('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar'));
+pipe(exec('npm install', { cwd: './Interstellar' }));
+
