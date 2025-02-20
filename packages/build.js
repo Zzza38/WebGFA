@@ -1,14 +1,17 @@
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
-function pipe(proc) {
-    proc.stdout.pipe(process.stdout);
-    proc.stderr.pipe(process.stderr);
+// Function that runs a command as a single string
+function runCommand(command, options = {}) {
+    const proc = spawn(command, { shell: true, stdio: 'inherit', ...options });
+    proc.on('error', (error) => {
+        console.error(`Error executing command "${command}":`, error);
+    });
 }
 
 // Needed to keep files in ./packages
 process.chdir(__dirname);
 
 // Interstellar
-pipe(exec('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar'));
-pipe(exec('npm install', { cwd: './Interstellar' }));
+runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
+runCommand('npm install', { cwd: './Interstellar' });
 
