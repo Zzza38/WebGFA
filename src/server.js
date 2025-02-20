@@ -5,13 +5,14 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const http = require('http');
-const { exec } = require('child_process');
-let db = require("../data/database.json");
-const urlUtils = require("./functions/urlUtils.js");
+const { exec, spawn } = require('child_process');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
-const logUtils = require('./functions/logFileUtils.js');
 const EventEmitter = require('events');
+
+const urlUtils = require("./functions/urlUtils.js");
+const logUtils = require('./functions/logFileUtils.js');
+let db = require("../data/database.json");
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -27,7 +28,8 @@ try {
 }
 
 const app = express();
-const HTTP_PORT = 8000;
+const dev = process.argv.includes("--dev");
+const HTTP_PORT = dev ? 5000 : 8000;
 const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
@@ -54,7 +56,7 @@ app.use(express.urlencoded({ extended: true }));
 // Authentication middleware
 app.use((req, res, next) => {
     let reqPath = urlUtils.normalizePath(req.path);
-    console.log(req.path, reqPath);
+
     const allowedPaths = ['/login', '/webhook'];
     allowedPaths.forEach(path => {
         if (reqPath.startsWith(path)) return next()
@@ -83,6 +85,7 @@ app.use(handleMainRequest);
         console.log("--NAME-START--");
         console.log(logUtils.generateLogFileName());
         console.log("--NAME-END--");
+        startDependencies();
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -140,8 +143,8 @@ async function handleLogin(req, res) {
 async function handleGitHubWebhook(req, res) {
     res.status(202).send('Accepted');
     if (req.headers['x-github-event'] === 'push') {
-        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa',
-            (error, stdout, stderr) => console.log(error ? `Exec error: ${error}` : `Output: ${stdout}${stderr}`));
+        exec('su - zion -c "cd /home/zion/WebGFA-dev && git pull"');
+        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && systemctl restart webgfa');
     }
 }
 
@@ -151,6 +154,15 @@ function startServer() {
     );
 }
 
+async function startDependencies() {
+    let processes = [];
+
+    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: "3000" }}));
+
+    processes.forEach(proc => {
+        proc.on("exit", code => console.log(`Child exited with code ${code}`));
+    });
+}
 /////////////////////////////////////////////////////////////
 //                  HELPER FUNCTIONS                       //
 /////////////////////////////////////////////////////////////
