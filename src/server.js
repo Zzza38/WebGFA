@@ -81,10 +81,12 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 (async () => {
     try {
+    
         await clearLogFile(logFilePath);
         console.log("--NAME-START--");
         console.log(logUtils.generateLogFileName());
         console.log("--NAME-END--");
+        process.chdir(__dirname);
         startDependencies();
         startServer();
     } catch (error) {
@@ -156,7 +158,7 @@ function startServer() {
 
 async function startDependencies() {
     let processes = [];
-    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: "3000" }, stdio: 'inherit'}));
+    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: "3000" }}));
 
     processes.forEach(proc => {
         proc.on("exit", code => console.log(`Child exited with code ${code}`));
