@@ -156,10 +156,7 @@ function startServer() {
 
 async function startDependencies() {
     let processes = [];
-    // removed 
-    // , env: { ...process.env, PORT: "3000" }
-    // hoping its not the isse
-    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true}));
+    processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: "3000" }, stdio: 'inherit'}));
 
     processes.forEach(proc => {
         proc.on("exit", code => console.log(`Child exited with code ${code}`));
