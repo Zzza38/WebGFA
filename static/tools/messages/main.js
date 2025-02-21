@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (currentUser === 'guest') {
         document.getElementById('send').disabled = true;
         document.getElementById('messageInput').disabled = true;
+        document.getElementById('guestPopup').style.display = '';
+        document.getElementById('guestPopup').addEventListener('click', () => {
+            document.getElementById('guestPopup').style.display = 'none';
+        });
     }
     document.getElementById('messageForm').addEventListener('submit', async (e) => {
         e.preventDefault();

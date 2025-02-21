@@ -40,7 +40,7 @@ function importStorageData(data) {
 
 function sendData() {
     let data = exportStorageData();
-    let response = fetch('/api/save', {
+    let response = fetch('/api/save-data', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

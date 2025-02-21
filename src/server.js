@@ -5,13 +5,15 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const http = require('http');
-const { exec } = require('child_process');
-let db = require("../data/database.json");
-const urlUtils = require("./functions/urlUtils.js");
+const { exec, spawn } = require('child_process');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
-const logUtils = require('./functions/logFileUtils.js');
 const EventEmitter = require('events');
+
+const urlUtils = require("./functions/urlUtils.js");
+const logUtils = require('./functions/logFileUtils.js');
+const db = require("../data/database.json");
+const config = require("../config.json");
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -27,14 +29,15 @@ try {
 }
 
 const app = express();
-const HTTP_PORT = 8000;
+const dev = process.argv.includes("--dev");
+const HTTP_PORT = dev ? 5000 : 8000;
 const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
 const extraTags = [
-    // non module tags
-    "<script src='/code/universalCode/aboutblankcloak.js'></script>",
-    "<script src='/code/universalCode/autoSave.js'></script>",
+    // module tags to prevent variable reading
+    "<script src='/assets/js/aboutblankcloak.js' type='module'></script>",
+    "<script src='/assets/js/autoSave.js' type='module'></script>",
 ];
 
 const excludedTags = {};
@@ -51,14 +54,9 @@ app.use(express.static(path.join(__dirname, '../static'), {
 app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Authentication middleware
 app.use((req, res, next) => {
-    let reqPath = urlUtils.normalizePath(req.path);
-    const allowedPaths = ['/index.html', '/login', '/webhook/github'];
-    if (allowedPaths.includes(reqPath)) return next();
-
-    const sessionID = req.cookies.uid;
-    if (!Object.values(db.users.sessionID).includes(sessionID)) return res.status(401).redirect('/');
+    const sessionID = req.cookies.uid
+    if (!Object.values(db.users.sessionID).includes(sessionID)) res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });;
     next();
 });
 
@@ -76,10 +74,13 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 (async () => {
     try {
+    
         await clearLogFile(logFilePath);
         console.log("--NAME-START--");
         console.log(logUtils.generateLogFileName());
         console.log("--NAME-END--");
+        process.chdir(__dirname);
+        startDependencies();
         startServer();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -127,7 +128,7 @@ async function handleLogin(req, res) {
         const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
-        writeDatabaseChanges();
+        await writeDatabaseChanges();
         return res.status(200).send('Login successful');
     }
 
@@ -137,8 +138,8 @@ async function handleLogin(req, res) {
 async function handleGitHubWebhook(req, res) {
     res.status(202).send('Accepted');
     if (req.headers['x-github-event'] === 'push') {
-        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && sudo systemctl restart webgfa',
-            (error, stdout, stderr) => console.log(error ? `Exec error: ${error}` : `Output: ${stdout}${stderr}`));
+        exec('su - zion -c "cd /home/zion/WebGFA-dev && git pull"');
+        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && systemctl restart webgfa');
     }
 }
 
@@ -148,6 +149,18 @@ function startServer() {
     );
 }
 
+async function startDependencies() {
+    let processes = [];
+    let names = [];
+    if (config.features.interstellar) processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar }})); names.push("Interstellar");
+    if (config.features['web-ssh']) processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports['web-ssh'] }})); names.push("WebSSH");
+
+    processes.forEach((proc, index) => {
+        proc.on("exit", code => console.log(`${names[index]} exited with code ${code}`));
+        proc.on("error", (err) => console.error(`${names[index]} failed:`, err));
+    });
+
+}
 /////////////////////////////////////////////////////////////
 //                  HELPER FUNCTIONS                       //
 /////////////////////////////////////////////////////////////
@@ -178,7 +191,7 @@ async function handleApiRequest(req, res) {
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
-        const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
+        const user = sessionId === 'GUEST-ACCOUNT' ? 'guest' : Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
 
         // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
@@ -191,7 +204,7 @@ async function handleApiRequest(req, res) {
                 }
 
                 try {
-                    const csv = await fs.readFile('/home/zion/WebGFA/webgfa.csv', 'utf8');
+                    const csv = await fs.readFile('../webgfa.csv', 'utf8');
                     res.set('Content-Type', 'text/csv').send(csv);
                 } catch (error) {
                     if (error.code === 'ENOENT') {
@@ -222,7 +235,7 @@ async function handleApiRequest(req, res) {
                 // Clear session cookie
                 res.clearCookie('uid');
                 delete db.users.sessionID[user];
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.redirect('/');
             },
             // Messaging API
@@ -241,7 +254,7 @@ async function handleApiRequest(req, res) {
                 };
 
                 db.messages[id] = messageData;
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json(messageData);
                 messageEmitter.emit('message');
             },
@@ -256,7 +269,7 @@ async function handleApiRequest(req, res) {
 
                 message.content = content;
                 message.edited = true;
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json(message);
                 messageEmitter.emit('message');
             },
@@ -270,7 +283,7 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 delete db.messages[id];
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json({ success: true });
                 messageEmitter.emit('message');
             },
@@ -280,12 +293,13 @@ async function handleApiRequest(req, res) {
             'get-user': async () => {
                 res.json({ user });
             },
-            'save': async () => {
+            'save-data': async () => {
                 const { data } = req.body;
                 if (!data) return res.status(400).send('Missing data');
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
                 db.users.save[user] = data;
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
+                res.json({ success: true });
             },
             'get-save': async () => {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
@@ -321,27 +335,21 @@ async function handleApiRequest(req, res) {
         console.error('API error:', error);
         res.status(500).send('Server error');
     }
+    if (!res.headersSent) res.status(202).send('Status code not set, contact owner.');
 }
 
 async function serveHtmlFile(reqPath, res) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
-        // Remove leading slash and handle root path
-        const safePath = reqPath === '/' ? '' : reqPath.replace(/^\//, '');
-        const normalizedPath = safePath.endsWith('/') ? safePath : `${safePath}/`;
-
-        const file = reqPath.endsWith('.html')
-            ? safePath
-            : path.join(normalizedPath, 'index.html');
-
-        const fullPath = path.resolve(staticDir, file);
+        const normalizedPath = urlUtils.normalizePath(reqPath);
+        const fullPath = path.resolve(staticDir, normalizedPath.slice(1));
 
         // Security check
         if (!fullPath.startsWith(staticDir)) {
+            console.log(fullPath)
             throw new Error('Invalid path');
         }
 
-        await fs.access(fullPath, fs.constants.F_OK);
         let html = await fs.readFile(fullPath, 'utf8');
 
         const filteredTags = extraTags.filter(tag => {
@@ -359,13 +367,17 @@ async function serveHtmlFile(reqPath, res) {
 
         res.set('Content-Type', 'text/html').send(html);
     } catch (error) {
-        console.error('File serve error:', error);
-        res.status(404);
-        try {
-            await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
-            res.sendFile(path.join(staticDir, '404.html'));
-        } catch {
-            res.type('txt').send('Not found');
+        if (error.code !== 'ENOENT') {
+            console.error('File serve error:', error);
+        }
+        if (!res.headersSent) {
+            res.status(404);
+            try {
+                await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
+                res.sendFile(path.join(staticDir, '404.html'));
+            } catch {
+                res.type('txt').send('Not found');
+            }
         }
     }
 }

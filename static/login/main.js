@@ -17,28 +17,6 @@ function getCookie(cname) {
 const form = document.getElementById('loginForm');
 const alertText = document.getElementById('alertText');
 
-function guestLogin() {
-    fetch('/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({ username: 'guest', password: 'guest' })
-    })
-        .then(response => {
-            if (response.ok) {
-                localStorage.setItem('loggedIn', 'true');
-                window.location.href = '/gameselect/';
-            } else {
-                return response.text();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-window.guestLogin = guestLogin;
-
 form.addEventListener('submit', function (event) {
     event.preventDefault();
     const username = form.username.value;
@@ -53,8 +31,7 @@ form.addEventListener('submit', function (event) {
     })
         .then(response => {
             if (response.ok) {
-                localStorage.setItem('loggedIn', 'true');
-                window.location.href = '/gameselect/';
+                window.location.href = '/';
             } else {
                 return response.text();
             }
@@ -67,7 +44,3 @@ form.addEventListener('submit', function (event) {
             alertText.textContent = 'Connection error';
         });
 });
-
-if (localStorage.getItem('loggedIn')) {
-    window.location.href = '/gameselect/';
-}

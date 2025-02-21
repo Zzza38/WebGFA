@@ -12,27 +12,18 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
-function adminCheck() {
-    if (username == 'zion') {
-        let admin = document.getElementsByClassName('admin');
-        for (let i = 0; i < admin.length; i++) {
-            const element = admin[i];
-            element.style.display = ''
-        }
-    }
-}
 async function logout() {
+    localStorage.removeItem('loggedIn');
     await fetch('/api/logout', {
         method: 'POST'
     });
-    // Redirect to the main page
-    window.location.href = "/";
+    window.location.href = "/login";
 }
 
 
 // Game Link Loading Code
 let allGames = [];
-function localStorageLoadGames() {
+function localStorageLoad() {
     if (!localStorage.getItem('gameLinks-games')) return;
     const games = JSON.parse(localStorage.getItem('gameLinks-games'));
     const tools = JSON.parse(localStorage.getItem('gameLinks-tools'));
@@ -178,97 +169,7 @@ function renderTools(games) {
     reloadCustomization();
 }
 
-
-// Customization Tools Code
-let isCusMenuOpen = false;
-function handleCustomization() {
-    isCusMenuOpen = !isCusMenuOpen; // Toggle the menu state
-    let button = document.getElementById('cus-toggleMenu');
-    let menu = document.getElementById('cus-menu');
-    let defaultColors = {
-        main: "#007bff",
-        mainText: "#ffffff",
-        buttonText: "#ffffff",
-        bg: "#000000"
-    }
-    let colorPickers = {
-        main: document.getElementById('cus-mainColor'),
-        mainText: document.getElementById('cus-mainTextColor'),
-        buttonText: document.getElementById('cus-buttonTextColor'),
-        bg: document.getElementById('cus-bgColor')
-    };
-
-    if (isCusMenuOpen) {
-        menu.style.display = ''; // Show menu
-        button.innerText = 'Close Customization Menu';
-        Object.keys(colorPickers).forEach((key) => {
-            let picker = colorPickers[key];
-            picker.value = localStorage.getItem(`cus-${key}Color`);
-            handleColorChange({ target: picker });
-        });
-        document.getElementById('cus-resetDefault').addEventListener('click', () => {
-            Object.keys(colorPickers).forEach((key) => {
-                let picker = colorPickers[key];
-                picker.value = defaultColors[key];
-                handleColorChange({ target: picker });
-            });
-        })
-        // Set picker values and add event listeners
-        Object.keys(colorPickers).forEach((key) => {
-            let picker = colorPickers[key];
-            console.log(`cus-${key}Color`)
-            picker.value = localStorage.getItem(`cus-${key}Color`);
-            picker.addEventListener('input', handleColorChange);
-        });
-    } else {
-        menu.style.display = 'none'; // Hide menu
-        button.innerText = 'Open Customization Menu';
-
-        // Remove event listeners
-        Object.keys(colorPickers).forEach((key) => {
-            let picker = colorPickers[key];
-            picker.removeEventListener('input', handleColorChange);
-        });
-    }
-}
-function handleColorChange(event) {
-    let picker = event.target; // Get the triggering input element
-    let color = picker.value;
-
-    // Save color to localStorage
-    localStorage.setItem(`cus-${picker.id.split('-')[1]}`, color);
-
-    // Apply changes based on picker ID
-    switch (picker.id) {
-        case 'cus-mainColor':
-            let buttons = document.getElementsByClassName('game-link');
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].style.backgroundColor = color;
-            }
-            break;
-        case 'cus-mainTextColor':
-            document.body.style.color = color;
-            break;
-        case 'cus-buttonTextColor':
-            let buttons1 = document.getElementsByClassName('game-link');
-            for (let i = 0; i < buttons1.length; i++) {
-                buttons1[i].style.color = color;
-            }
-            break;
-        case 'cus-bgColor':
-            document.body.style.backgroundColor = color;
-            break;
-        default:
-            break;
-    }
-}
 function reloadCustomization() {
-    let colorPickers = {
-        main: document.getElementById('cus-mainColor'),
-        mainText: document.getElementById('cus-mainTextColor'),
-        buttonText: document.getElementById('cus-buttonTextColor'),
-        bg: document.getElementById('cus-bgColor')
-    };
     let defaultColors = {
         main: "#007bff",
         mainText: "#ffffff",
@@ -282,18 +183,36 @@ function reloadCustomization() {
             localStorage.setItem(`cus-${keyName}Color`, color)
         })
     }
-    Object.keys(colorPickers).forEach((key) => {
-        let picker = colorPickers[key];
-        picker.value = localStorage.getItem(`cus-${key}Color`);
-        handleColorChange({ target: picker });
+    Object.keys(defaultColors).forEach((key) => {
+        const colorValue = localStorage.getItem(`cus-${key}Color`);
+        switch (key) {
+            case 'main':
+                let buttons = document.getElementsByClassName('game-link');
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].style.backgroundColor = colorValue;
+                }
+                break;
+            case 'mainText':
+                document.body.style.color = colorValue;
+                break;
+            case 'buttonText':
+                let buttons1 = document.getElementsByClassName('game-link');
+                for (let i = 0; i < buttons1.length; i++) {
+                    buttons1[i].style.color = colorValue;
+                }
+                break;
+            case 'bg':
+                document.body.style.backgroundColor = colorValue;
+                break;
+            default:
+                break;
+        }
     });
 }
-document.getElementById('cus-toggleMenu').addEventListener('click', handleCustomization);
-document.getElementById('searchG').addEventListener('input', filterGames);
-reloadCustomization();
 
 // Run all the necessary functions to initialize
-localStorageLoadGames();
+document.getElementById('searchG').addEventListener('input', filterGames); 
+reloadCustomization();
+localStorageLoad();
 loadTools();
 loadGames();
-adminCheck();
