@@ -291,7 +291,7 @@ async function handleApiRequest(req, res) {
             'get-user': async () => {
                 res.json({ user });
             },
-            'save': async () => {
+            'save-data': async () => {
                 const { data } = req.body;
                 if (!data) return res.status(400).send('Missing data');
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');

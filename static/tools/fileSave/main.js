@@ -1,17 +1,4 @@
-const username = fetch('/api/get-user', {
-    method: 'POST'
-}).then(response => {
-    if (response.ok) {
-        return response.json();
-    }
-    throw new Error('Failed to fetch user');
-}).then(data => {
-    return data.user;
-}).catch(error => {
-    console.error('Error fetching user:', error);
-});
-
-const saveData = fetch('/api/save-data', {
+const saveData = fetch('/api/get-save', {
     method: 'POST'
 }).then(response => {
     if (response.ok) {
@@ -39,7 +26,7 @@ function importStorageData(data) {
 
 
 document.getElementById('message').innerText = `Hello, ${username}. You ${saveData ? 'do' : 'don\''} have saved data.`;
-document.getElementById('saveData').addEventListener('click', async () => {
+document.getElementById('saveButton').addEventListener('click', async () => {
     importStorageData(await saveData)
     console.log('Data saved successfully');
 });
