@@ -1,27 +1,27 @@
-const username = fetch('/api/get-user', {
-    method: 'POST'
-}).then(response => {
-    if (response.ok) {
-        return response.json();
+async function fetchUsername() {
+    try {
+        const response = await fetch('/api/get-user', { method: 'POST' });
+        if (!response.ok) throw new Error('Failed to get username');
+
+        const data = await response.json();
+        return data.user;
+    } catch (error) {
+        console.error('Error getting username:', error);
+        return 'guest';
     }
-    throw new Error('Failed to get username');
-}).then(data => {
-    return data.user;
-}).catch(error => {
-    console.error('Error getting username:', error);
-});
-const saveData = fetch('/api/get-save', {
-    method: 'POST'
-}).then(response => {
-    if (response.ok) {
-        return response.json();
+}
+
+async function fetchSaveData() {
+    try {
+        const response = await fetch('/api/get-save', { method: 'POST' });
+        if (!response.ok) throw new Error('Failed to get save data');
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error getting save data:', error);
+        return null;
     }
-    throw new Error('Failed to get save data');
-}).then(data => {
-    return data;
-}).catch(error => {
-    console.error('Error getting save data:', error);
-});
+}
 
 function importStorageData(data) {
     if (data.cookies) {
@@ -36,14 +36,23 @@ function importStorageData(data) {
     }
 }
 
+async function initializePage() {
+    const username = await fetchUsername();
+    const saveData = await fetchSaveData();
 
-document.getElementById('message').innerText = `Hello, ${username}. You ${saveData ? 'do' : 'don\''} have saved data.`;
-document.getElementById('saveButton').addEventListener('click', async () => {
-    importStorageData(await saveData)
-    console.log('Data saved successfully');
-});
-if (username === 'guest') {
-    document.getElementById('saveData').disabled = true;
-    document.getElementById('message').innerText = `Hello, guest. You don't have saved data as a guest account cannot get save data. Make a free WebGFA account today!`;
+    document.getElementById('message').innerText = `Hello, ${username}. You ${saveData ? 'do' : 'don\'t'} have saved data.`;
 
+    document.getElementById('saveButton').addEventListener('click', async () => {
+        if (saveData) {
+            importStorageData(saveData);
+            console.log('Data saved successfully');
+        }
+    });
+
+    if (username === 'guest') {
+        document.getElementById('saveData').disabled = true;
+        document.getElementById('message').innerText = `Hello, guest. You don't have saved data as a guest account cannot get save data. Make a free WebGFA account today!`;
+    }
 }
+
+initializePage();
