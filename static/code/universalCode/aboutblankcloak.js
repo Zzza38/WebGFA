@@ -30,7 +30,7 @@ function AB() {
         icon = localStorage.getItem("icoAB");
       }
       else {
-        icon = '/code/img/favicon.ico';
+        icon = '/favicon.ico';
       }
       doc.title = name;
       link.rel = 'icon';
