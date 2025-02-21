@@ -35,12 +35,14 @@ function importStorageData(data) {
         });
     }
 }
-
+function titleCase(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 async function initializePage() {
     const username = await fetchUsername();
     const saveData = await fetchSaveData();
 
-    document.getElementById('message').innerText = `Hello, ${username}. You ${saveData ? 'do' : 'don\'t'} have saved data.`;
+    document.getElementById('message').innerText = `Hello, ${titleCase(username)}. You ${saveData ? 'do' : 'don\'t'} have saved data.`;
 
     document.getElementById('saveButton').addEventListener('click', async () => {
         if (saveData) {

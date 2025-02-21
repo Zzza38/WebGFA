@@ -128,7 +128,7 @@ async function handleLogin(req, res) {
         const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
-        writeDatabaseChanges();
+        await writeDatabaseChanges();
         return res.status(200).send('Login successful');
     }
 
@@ -233,7 +233,7 @@ async function handleApiRequest(req, res) {
                 // Clear session cookie
                 res.clearCookie('uid');
                 delete db.users.sessionID[user];
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.redirect('/');
             },
             // Messaging API
@@ -252,7 +252,7 @@ async function handleApiRequest(req, res) {
                 };
 
                 db.messages[id] = messageData;
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json(messageData);
                 messageEmitter.emit('message');
             },
@@ -267,7 +267,7 @@ async function handleApiRequest(req, res) {
 
                 message.content = content;
                 message.edited = true;
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json(message);
                 messageEmitter.emit('message');
             },
@@ -281,7 +281,7 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 delete db.messages[id];
-                writeDatabaseChanges();
+                await writeDatabaseChanges();
                 res.json({ success: true });
                 messageEmitter.emit('message');
             },
@@ -292,11 +292,17 @@ async function handleApiRequest(req, res) {
                 res.json({ user });
             },
             'save-data': async () => {
+                console.log('recived save data request')
                 const { data } = req.body;
+                console.log('data parsed')
                 if (!data) return res.status(400).send('Missing data');
+                console.log('data exists')
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
+                console.log('not a guest')
                 db.users.save[user] = data;
-                writeDatabaseChanges();
+                console.log('set to db')
+                await writeDatabaseChanges();
+                console.log('wrote changes')
             },
             'get-save': async () => {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
