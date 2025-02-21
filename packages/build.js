@@ -43,9 +43,6 @@ process.chdir(__dirname);
     runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
     await runCommand('git clone --branch current https://github.com/billchurch/webssh2.git');
 
-    // Setting the correct branch
-    //await runCommand('git checkout current', { cwd: './webssh2' });
-
     // Installing dependencies
     runCommand('npm install', { cwd: './Interstellar' });
     await runCommand('npm install --production', { cwd: './webssh2/app' });
