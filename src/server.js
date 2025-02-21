@@ -342,6 +342,7 @@ async function serveHtmlFile(reqPath, res) {
 
         // Security check
         if (!fullPath.startsWith(staticDir)) {
+            console.log(fullPath)
             throw new Error('Invalid path');
         }
 
