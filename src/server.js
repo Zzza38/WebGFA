@@ -333,7 +333,7 @@ async function handleApiRequest(req, res) {
         console.error('API error:', error);
         res.status(500).send('Server error');
     }
-    if (!res.sentStatus) res.status(202).send('Status code not set, contact owner.');
+    if (!res.headersSent) res.status(202).send('Status code not set, contact owner.');
 }
 
 async function serveHtmlFile(reqPath, res) {
