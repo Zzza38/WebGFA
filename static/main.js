@@ -183,9 +183,8 @@ function reloadCustomization() {
             localStorage.setItem(`cus-${keyName}Color`, color)
         })
     }
-    Object.keys(colorPickers).forEach((key) => {
-        let picker = colorPickers[key];
-        picker.value = localStorage.getItem(`cus-${key}Color`);
+    Object.keys(defaultColors).forEach((key) => {
+        const colorValue = localStorage.getItem(`cus-${key}Color`);
         switch (key) {
             case 'main':
                 let buttons = document.getElementsByClassName('game-link');
@@ -210,10 +209,9 @@ function reloadCustomization() {
         }
     });
 }
-document.getElementById('searchG').addEventListener('input', filterGames);
-reloadCustomization();
 
 // Run all the necessary functions to initialize
+setTimeout(() => { document.getElementById('searchG').addEventListener('input', filterGames); reloadCustomization(); }, 1);
 localStorageLoad();
 loadTools();
 loadGames();
