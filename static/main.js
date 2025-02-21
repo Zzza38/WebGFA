@@ -169,7 +169,6 @@ function renderTools(games) {
     reloadCustomization();
 }
 
-
 function reloadCustomization() {
     let defaultColors = {
         main: "#007bff",
@@ -187,7 +186,28 @@ function reloadCustomization() {
     Object.keys(colorPickers).forEach((key) => {
         let picker = colorPickers[key];
         picker.value = localStorage.getItem(`cus-${key}Color`);
-        handleColorChange({ target: picker });
+        switch (key) {
+            case 'main':
+                let buttons = document.getElementsByClassName('game-link');
+                for (let i = 0; i < buttons.length; i++) {
+                    buttons[i].style.backgroundColor = colorValue;
+                }
+                break;
+            case 'mainText':
+                document.body.style.color = colorValue;
+                break;
+            case 'buttonText':
+                let buttons1 = document.getElementsByClassName('game-link');
+                for (let i = 0; i < buttons1.length; i++) {
+                    buttons1[i].style.color = colorValue;
+                }
+                break;
+            case 'bg':
+                document.body.style.backgroundColor = colorValue;
+                break;
+            default:
+                break;
+        }
     });
 }
 document.getElementById('searchG').addEventListener('input', filterGames);
