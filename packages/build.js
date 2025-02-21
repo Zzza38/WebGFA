@@ -40,10 +40,10 @@ process.chdir(__dirname);
 (async () => {
     await cleanupDirectory();
     // Cloning the repositories
-    runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
+    await runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
     await runCommand('git clone --branch current https://github.com/billchurch/webssh2.git');
 
     // Installing dependencies
-    runCommand('npm install', { cwd: './Interstellar' });
+    await runCommand('npm install', { cwd: './Interstellar' });
     await runCommand('npm install --production', { cwd: './webssh2/app' });
 })();
