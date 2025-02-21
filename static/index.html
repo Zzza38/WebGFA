@@ -11,22 +11,12 @@
 
 <body>
     <script src="main.js"></script>
-    <div id="topbar"><a href = "/settings">Settings</a> | <a href = "/changeLog">Change Log</a></div>
+    <div id="topbar">
+        <a href='/settings' class="topbar-link">Settings</a>
+        <a href='/changeLog' class="topbar-link">Change Log</a>
+        <a href='/login' class="topbar-link">Login</a>
+    </div>
     <div class="container">
-        <!-- Disable Customization Temporary -->
-        <button class="customization game-link" id="cus-toggleMenu" style="display: none;">Open Customization
-            Menu</button>
-        <div class="customization" id="cus-menu" style="display: none; outline-color: #fff; outline: 10px; ">
-            <label>Button color:</label>
-            <input type="color" id="cus-mainColor"> <br> <br>
-            <label>Main Text color: </label>
-            <input type="color" id="cus-mainTextColor"> <br> <br>
-            <label>Button Text color:</label>
-            <input type="color" id="cus-buttonTextColor"> <br> <br>
-            <label>Background color: </label>
-            <input type="color" id="cus-bgColor"> <br>
-            <button class="game-link" id="cus-resetDefault">Reset to Default Colors</button>
-        </div>
         <img src='favicon.ico' width=128px height=128px></img> <br>
         <input type="text" id="searchG" placeholder="Search for a game...">
         <h3>Games</h3>

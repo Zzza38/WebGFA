@@ -4,25 +4,58 @@
 <head>
   <link rel="icon" href="/favicon.ico">
   <title>Settings</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
-
-    body {
-      font-family: 'Ubuntu', sans-serif;
-      text-align: center;
-      background-color: #000;
-      /* Set background color to black */
-      color: #FFF;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/classic.min.css" />
 </head>
 
 <body>
-    <h1>Settings</h1>
-    <p>Coming soon...</p>
-    <a href="/">Go back</a>
+  <script src="main.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr"></script>
+  <script src="particles.js"></script>
+  <div id="particles-js"></div>
+  <h1>Settings</h1>
+  <div id="container">
+    <div class="setting">
+      <h2>Customization</h2>
+      <p>Customize the appearance of the game navigation page.</p>
+      <button class="customization game-link" id="cus-toggleMenu">Open Customization Menu</button>
+      <div class="customization" id="cus-menu" style="display: none;">
+        <div class="color-picker-container">
+          <label>Buttons:</label>
+          <div class="color-picker" id="cus-mainColor"></div>
+        </div>
+        <div class="color-picker-container">
+          <label>Text:</label>
+          <div class="color-picker" id="cus-mainTextColor"></div>
+        </div>
+        <div class="color-picker-container">
+          <label>Button Text:</label>
+          <div class="color-picker" id="cus-buttonTextColor"></div>
+        </div>
+        <div class="color-picker-container">
+          <label>Background:</label>
+          <div class="color-picker" id="cus-bgColor"></div>
+        </div>
+        <button class="game-link" id="cus-resetDefault">Reset to Default Colors</button>
+      </div>
+    </div>
+    <div class="setting">
+      <h2>Cloaking</h2>
+      <p>Customize the appearance of the 'about:blank' tab.</p>
+      <div class="custom-select-wrapper">
+        <div class="custom-select">
+          <div class="custom-select-trigger">
+            <span>Select Cloak</span>
+            <div class="arrow"></div>
+          </div>
+          <div class="custom-options">
+            <!-- Options will be dynamically added here -->
+          </div>
+        </div>
+      </div>
+      <button class="game-link" id="cloak-setCloak">Set Cloak</button>
+    </div>
+  </div>
 </body>
 
 </html>

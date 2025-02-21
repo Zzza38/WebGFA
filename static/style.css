@@ -1,11 +1,9 @@
-/* Basic styling */
 @import url("https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap");
 
 body {
   font-family: "Ubuntu", sans-serif;
   text-align: center;
   background-color: #000;
-  /* Set background color to black */
   color: #fff;
   margin: 0;
   padding: 0;
@@ -42,21 +40,20 @@ body {
   padding: 10px;
   border-radius: 20px;
 }
-
-#cus-toggleMenu {
-  position: absolute;
-  top: 5%;
-  right: 5%;
-}
-
-#cus-menu {
-  position: absolute;
-  top: 15%;
-  right: 5%;
-}
-
 #topbar {
   width: 100vw;
   background-color: #333;
   padding: 10px;
 } 
+.topbar-link {
+  display: inline-block;
+  margin: 0 10px; 
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.topbar-link:hover {
+  outline: 2px solid white;
+}
