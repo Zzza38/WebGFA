@@ -211,7 +211,8 @@ function reloadCustomization() {
 }
 
 // Run all the necessary functions to initialize
-setTimeout(() => { document.getElementById('searchG').addEventListener('input', filterGames); reloadCustomization(); }, 1);
+document.getElementById('searchG').addEventListener('input', filterGames); 
+reloadCustomization();
 localStorageLoad();
 loadTools();
 loadGames();
