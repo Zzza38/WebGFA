@@ -292,17 +292,12 @@ async function handleApiRequest(req, res) {
                 res.json({ user });
             },
             'save-data': async () => {
-                console.log('recived save data request')
                 const { data } = req.body;
-                console.log('data parsed')
                 if (!data) return res.status(400).send('Missing data');
-                console.log('data exists')
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
-                console.log('not a guest')
                 db.users.save[user] = data;
-                console.log('set to db')
                 await writeDatabaseChanges();
-                console.log('wrote changes')
+                res.json({ success: true });
             },
             'get-save': async () => {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
@@ -338,6 +333,7 @@ async function handleApiRequest(req, res) {
         console.error('API error:', error);
         res.status(500).send('Server error');
     }
+    if (!res.sentStatus) res.status(202).send('Status code not set, contact owner.');
 }
 
 async function serveHtmlFile(reqPath, res) {
