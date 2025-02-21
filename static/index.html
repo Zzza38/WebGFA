@@ -8,11 +8,14 @@
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
+
 <body>
-    <script src="main.js" defer type="module"></script>
+    <script src="main.js"></script>
+    <div id="topbar"><a href = "/settings">Settings</a> | <a href = "/changeLog">Change Log</a></div>
     <div class="container">
         <!-- Disable Customization Temporary -->
-        <button class="customization game-link" id="cus-toggleMenu" style="display: none;">Open Customization Menu</button>
+        <button class="customization game-link" id="cus-toggleMenu" style="display: none;">Open Customization
+            Menu</button>
         <div class="customization" id="cus-menu" style="display: none; outline-color: #fff; outline: 10px; ">
             <label>Button color:</label>
             <input type="color" id="cus-mainColor"> <br> <br>
@@ -21,7 +24,7 @@
             <label>Button Text color:</label>
             <input type="color" id="cus-buttonTextColor"> <br> <br>
             <label>Background color: </label>
-            <input type="color" id="cus-bgColor">  <br> 
+            <input type="color" id="cus-bgColor"> <br>
             <button class="game-link" id="cus-resetDefault">Reset to Default Colors</button>
         </div>
         <img src='favicon.ico' width=128px height=128px></img> <br>
@@ -35,7 +38,6 @@
         <a href="https://forms.gle/HYjhsYmARfe4Mbr58" class="game-link">Request a feature</a>
         <a href="https://forms.gle/XFzTnrQPuziy826t8" class="game-link">Report something broken</a>
         <p>To log out, press Ctrl + Shift + L on your keyboard</p>
-    </div>
     </div>
 </body>
 

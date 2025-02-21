@@ -27,17 +27,13 @@ body {
 
 .game-link:hover {
   outline: 2px solid white;
-  /* Add white outline when hovering */
 }
 
 .game-links {
   margin-top: 20px;
   max-height: 30vh;
-  /* Set the maximum height of the container */
   overflow-y: auto;
-  /* Enable vertical scrolling if content overflows */
   overflow-x: hidden;
-  /* Disable horizontal scrolling */
 }
 
 #searchG {
@@ -58,3 +54,9 @@ body {
   top: 15%;
   right: 5%;
 }
+
+#topbar {
+  width: 100vw;
+  background-color: #333;
+  padding: 10px;
+} 
