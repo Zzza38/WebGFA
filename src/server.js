@@ -55,6 +55,7 @@ app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
+    const sessionID = req.cookies.uid
     if (!Object.values(db.users.sessionID).includes(sessionID)) res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });;
     next();
 });
