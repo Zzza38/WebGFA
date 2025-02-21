@@ -189,7 +189,7 @@ async function handleApiRequest(req, res) {
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
-        const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
+        const user = sessionId !== 'GUEST-ACCOUNT' ? 'guest' : Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
 
         // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
