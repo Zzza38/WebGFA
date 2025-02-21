@@ -160,7 +160,7 @@ function startServer() {
 async function startDependencies() {
     let processes = [];
     if (config.features.interstellar) processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar }}));
-    if (config.features['web-ssh']) processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.web-ssh }}));
+    if (config.features['web-ssh']) processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports['web-ssh'] }}));
 
     processes.forEach(proc => {
         proc.on("exit", code => console.log(`Child exited with code ${code}`));

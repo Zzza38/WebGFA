@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "install": "node packages/build.js",
-    "test": "node src/server.js --dev"
+    "dev": "node src/server.js --dev"
   },
   "author": "",
   "license": "ISC",
