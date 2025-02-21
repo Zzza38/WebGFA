@@ -338,8 +338,7 @@ async function serveHtmlFile(reqPath, res) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
         const normalizedPath = urlUtils.normalizePath(reqPath);
-        console.log(normalizedPath)
-        const fullPath = path.resolve(staticDir, file);
+        const fullPath = path.resolve(staticDir, normalizedPath);
 
         // Security check
         if (!fullPath.startsWith(staticDir)) {
