@@ -31,7 +31,6 @@ form.addEventListener('submit', function (event) {
     })
         .then(response => {
             if (response.ok) {
-                localStorage.setItem('loggedIn', 'true');
                 window.location.href = '/';
             } else {
                 return response.text();
@@ -45,7 +44,3 @@ form.addEventListener('submit', function (event) {
             alertText.textContent = 'Connection error';
         });
 });
-
-if (localStorage.getItem('loggedIn')) {
-    window.location.href = '/';
-}
