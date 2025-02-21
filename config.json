@@ -1,4 +1,12 @@
 {
-    "there to exist": "config.json",
-    "later when needed will add more": "to this file"
+    "ports": {
+        "main": 8000,
+        "interstellar": 3000,
+        "web-ssh": 2222
+    },
+    "features": {
+        "interstellar": true,
+        "web-ssh": true,
+        "login": true
+    }
 }

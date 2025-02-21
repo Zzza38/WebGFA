@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "build": "node packages/build.js",
+    "install": "node packages/build.js",
     "test": "node src/server.js --dev"
   },
   "author": "",
