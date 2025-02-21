@@ -2,11 +2,23 @@ const { spawn } = require('child_process');
 const fs = require('fs/promises');
 const path = require('path');
 
-// Function that runs a command as a single string
+// Updated runCommand to return a promise so commands can run sequentially
 function runCommand(command, options = {}) {
-    const proc = spawn(command, { shell: true, stdio: 'inherit', ...options });
-    proc.on('error', (error) => {
-        console.error(`Error executing command "${command}":`, error);
+    return new Promise((resolve, reject) => {
+        const [executable, ...args] = command.split(' ');
+        const proc = spawn(executable, args, { shell: true, stdio: 'inherit', ...options });
+        proc.on('error', (error) => {
+            console.error(`Error executing command "${command}":`, error);
+            reject(error);
+        });
+        proc.on('exit', (code) => {
+            if (code !== 0) {
+                console.error(`Command "${command}" exited with code ${code}`);
+                reject(new Error(`Command "${command}" exited with code ${code}`));
+            } else {
+                resolve();
+            }
+        });
     });
 }
 
@@ -27,13 +39,14 @@ process.chdir(__dirname);
 // Removing all files in the directory except build.js
 (async () => {
     await cleanupDirectory();
-    // Cloning the repos
+    // Cloning the repositories
     runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
-    runCommand('git clone https://github.com/billchurch/webssh2.git');
-    runCommand('git checkout current', { cwd: './webssh2' });
+    await runCommand('git clone --branch current https://github.com/billchurch/webssh2.git');
 
+    // Setting the correct branch
+    //await runCommand('git checkout current', { cwd: './webssh2' });
 
     // Installing dependencies
     runCommand('npm install', { cwd: './Interstellar' });
-    runCommand('npm install --production', { cwd: './webssh2/app' });
+    await runCommand('npm install --production', { cwd: './webssh2/app' });
 })();
