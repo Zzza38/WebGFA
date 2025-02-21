@@ -1,4 +1,4 @@
-const username = fetch('/api/get-iser', {
+const username = fetch('/api/get-user', {
     method: 'POST'
 }).then(response => {
     if (response.ok) {
