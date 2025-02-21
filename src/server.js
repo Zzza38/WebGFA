@@ -35,9 +35,9 @@ const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
 const extraTags = [
-    // non module tags
-    "<script src='/code/universalCode/aboutblankcloak.js'></script>",
-    "<script src='/code/universalCode/autoSave.js'></script>",
+    // module tags to prevent variable reading
+    "<script src='/code/universalCode/aboutblankcloak.js' type='module'></script>",
+    "<script src='/code/universalCode/autoSave.js' type='module'></script>",
 ];
 
 const excludedTags = {};

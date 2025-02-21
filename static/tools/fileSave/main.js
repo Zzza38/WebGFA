@@ -1,14 +1,26 @@
+const username = fetch('/api/get-iser', {
+    method: 'POST'
+}).then(response => {
+    if (response.ok) {
+        return response.json();
+    }
+    throw new Error('Failed to get username');
+}).then(data => {
+    return data.user;
+}).catch(error => {
+    console.error('Error getting username:', error);
+});
 const saveData = fetch('/api/get-save', {
     method: 'POST'
 }).then(response => {
     if (response.ok) {
         return response.json();
     }
-    throw new Error('Failed to save data');
+    throw new Error('Failed to get save data');
 }).then(data => {
     return data;
 }).catch(error => {
-    console.error('Error saving data:', error);
+    console.error('Error getting save data:', error);
 });
 
 function importStorageData(data) {
