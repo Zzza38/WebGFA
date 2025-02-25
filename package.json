@@ -8,7 +8,7 @@
     "build": "node packages/build.js",
     "dev": "node src/server.js --dev"
   },
-  "author": "",
+  "author": "Zzza38",
   "license": "ISC",
   "dependencies": {
     "@genkit-ai/googleai": "^1.0.5",
