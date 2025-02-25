@@ -4,25 +4,23 @@
 <head>
   <link rel="icon" href="/favicon.ico">
   <title>Settings</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
-
-    body {
-      font-family: 'Ubuntu', sans-serif;
-      text-align: center;
-      background-color: #000;
-      /* Set background color to black */
-      color: #FFF;
-      margin: 0;
-      padding: 0;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <h1>Change Log</h1>
-    <p>Coming soon...</p>
-    <a href="/">Go back</a>
+  <h1>Change Log</h1>
+  <div id="message" style = "display: none;">
+    <h3>Hey! This is currently disabled.</h3>
+    <p>I have someone working on adding a full changelog, complete with explanations and my crashouts and programming.
+    </p>
+    <a href="/">Return to the main menu...</a>
+  </div>
+  <div id="commits">
+    <p>Sammy, after you finish working on a section just email me the text. I'll add a button to send it to me later.</p>
+    <textarea id="commitText" placeholder="Enter commit messages here..."></textarea>
+    <div id="commitContainer"></div>
+    <script src="main.js"></script>
+  </div>
 </body>
 
 </html>

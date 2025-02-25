@@ -33,11 +33,12 @@ button {
     cursor: pointer;
 }
 
-#container {
-    display: inline-block;
-}
 button:hover {
     background-color: #0056b3;
+}
+
+#container {
+    display: inline-block;
 }
 
 .color-picker-container {
