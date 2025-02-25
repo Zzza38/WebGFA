@@ -70,11 +70,11 @@ async function fetchUsername() {
     }
 }
 
-async () => {
+(async () => {
     const username = await fetchUsername();
     if (username === 'guest') {
        console.error('Cannot save data for guest user');
     } else {
       let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
     }
-}();
+})();
