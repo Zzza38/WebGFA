@@ -7,8 +7,7 @@ async function fetchUsername() {
             }
         });
         const data = await response.json();
-        return data.user;
-        console.log("Username:", username);
+        return await data.user;
     } catch (error) {
         console.error("Error fetching username:", error);
     }
@@ -56,4 +55,4 @@ async () => {
         document.getElementById("commits").style.display = "none"
         document.getElementById("message").style.display = "block"
     }
-}
+}();

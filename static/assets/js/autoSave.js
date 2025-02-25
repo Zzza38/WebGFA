@@ -54,21 +54,27 @@ function sendData() {
     }
 }
 
-const username = fetch('/api/get-user', {
-    method: 'POST'
-}).then(response => {
-    if (response.ok) {
-        return response.json();
+async function fetchUsername() {
+    try {
+        const response = await fetch("/api/get-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await response.json();
+        return data.user;
+        console.log("Username:", username);
+    } catch (error) {
+        console.error("Error fetching username:", error);
     }
-    throw new Error('Failed to fetch user');
-}).then(data => {
-    return data.user;
-}).catch(error => {
-    console.error('Error fetching user:', error);
-});
-
-if (username === 'guest') {
-    console.error('Cannot save data for guest user');
-} else {
-    let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
 }
+
+async () => {
+    const username = await fetchUsername();
+    if (username === 'guest') {
+       console.error('Cannot save data for guest user');
+    } else {
+      let saveInterval = setInterval(sendData, (1000 * 60) * 1); // Save every minute
+    }
+}();
