@@ -304,8 +304,19 @@ async function handleApiRequest(req, res) {
             'get-save': async () => {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
                 res.json({ data: db.users.save[user] });
+            },
+            'save-changeLog': async () => {
+                const { data } = req.body
+                if (user !== 'sammy') return res.status(403).send('Sammy only');
+                db.changeLog = data;
+                await writeDatabaseChanges();
+                res.json({ success: true });
+            },
+            'get-changeLog': async () => {
+                if (user !== 'sammy') return res.status(403).send('Sammy only');
+                res.json({ data: db.changeLog })
             }
-        }[service];
+         }[service];
         const getHandler = {
             'updates': async () => {
                 res.set('Content-Type', 'text/event-stream');

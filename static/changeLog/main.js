@@ -7,7 +7,22 @@ async function fetchUsername() {
             }
         });
         const data = await response.json();
-        return await data.user;
+        return data.user;
+    } catch (error) {
+        console.error("Error fetching username:", error);
+    }
+}
+
+async function fetchChangeLog() {
+    try {
+        const response = await fetch("/api/get-changeLog", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await response.json();
+        return data.data;
     } catch (error) {
         console.error("Error fetching username:", error);
     }
@@ -45,6 +60,21 @@ document.getElementById("commitText").addEventListener("input", () => {
     });
 });
 
+document.getElementById("pushCommit").addEventListener("click", async () => {
+    const commitText = document.getElementById("commitText").value;
+    try {
+        const response = await fetch("/api/save-changeLog", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ data: commitText })
+        });
+    } catch (error) {
+        console.error("Error sending changelog:", error);
+    }
+});
+
 let username;
 (async () => {
     username = await fetchUsername();
@@ -54,5 +84,6 @@ let username;
     } else {
         document.getElementById("commits").style.display = "none"
         document.getElementById("message").style.display = "block"
+        document.getElementById("commitText").value = fetchChangeLog();
     }
 })();
