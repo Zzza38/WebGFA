@@ -1,5 +1,3 @@
-async () => {const username = await fetchUsername()}
-
 async function fetchUsername() {
     try {
         const response = await fetch("/api/get-user", {
@@ -48,5 +46,7 @@ document.getElementById("commitText").addEventListener("input", () => {
     });
 });
 
-if (username !== "sammy") document.getElementById("message").style.display = "block"
-else document.getElementById("commits").style.display = "none"
+async () => {
+    const username = await fetchUsername();
+    if (username !== "sammy" || username !== "zion") document.getElementById("commits").style.display = "none"
+}
