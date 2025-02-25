@@ -48,5 +48,11 @@ document.getElementById("commitText").addEventListener("input", () => {
 
 async () => {
     const username = await fetchUsername();
-    if (username !== "sammy" || username !== "zion") document.getElementById("commits").style.display = "none"
+    if (username === "sammy" || username === "zion") {
+        document.getElementById("commits").style.display = "block"
+        document.getElementById("message").style.display = "none"
+    } else {
+        document.getElementById("commits").style.display = "none"
+        document.getElementById("message").style.display = "block"
+    }
 }
