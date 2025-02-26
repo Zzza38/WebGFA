@@ -1,12 +1,17 @@
 {
     "ports": {
         "main": 8000,
+        "development": 5000,
         "interstellar": 3000,
-        "web-ssh": 2222
+        "webssh": 2222
     },
     "features": {
         "interstellar": true,
-        "web-ssh": true,
+        "webssh": true,
         "login": true
+    },
+    "installed": {
+        "interstellar": false,
+        "webssh": false
     }
 }

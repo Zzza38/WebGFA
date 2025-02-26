@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node src/server.js",
     "build": "node packages/build.js",
+    "update": "node packages/build.js --update"
     "dev": "node src/server.js --dev"
   },
   "author": "Zzza38",
