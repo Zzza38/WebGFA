@@ -9,12 +9,7 @@ function handleCustomization() {
     isCusMenuOpen = !isCusMenuOpen; // Toggle the menu state
     let button = document.getElementById('cus-toggleMenu');
     let menu = document.getElementById('cus-menu');
-    let defaultColors = {
-        main: "#007bff",
-        mainText: "#ffffff",
-        buttonText: "#ffffff",
-        bg: "#000000"
-    };
+    let defaultColors = config.defaultColors;
 
     if (!localStorage.getItem('cus-mainColor') || localStorage.getItem('cus-mainColor') === localStorage.getItem('cus-bgColor')) {
         Object.values(defaultColors).forEach((color, i) => {
