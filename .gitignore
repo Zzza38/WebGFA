@@ -19,3 +19,6 @@ data/database-copy.json
 # Ignore packages that are cloned from GitHub by npm run build
 packages/*
 !packages/build.js
+
+# Ignore scraped sites
+src/sites

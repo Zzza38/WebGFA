@@ -6,16 +6,20 @@
   "scripts": {
     "start": "node src/server.js",
     "build": "node packages/build.js",
+    "update": "node packages/build.js --update"
     "dev": "node src/server.js --dev"
   },
-  "author": "",
+  "author": "Zzza38",
   "license": "ISC",
   "dependencies": {
     "@genkit-ai/googleai": "^1.0.5",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "genkit": "^1.0.5",
     "http-proxy": "^1.18.1",
-    "http-proxy-middleware": "^3.0.3"
+    "http-proxy-middleware": "^3.0.3",
+    "puppeteer": "^24.2.1"
   }
 }

@@ -14,6 +14,7 @@ const urlUtils = require("./functions/urlUtils.js");
 const logUtils = require('./functions/logFileUtils.js');
 const db = require("../data/database.json");
 const config = require("../config.json");
+const games = require("../games.json");
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -30,7 +31,7 @@ try {
 
 const app = express();
 const dev = process.argv.includes("--dev");
-const HTTP_PORT = dev ? 5000 : 8000;
+const HTTP_PORT = process.env.PORT ? process.env.PORT : dev ? config.ports.development : config.ports.main;
 const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
@@ -55,7 +56,7 @@ app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    const sessionID = req.cookies.uid
+    const sessionID = req.cookies.uid;
     if (!Object.values(db.users.sessionID).includes(sessionID)) res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });;
     next();
 });
@@ -74,7 +75,6 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 (async () => {
     try {
-    
         await clearLogFile(logFilePath);
         console.log("--NAME-START--");
         console.log(logUtils.generateLogFileName());
@@ -89,7 +89,7 @@ app.use(handleMainRequest);
 })();
 
 /////////////////////////////////////////////////////////////
-//                     CORE FUNCTIONS                      //
+//                     FUNCTIONS                           //
 /////////////////////////////////////////////////////////////
 async function clearLogFile(filePath) {
     try {
@@ -108,7 +108,7 @@ async function handleMainRequest(req, res, next) {
     if (isHtmlRequest(reqPath)) {
         await serveHtmlFile(reqPath, res);
         const humanReadableDate = new Date().toLocaleString();
-        let body = {}
+        let body = {};
         body['Path'] = reqPath;
         body['Username'] = user;
         body['UID'] = db.users.sessionID[user];
@@ -128,7 +128,7 @@ async function handleLogin(req, res) {
         const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
         res.cookie('uid', uid, { httpOnly: true, secure: true });
         db.users.sessionID[username] = uid;
-        await writeDatabaseChanges();
+        await writeJSONChanges(db);
         return res.status(200).send('Login successful');
     }
 
@@ -150,20 +150,24 @@ function startServer() {
 }
 
 async function startDependencies() {
+    
     let processes = [];
     let names = [];
-    if (config.features.interstellar) processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar }})); names.push("Interstellar");
-    if (config.features['web-ssh']) processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports['web-ssh'] }})); names.push("WebSSH");
-
+    if (config.features.interstellar) {
+        processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar }})); 
+        names.push("Interstellar");
+    }
+    if (config.features.webssh) {
+        processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh }})); 
+        names.push("WebSSH");
+    }
     processes.forEach((proc, index) => {
         proc.on("exit", code => console.log(`${names[index]} exited with code ${code}`));
         proc.on("error", (err) => console.error(`${names[index]} failed:`, err));
     });
 
 }
-/////////////////////////////////////////////////////////////
-//                  HELPER FUNCTIONS                       //
-/////////////////////////////////////////////////////////////
+
 function generateUID() {
     const hex1 = crypto.randomBytes(2).toString("hex"); // 4 chars
     const hex2 = crypto.randomBytes(2).toString("hex"); // 4 chars
@@ -173,13 +177,15 @@ function generateUID() {
 
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
 }
-async function writeDatabaseChanges() {
+
+async function writeJSONChanges(json, path = "../data/database.json") {
     try {
-        await fs.writeFile(path.resolve(__dirname, '../data/database.json'), JSON.stringify(db, null, 2));
+        await fs.writeFile(path.resolve(__dirname, path), JSON.stringify(json, null, 2));
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
 }
+
 function isHtmlRequest(path) {
     return path === '/' || Boolean(path.match(/^\/(.*\.html$|.*\/$|[^\/\.]+\/?$)/));
 }
@@ -214,18 +220,18 @@ async function handleApiRequest(req, res) {
                 }
             },
             'getGames': async () => {
-                const base = db.data.games || {};
+                const base = games.games || {};
                 const premium = db.users.permissions[user]?.includes('prem')
-                    ? db.data.premiumGames || {}
+                    ? games.premiumGames || {}
                     : {};
 
                 res.json({ ...base, ...premium });
 
             },
             'getTools': async () => {
-                const base = db.data.tools || {};
+                const base = games.tools || {};
                 const premium = db.users.permissions[user]?.includes('prem')
-                    ? db.data.premiumTools || {}
+                    ? games.premiumGames || {}
                     : {};
 
                 res.json({ ...base, ...premium });
@@ -235,7 +241,7 @@ async function handleApiRequest(req, res) {
                 // Clear session cookie
                 res.clearCookie('uid');
                 delete db.users.sessionID[user];
-                await writeDatabaseChanges();
+                await writeJSONChanges(db);
                 res.redirect('/');
             },
             // Messaging API
@@ -254,7 +260,7 @@ async function handleApiRequest(req, res) {
                 };
 
                 db.messages[id] = messageData;
-                await writeDatabaseChanges();
+                await writeJSONChanges(db);
                 res.json(messageData);
                 messageEmitter.emit('message');
             },
@@ -269,7 +275,7 @@ async function handleApiRequest(req, res) {
 
                 message.content = content;
                 message.edited = true;
-                await writeDatabaseChanges();
+                await writeJSONChanges(db);
                 res.json(message);
                 messageEmitter.emit('message');
             },
@@ -283,7 +289,7 @@ async function handleApiRequest(req, res) {
                 if (message.user !== user) return res.status(403).send('Forbidden');
 
                 delete db.messages[id];
-                await writeDatabaseChanges();
+                await writeJSONChanges(db);
                 res.json({ success: true });
                 messageEmitter.emit('message');
             },
@@ -298,7 +304,7 @@ async function handleApiRequest(req, res) {
                 if (!data) return res.status(400).send('Missing data');
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
                 db.users.save[user] = data;
-                await writeDatabaseChanges();
+                await writeJSONChanges(db);
                 res.json({ success: true });
             },
             'get-save': async () => {

@@ -1,8 +1,11 @@
 const { spawn } = require('child_process');
 const fs = require('fs/promises');
 const path = require('path');
+const config = require("../config.json");
 
-// Updated runCommand to return a promise so commands can run sequentially
+const update = process.argv.includes("--update");
+
+// chatgpt made a cool command so imma use it
 function runCommand(command, options = {}) {
     return new Promise((resolve, reject) => {
         const [executable, ...args] = command.split(' ');
@@ -21,6 +24,13 @@ function runCommand(command, options = {}) {
         });
     });
 }
+async function writeJSONChanges(json, path = "../config.json") {
+    try {
+        await fs.writeFile(path.resolve(__dirname, path), JSON.stringify(json, null, 2));
+    } catch (error) {
+        console.error('Error writing database changes:', error);
+    }
+}
 
 async function cleanupDirectory() {
     const currentFile = path.basename(__filename);
@@ -36,14 +46,53 @@ async function cleanupDirectory() {
 // Needed to keep files in ./packages
 process.chdir(__dirname);
 
-// Removing all files in the directory except build.js
-(async () => {
-    await cleanupDirectory();
-    // Cloning the repositories
-    await runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
-    await runCommand('git clone --branch current https://github.com/billchurch/webssh2.git');
+if (update) {
+    (async () => {
+        if (config.features.interstellar) {
+            try {
+                await runCommand('git fetch', { cwd: './Interstellar' });
+                await runCommand('git pull', { cwd: './Interstellar' });
+                await runCommand('npm install', { cwd: './Interstellar' });
+            } catch (error) {
+                console.error("Error updating Interstellar: ", error)
+            }
+        }
+        if (config.features.webssh) {
+            try {
+                await runCommand('git fetch', { cwd: './webssh2' });
+                await runCommand('git pull', { cwd: './webssh2' });
+                await runCommand('npm install', { cwd: './webssh2' });
+            } catch (error) {
+                console.error("Error updating WebSSH: ", error)
+            }
+        }
+    })();
+} else {
+    (async () => {
+        await cleanupDirectory();
 
-    // Installing dependencies
-    await runCommand('npm install', { cwd: './Interstellar' });
-    await runCommand('npm install --production', { cwd: './webssh2/app' });
-})();
+        // Interstellar
+        if (config.features.interstellar) {
+            try {
+                await runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
+                await runCommand('npm install', { cwd: './Interstellar' });
+                config.installed.interstellar = true;
+                writeJSONChanges(config);
+            } catch (error) {
+                console.error("Error when downloading and setting up Interstellar: ", error);
+            }
+        }
+
+        // WebSSH2
+        if (config.features.webssh) {
+            try {
+                await runCommand('git clone https://github.com/billchurch/webssh2.git');
+                await runCommand('npm install --omit=dev', { cwd: './webssh2/app' });
+                config.installed.webssh = true;
+                writeJSONChanges(config);
+            } catch (error) {
+                console.error("Error when downloading and setting up WebSSH2: ", error);
+            }
+        }
+    })();
+}
