@@ -170,12 +170,7 @@ function renderTools(games) {
 }
 
 function reloadCustomization() {
-    let defaultColors = {
-        main: "#007bff",
-        mainText: "#ffffff",
-        buttonText: "#ffffff",
-        bg: "#000000"
-    }
+    let defaultColors = config.defaultColors;
     // glitch occured where all colors were set to 000, so to reset them we need to check if they are the same
     if (!localStorage.getItem('cus-mainColor') || localStorage.getItem('cus-mainColor') === localStorage.getItem('cus-bgColor')) {
         Object.values(defaultColors).forEach((color, i) => {

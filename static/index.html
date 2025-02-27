@@ -11,6 +11,9 @@
 
 <body>
     <script src="main.js" defer></script>
+    <script>
+        const config = JSON.parse(fetch('/config.json'));
+    </script>
     <div id="topbar">
         <a href='/settings' class="topbar-link">Settings</a>
         <a href='/changeLog' class="topbar-link">Change Log</a>

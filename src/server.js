@@ -12,7 +12,15 @@ const EventEmitter = require('events');
 
 const urlUtils = require("./functions/urlUtils.js");
 const logUtils = require('./functions/logFileUtils.js');
-const db = require("../data/database.json");
+let db;
+try {
+    db = require("../data/database.json");
+} catch {
+    (async () => {
+        await fs.copyFile("../data/default-database.json", "../data/database.json");
+        db = require("../data/database.json");
+    })();
+}
 const config = require("../config.json");
 const games = require("../games.json");
 
@@ -67,6 +75,9 @@ app.post('/login', handleLogin);
 app.post('/api', handleApiRequest);
 
 // Get Requests
+app.use('/config.json', (req, res) => {
+    res.json(config['client-config'])
+})
 app.use('/api', handleApiRequest);
 app.use(handleMainRequest);
 
@@ -150,15 +161,15 @@ function startServer() {
 }
 
 async function startDependencies() {
-    
+
     let processes = [];
     let names = [];
     if (config.features.interstellar) {
-        processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar }})); 
+        processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar } }));
         names.push("Interstellar");
     }
     if (config.features.webssh) {
-        processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh }})); 
+        processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh } }));
         names.push("WebSSH");
     }
     processes.forEach((proc, index) => {
@@ -322,7 +333,7 @@ async function handleApiRequest(req, res) {
                 if (user !== 'sammy') return res.status(403).send('Sammy only');
                 res.json({ data: db.changeLog })
             }
-         }[service];
+        }[service];
         const getHandler = {
             'updates': async () => {
                 res.set('Content-Type', 'text/event-stream');
