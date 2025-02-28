@@ -47,6 +47,7 @@ const extraTags = [
     // module tags to prevent variable reading
     "<script src='/assets/js/aboutblankcloak.js' type='module'></script>",
     "<script src='/assets/js/autoSave.js' type='module'></script>",
+    "<script> let config; (async () => { config = JSON.parse(fetch('/config.json')); }) </script>"
 ];
 
 const excludedTags = {};
