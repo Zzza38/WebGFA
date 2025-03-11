@@ -1,6 +1,8 @@
 /////////////////////////////////////////////////////////////
 //                   IMPORT STATEMENTS                     //
 /////////////////////////////////////////////////////////////
+
+// npm imports
 const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
@@ -9,7 +11,13 @@ const { exec, spawn } = require('child_process');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
 const EventEmitter = require('events');
+require("dotenv").config()
 
+// needed to have the directory be at /src, not / (relative to the package.json)
+process.chdir(__dirname);
+
+// custom imports
+const emailUtils = require('./functions/emailUtils.js');
 const urlUtils = require("./functions/urlUtils.js");
 const logUtils = require('./functions/logFileUtils.js');
 let db;
@@ -19,9 +27,19 @@ try {
     (async () => {
         await fs.copyFile("../data/default-database.json", "../data/database.json");
         db = require("../data/database.json");
+        console.log("Database copied from default database file.")
     })();
 }
-const config = require("../config.json");
+let config;
+try {
+    config = require("../config.json");
+} catch {
+    (async () => {
+        await fs.copyFile("../default-config.json", "../config.json");
+        db = require("../config.json");
+        console.log("Config copied from default config file.")
+    })();
+}
 const games = require("../games.json");
 
 /////////////////////////////////////////////////////////////
@@ -47,7 +65,7 @@ const extraTags = [
     // module tags to prevent variable reading
     "<script src='/assets/js/aboutblankcloak.js' type='module'></script>",
     "<script src='/assets/js/autoSave.js' type='module'></script>",
-    "<script> let config; (async () => { config = JSON.parse(fetch('/config.json')); }) </script>"
+    `<script> const config = JSON.parse('${JSON.stringify(config['client-config'])}')</script>`
 ];
 
 const excludedTags = {};
@@ -66,7 +84,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
     const sessionID = req.cookies.uid;
-    if (!Object.values(db.users.sessionID).includes(sessionID)) res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });;
+    !Object.values(db.users).some(user => user.sessionID === sessionID) && res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });
     next();
 });
 
@@ -76,9 +94,6 @@ app.post('/login', handleLogin);
 app.post('/api', handleApiRequest);
 
 // Get Requests
-app.use('/config.json', (req, res) => {
-    res.json(config['client-config'])
-})
 app.use('/api', handleApiRequest);
 app.use(handleMainRequest);
 
@@ -91,7 +106,6 @@ app.use(handleMainRequest);
         console.log("--NAME-START--");
         console.log(logUtils.generateLogFileName());
         console.log("--NAME-END--");
-        process.chdir(__dirname);
         startDependencies();
         startServer();
     } catch (error) {
@@ -115,7 +129,7 @@ async function clearLogFile(filePath) {
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
     const sessionId = req.cookies.uid;
-    const user = Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
+    const user = !Object.keys(db.users).find(user => db.users[user].sessionID === sessionId) ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
 
     if (isHtmlRequest(reqPath)) {
         await serveHtmlFile(reqPath, res);
@@ -123,7 +137,7 @@ async function handleMainRequest(req, res, next) {
         let body = {};
         body['Path'] = reqPath;
         body['Username'] = user;
-        body['UID'] = db.users.sessionID[user];
+        body['UID'] = user !== 'guest' ? db.users[user].sessionID : 'GUEST-ACCOUNT';
         body['Date'] = humanReadableDate;
         const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
         oldTable = await updateTable(body, csvFilePath, oldTable);
@@ -135,11 +149,11 @@ async function handleMainRequest(req, res, next) {
 async function handleLogin(req, res) {
     const { username, password } = req.body;
 
-    if (db.users.usernames[username] === password) {
+    if (db.users[username].password === password) {
         // Set login cookies
         const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
         res.cookie('uid', uid, { httpOnly: true, secure: true });
-        db.users.sessionID[username] = uid;
+        db.users[username].sessionID = uid;
         await writeJSONChanges(db);
         return res.status(200).send('Login successful');
     }
@@ -149,27 +163,30 @@ async function handleLogin(req, res) {
 
 async function handleGitHubWebhook(req, res) {
     res.status(202).send('Accepted');
+    if (config.features.githubAutoPull.pull == false) return;
     if (req.headers['x-github-event'] === 'push') {
-        exec('su - zion -c "cd /home/zion/WebGFA-dev && git pull"');
-        exec('su - zion -c "cd /home/zion/WebGFA && git pull" && systemctl restart webgfa');
+        exec(`cd ${__dirname}../ && git pull`);
+        exec(config.features.githubAutoPull.restartCommand);
+        // if a restart command is not needed then put it to something like 'dir', works across OSes and does nothing
+        // a fork would work well with this
     }
 }
 
 function startServer() {
-    http.createServer(app).listen(HTTP_PORT, () =>
-        console.log(`HTTP server running on port ${HTTP_PORT}`)
-    );
+    http.createServer(app).listen(HTTP_PORT, () => {
+        console.log(`WebGFA running at port ${HTTP_PORT}`);
+        console.log(`http://localhost:${HTTP_PORT}`);
+    });
 }
 
 async function startDependencies() {
-
     let processes = [];
     let names = [];
-    if (config.features.interstellar) {
+    if (config.installed.interstellar) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar } }));
         names.push("Interstellar");
     }
-    if (config.features.webssh) {
+    if (config.installed.webssh) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh } }));
         names.push("WebSSH");
     }
@@ -190,9 +207,9 @@ function generateUID() {
     return `${hex1}-${hex2}-${hex3}-${hex4}-${hex5}`.toUpperCase();
 }
 
-async function writeJSONChanges(json, path = "../data/database.json") {
+async function writeJSONChanges(json, JSONpath = "../data/database.json") {
     try {
-        await fs.writeFile(path.resolve(__dirname, path), JSON.stringify(json, null, 2));
+        await fs.writeFile(path.resolve(__dirname, JSONpath), JSON.stringify(json, null, 2));
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
@@ -209,7 +226,7 @@ async function handleApiRequest(req, res) {
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
-        const user = sessionId === 'GUEST-ACCOUNT' ? 'guest' : Object.keys(db.users.sessionID).find(user => db.users.sessionID[user] === sessionId);
+        const user = sessionId === 'GUEST-ACCOUNT' ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
 
         // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
@@ -217,7 +234,7 @@ async function handleApiRequest(req, res) {
         const postHandler = {
             'getCSV': async () => {
                 // Check permissions (make sure user has admin rights to get the csv)
-                if (!db.users.permissions[user]?.includes('admin')) {
+                if (!db.users[user].permissions?.includes('admin')) {
                     return res.status(403).send('Forbidden');
                 }
 
@@ -233,7 +250,7 @@ async function handleApiRequest(req, res) {
             },
             'getGames': async () => {
                 const base = games.games || {};
-                const premium = db.users.permissions[user]?.includes('prem')
+                const premium = db.users[user].permissions?.includes('prem')
                     ? games.premiumGames || {}
                     : {};
 
@@ -242,7 +259,7 @@ async function handleApiRequest(req, res) {
             },
             'getTools': async () => {
                 const base = games.tools || {};
-                const premium = db.users.permissions[user]?.includes('prem')
+                const premium = db.users[user].permissions?.includes('prem')
                     ? games.premiumGames || {}
                     : {};
 
@@ -252,7 +269,7 @@ async function handleApiRequest(req, res) {
             'logout': async () => {
                 // Clear session cookie
                 res.clearCookie('uid');
-                delete db.users.sessionID[user];
+                delete db.users[user].sessionID;
                 await writeJSONChanges(db);
                 res.redirect('/');
             },
@@ -315,24 +332,46 @@ async function handleApiRequest(req, res) {
                 const { data } = req.body;
                 if (!data) return res.status(400).send('Missing data');
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
-                db.users.save[user] = data;
+                db.users[user].save = data;
                 await writeJSONChanges(db);
                 res.json({ success: true });
             },
             'get-save': async () => {
                 if (user === 'guest') return res.status(403).send('Forbidden for guests');
-                res.json({ data: db.users.save[user] });
+                res.json({ data: db.users[user].save });
             },
-            'save-changeLog': async () => {
-                const { data } = req.body
-                if (user !== 'sammy') return res.status(403).send('Sammy only');
-                db.changeLog = data;
-                await writeDatabaseChanges();
-                res.json({ success: true });
+            'request-account-creation': async () => {
+                const { username, email } = req.body;
+                if (Object.keys(db.users).find(user => db.users[user].email === email)) return res.status(409).send("Account with this email already exists.");
+                if (false) return res.status(403).send("This email is blacklisted.");
+                if (!emailUtils.isValidEmail(email)) return res.status(406).send("Invalid email format.");
+                db.users[username] = {
+                    password: "deactivated-account",
+                    email: email,
+                    creationID: generateUID()
+                };
+                await writeJSONChanges(db);
+                const link = encodeURI(`https://${config.features.login.url}/account/create/?creationID=${db.users[username].creationID}&username=${username}`);
+
+                emailUtils.sendEmail(email, 'Create Account with WebGFA', `
+                    Hello ${email}! You have decided to create a WebGFA account.
+                    To proceed, click on the link below!
+                    ${link}
+                `)
             },
-            'get-changeLog': async () => {
-                if (user !== 'sammy') return res.status(403).send('Sammy only');
-                res.json({ data: db.changeLog })
+            'create-account': async () => {
+                const { username, password, creationID } = req.body;
+                if (db.users[username].creationID != creationID &! db.users[user].permissions?.includes('admin')) return res.status(403).send("The specified username either does not have a creationID specified or the creationID is wrong.");
+                const oldUserEntry = db.users[username];
+                db.users[username] = {
+                    permissions: '',
+                    password: password,
+                    save: '',
+                    sessionID: creationID,
+                    email: oldUserEntry.email,
+                    creationDate: new Date().toISOString()
+                };
+                if (!db.users[user].permissions?.includes('admin')) res.cookie('uid', creationID, { httpOnly: true, secure: true })
             }
         }[service];
         const getHandler = {

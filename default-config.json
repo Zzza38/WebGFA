@@ -1,0 +1,34 @@
+{
+  "ports": {
+    "main": 8000,
+    "development": 5000,
+    "interstellar": 3000,
+    "webssh": 2222
+  },
+  "features": {
+    "interstellar": true,
+    "webssh": true,
+    "githubAutoPull": {
+      "pull": false,
+      "restartCommand": "dir"
+    },
+    "login": {
+      "email": true,
+      "url": "elaisveryfun.online"
+    }
+  },
+  "installed": {
+    "interstellar": false,
+    "webssh": false
+  },
+  "client-config": {
+    "defaultColors": {
+      "main": "#007bff",
+      "mainText": "#ffffff",
+      "buttonText": "#ffffff",
+      "bg": "#000000"
+    },
+    "name": "WebGFA",
+    "login": true
+  }
+}

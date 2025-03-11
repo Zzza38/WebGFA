@@ -24,9 +24,9 @@ function runCommand(command, options = {}) {
         });
     });
 }
-async function writeJSONChanges(json, path = "../config.json") {
+async function writeJSONChanges(json, jsonPath = "../config.json") {
     try {
-        await fs.writeFile(path.resolve(__dirname, path), JSON.stringify(json, null, 2));
+        await fs.writeFile(path.resolve(__dirname, jsonPath), JSON.stringify(json, null, 2));
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
@@ -74,7 +74,7 @@ if (update) {
         // Interstellar
         if (config.features.interstellar) {
             try {
-                await runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar');
+                await runCommand('git clone --branch main https://github.com/UseInterstellar/Interstellar.git');
                 await runCommand('npm install', { cwd: './Interstellar' });
                 config.installed.interstellar = true;
                 writeJSONChanges(config);
@@ -86,7 +86,7 @@ if (update) {
         // WebSSH2
         if (config.features.webssh) {
             try {
-                await runCommand('git clone https://github.com/billchurch/webssh2.git');
+                await runCommand('git clone --branch main https://github.com/billchurch/webssh2.git');
                 await runCommand('npm install --omit=dev', { cwd: './webssh2/app' });
                 config.installed.webssh = true;
                 writeJSONChanges(config);
