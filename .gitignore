@@ -1,8 +1,11 @@
 # Ignore Node.js modules directory
 node_modules
 
-# Ignore sensitive Firebase private key file
+# Ignore sensitive files
 data/firebasePrivateKey.json
+data/database.json
+data/database-copy.json
+.env
 
 # Ignore server log files
 server.log
@@ -11,10 +14,6 @@ webgfa.csv
 
 # Ignore Firestore backup file
 data/firestore_backup.json
-
-# Ignore JSON database exports
-data/database.json
-data/database-copy.json
 
 # Ignore packages that are cloned from GitHub by npm run build
 packages/*

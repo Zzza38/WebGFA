@@ -1,9 +1,19 @@
 {
     "messages": {},
     "users": {
-        "permissions": {},
-        "usernames": {},
-        "save": {},
-        "sessionID": {}
+        "admin": {
+            "permissions": "prem,admin",
+            "password": "admin",
+            "save": {},
+            "sessionID": "",
+            "email": ""
+        },
+        "guest": {
+            "permissions": "",
+            "password": "guest",
+            "save": {},
+            "sessionID": "guests have their own check for sessionIDs",
+            "email": ""
+        }
     }
 }
