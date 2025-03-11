@@ -4,7 +4,8 @@ require("dotenv").config();
 let browser;
 let page;
 (async () => {
-    browser = await puppeteer.launch();
+    if (process.arch == 'x64' || process.platform == 'win32') browser = await puppeteer.launch();
+    if (process.arch == 'arm64' && process.platform == 'linux') browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
     page = await browser.newPage();
 
     await startEmail();
