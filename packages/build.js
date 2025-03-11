@@ -94,5 +94,23 @@ if (update) {
                 console.error("Error when downloading and setting up WebSSH2: ", error);
             }
         }
+
+        if (process.arch == 'arm64') {
+            try {
+                await runCommand('sudo apt install -y chromium-browser');
+            } catch (error) {
+                try {
+                    await runCommand('sudo pacman -S chromium')
+                } catch (error) {
+                    if (process.platform == 'win32') {
+                        console.log('chromium for x64 was installed. this is fine but could be slow cuz of emulation.')
+                    } else {
+                        console.error('chromium was not installed. this is bad, and try to install it.')
+                        console.error('if not at /usr/bin/chromium-browser then either move it there or change the path of the chromium browser.')
+                    }
+                    
+                }
+            }
+        }
     })();
 }
