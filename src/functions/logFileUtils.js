@@ -1,4 +1,4 @@
-// handle log files, dont want them to be overwritten
+// handle log files, don't want them to be overwritten
 // imports
 const fs = require('fs');
 const path = require('path');

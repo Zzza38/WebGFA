@@ -3,19 +3,16 @@ require("dotenv").config();
 
 let browser;
 let page;
-(async () => {
-    if (process.arch == 'x64' || process.platform == 'win32') browser = await puppeteer.launch();
-    if (process.arch == 'arm64' && process.platform == 'linux') browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
-    page = await browser.newPage();
-
-    await startEmail();
-})();
-
 
 // using puppeteer, a non-2FA account is logged into and goes to mail.google.com
 
 async function startEmail() {
     try {
+        // linux puppeteer doesn't work with arm64, but windows works cuz of x64 emulation
+        if (process.arch == 'x64' || process.platform == 'win32') browser = await puppeteer.launch();
+        if (process.arch == 'arm64' && process.platform == 'linux') browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium-browser' });
+        page = await browser.newPage();
+
         await page.goto("https://mail.google.com/", { waitUntil: "networkidle2" });
 
         // **Login**
@@ -52,6 +49,7 @@ async function sendEmail(sendTo, subject, message) {
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 module.exports = {
+    startEmail,
     sendEmail,
     isValidEmail
 }
