@@ -11,11 +11,33 @@
     <div id="container">
         <div id="create" class="accountBox">
             <h2>Account Creation</h2>
-            <p>Type in your school email, click authenticate, click on the link sent to your email, and go from there!
+            <p>
+                To create an account, enter a username and your email. <br>
+                An email should arrive into your inbox. <br>
+                Click the link to finish the account creation process. <br>
             </p>
-            <input id="emailCreate" type="email">
-            <button id="createAccount" type="submit">Authenticate</button>
+            <form>
+                <label>Username</label> <br> <br>
+                <input id="usernameCreate" type="text"> <br> <br>
+                <label>Email</label> <br> <br>
+                <input id="emailCreate" type="email"> <br> <br>
+                <button id="createAccount" type="submit">Send Email</button>
+            </form>
             <p class="alertText" id="createAlert"></p>
+        </div>
+        <div id="edit" class="accountBox">
+            <h2>Password Reset</h2>
+            <p>
+                If you forgot your password, then type in your username here. <br> 
+                You should receive an email based on your email that you put in when it was first created. <br>
+                Click the link in the email, and change your password. Then try to login. <br>
+            </p>
+            <form>
+                <label>Username</label> <br> <br>
+                <input id="usernameReset" type="username"> <br> <br>
+                <button id="resetPassword" type="submit">Send Email</button>
+            </form>
+            <p class="alertText" id="resetAlert"></p>
         </div>
     </div>
     <script src="main.js"></script>

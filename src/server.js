@@ -62,10 +62,14 @@ const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
 const extraTags = [
-    // module tags to prevent variable reading
+    // module tags to prevent variable definitions overlapping
     "<script src='/assets/js/aboutblankcloak.js' type='module'></script>",
     "<script src='/assets/js/autoSave.js' type='module'></script>",
-    `<script> const config = JSON.parse('${JSON.stringify(config['client-config'])}')</script>`
+    "<script src='/assets/js/particles.js'></script>",
+    "<script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8561781792679334\" crossorigin=\"anonymous\"></script>",
+
+    `<script> const config = JSON.parse('${JSON.stringify(config['client-config'])}')</script>`,
+    "<div id='particles-js' style='position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;'></div>"
 ];
 
 const excludedTags = {};
@@ -108,6 +112,7 @@ app.use(handleMainRequest);
         console.log("--NAME-END--");
         startDependencies();
         startServer();
+        if (!dev) emailUtils.startEmail();
     } catch (error) {
         console.error('Initialization failed:', error);
         process.exit(1);
@@ -342,9 +347,11 @@ async function handleApiRequest(req, res) {
             },
             'request-account-creation': async () => {
                 const { username, email } = req.body;
-                if (Object.keys(db.users).find(user => db.users[user].email === email)) return res.status(409).send("Account with this email already exists.");
+
+                if (Object.keys(db.users).some(user => db.users[user].email === email)) return res.status(409).send("Account with this email already exists.");
+                if (db.users.hasOwnProperty(username)) return res.status(409).send("Account with this username already exists.");
                 if (false) return res.status(403).send("This email is blacklisted.");
-                if (!emailUtils.isValidEmail(email)) return res.status(406).send("Invalid email format.");
+                if (!emailUtils.isValidEmail(email)) return res.status(400).send("Invalid email format.");
                 db.users[username] = {
                     password: "deactivated-account",
                     email: email,
@@ -360,9 +367,14 @@ async function handleApiRequest(req, res) {
                 `)
             },
             'create-account': async () => {
-                const { username, password, creationID } = req.body;
-                if (db.users[username].creationID != creationID &! db.users[user].permissions?.includes('admin')) return res.status(403).send("The specified username either does not have a creationID specified or the creationID is wrong.");
+                let { username, password, creationID, updatedUsername } = req.body;
+                if (db.users[username].creationID != creationID & !db.users[user].permissions?.includes('admin')) return res.status(403).send("The specified username either does not have a creationID specified or the creationID is wrong.");
                 const oldUserEntry = db.users[username];
+
+                if (updatedUsername) {
+                    if (Object.keys(db.users).find(user => db.users[updatedUsernames])) return res.status(409).send("Account with this username already exists.")
+                    username = updatedUsername;
+                }
                 db.users[username] = {
                     permissions: '',
                     password: password,
@@ -371,7 +383,34 @@ async function handleApiRequest(req, res) {
                     email: oldUserEntry.email,
                     creationDate: new Date().toISOString()
                 };
-                if (!db.users[user].permissions?.includes('admin')) res.cookie('uid', creationID, { httpOnly: true, secure: true })
+
+                if (!db.users[user].permissions?.includes('admin')) res.cookie('uid', creationID, { httpOnly: true, secure: true });
+                return res.status(200).send('Account Created!')
+            },
+            'request-password-reset': async () => {
+                const { username } = req.body;
+
+                const email = db.users[username]?.email;
+                if (!email) return res.status(404).send('Email not found');
+
+                const resetID = generateUID();
+                db.users[username].resetID = resetID;
+
+                const link = encodeURI(`https://${config.features.login.url}/account/reset/?resetID=${resetID}&username=${username}`);
+
+                emailUtils.sendEmail(email, "Change WebGFA Password", `
+                    Hello ${username}! The password reset button was clicked for your username.
+                    To proceed, click on the link below. If you didn't ask for this, then just ignore it.
+                    ${link}
+                `)
+                return res.status(200).send('Password reset email sent.');
+            },
+            'reset-password': async () => {
+                const { username, resetID, password } = req.body;
+                if (db.users[username].resetID != resetID & !db.users[user].permissions?.includes('admin')) return res.status(403).send("The specified username either does not have a resetID specified or the resetID is wrong.");
+
+                db.users[username].password = password;
+                return res.status(200).send('Password successfully reset!');
             }
         }[service];
         const getHandler = {
@@ -427,10 +466,10 @@ async function serveHtmlFile(reqPath, res) {
             });
         });
 
-        if (!html.includes('</body>')) {
+        if (!html.includes('<body>')) {
             html += filteredTags.join('');
         } else {
-            html = html.replace('</body>', filteredTags.join('') + '</body>');
+            html = html.replace('<body>', '</body>' + filteredTags.join(''));
         }
 
         res.set('Content-Type', 'text/html').send(html);

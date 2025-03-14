@@ -5,6 +5,8 @@ node_modules
 data/firebasePrivateKey.json
 data/database.json
 data/database-copy.json
+data/firestore_backup.json
+
 .env
 
 # Ignore server log files
@@ -12,12 +14,12 @@ server.log
 log/
 webgfa.csv
 
-# Ignore Firestore backup file
-data/firestore_backup.json
-
 # Ignore packages that are cloned from GitHub by npm run build
 packages/*
 !packages/build.js
 
 # Ignore scraped sites
 src/sites
+
+# Ignore Custom config.json
+config.json

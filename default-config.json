@@ -7,17 +7,21 @@
   },
   "features": {
     "interstellar": true,
+    "interstellarURL": "https://inter.elaisveryfun.online",
     "webssh": true,
+    "websshURL": "https://ssh.elaisveryfun.online",
     "githubAutoPull": {
       "pull": false,
       "restartCommand": "dir"
     },
     "login": {
-      "email": true,
-      "url": "elaisveryfun.online"
+      "enabled": true,
+      "email": "email@example.com",
+      "url": "https://elaisveryfun.online"
     }
   },
   "installed": {
+    "MESSAGE": "DO NOT EDIT THIS SECTION! THIS WILL BE AUTOMATICALLY HANDLED BY NPM RUN BUILD!!!",
     "interstellar": false,
     "webssh": false
   },
@@ -29,6 +33,7 @@
       "bg": "#000000"
     },
     "name": "WebGFA",
-    "login": true
+    "login": true,
+    "email": "email@example.com"
   }
 }
