@@ -64,7 +64,6 @@ async function fetchUsername() {
         });
         const data = await response.json();
         return data.user;
-        console.log("Username:", username);
     } catch (error) {
         console.error("Error fetching username:", error);
     }

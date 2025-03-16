@@ -1,0 +1,132 @@
+<html lang="en">
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Max's Games</title>
+  <style type="text/css">
+    html {
+      overflow: auto;
+    }
+
+    html,
+    body,
+    div,
+    iframe {
+      margin: 0px;
+      padding: 0px;
+      height: 100%;
+      border: none;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      border: none;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .bottom {
+      bottom: -30vh;
+    }
+
+    #adsense-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup-content {
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      text-align: center;
+    }
+  </style>
+  <link href="/favicon.ico" rel="icon" type="image/x-icon">
+</head>
+
+<body>
+
+</body>
+<iframe src="" frameborder="0" marginheight="0" marginwidth="0" width="100%" height="100%" scrolling="auto"
+  id="frame"></iframe>
+<script>
+  function encodeUV(url) {
+    return encodeURIComponent(
+      url.split("")
+        .map((char, index) => index % 2 === 1 ? String.fromCharCode(2 ^ char.charCodeAt()) : char)
+        .join("")
+    );
+  }
+
+  function decodeUV(encodedUrl) {
+    return decodeURIComponent(encodedUrl)
+      .split("")
+      .map((char, index) => index % 2 === 1 ? String.fromCharCode(2 ^ char.charCodeAt()) : char)
+      .join("");
+  }
+
+  function proxyLink(link) {
+    return `${config.interstellarURL}/a/${encodeUV(link)}`;
+  }
+  const params = new URLSearchParams(window.location.search);
+  let gameId = params.get("id");
+
+  if (gameId) {
+    // Fetch gs.json
+    fetch("json/gs.json")
+      .then(response => response.json())
+      .then(data => {
+        // Check if the game is in gs.json
+        let game = data.find(game => game.id.toString() === gameId);
+        if (game) {
+          document.title = `${game.name}`;
+          if (game.url === "c") {
+            document.querySelector("#frame").src = `emu/c.html?sys=${game.sys}&g=${game.g}&id=${game.id}&mc=${game.mame}`;
+          } else if (game.url === "u") {
+            document.querySelector("#frame").src = `unity/${game.url}.html?g=${game.g}`;
+          }
+          else if (game.url === "h") {
+            document.querySelector("#frame").src = proxyLink(game.gameurl);
+          }
+        } else {
+          // If not found in gs.json, check dog.json
+          fetch("json/dog.json")
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(dogGames => {
+              // Log the dogGames response for debugging
+              console.log('dogGames response:', dogGames);
+              // Find the game in the dogGames array
+              let dogGame = dogGames.find(game => game.id.toString() === gameId);
+              if (dogGame) {
+                document.title = `${dogGame.name}`;
+                document.querySelector("#frame").src = proxyLink(dogGame.gameurl);
+              } else {
+                console.error('Game not found in dog.json for ID:', gameId);
+              }
+            })
+            .catch(error => console.error('Error fetching dog.json:', error));
+        }
+      })
+      .catch(error => console.error('Error fetching gs.json:', error));
+  }
+</script>
+</body>
+<script src="js/main.js"></script>
+
+</html>

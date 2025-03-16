@@ -1,6 +1,15 @@
-const username = localStorage.getItem('user');
+let username = localStorage.getItem("username"); 
+let hasEmail = localStorage.getItem("hasEmail");
+(async () => {
+    username = await fetchUsername();
+    hasEmail = await fetchHasEmail();
 
-// Keydown Function
+    // Keep the username in localStorage, for easy fetching. The client will then fetch the correct username.
+    localStorage.setItem("username", username);
+    localStorage.setItem("hasEmail", hasEmail);
+})();
+
+// Keydown Function (Put any events that happen on a key press here)
 document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.shiftKey && event.key === 'C') {
         const cookies = document.cookie.split(';');
@@ -12,6 +21,8 @@ document.addEventListener('keydown', function (event) {
     }
 });
 
+
+// Fetch stuff from the server
 async function logout() {
     localStorage.removeItem('loggedIn');
     await fetch('/api/logout', {
@@ -20,6 +31,33 @@ async function logout() {
     window.location.href = "/login";
 }
 
+async function fetchUsername() {
+    try {
+        const response = await fetch("/api/get-user", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+        const data = await response.json();
+        return data.user;
+    } catch (error) {
+        console.error("Error fetching username:", error);
+    }
+}
+
+async function fetchHasEmail() {
+    try {
+        const response = await fetch("/api/has-email");
+        if (response.status === 403) {
+            return true;
+        }
+        const data = await response.text();
+        return data === "true" ? true : false;
+    } catch (error) {
+        console.error("Error fetching hasEmail:", error);
+    } 
+}
 
 // Game Link Loading Code
 let allGames = [];
@@ -205,7 +243,15 @@ function reloadCustomization() {
     });
 }
 
+document.querySelectorAll('.popup').forEach(popup => {
+    popup.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+});
+
 // Run all the necessary functions to initialize
+if (username === "guest") document.getElementById('guestPopup').style.display = "";
+if (!hasEmail) document.getElementById('emailPopup').style.display = "";
 document.getElementById('searchG').addEventListener('input', filterGames); 
 reloadCustomization();
 localStorageLoad();

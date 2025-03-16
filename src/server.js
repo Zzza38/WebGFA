@@ -36,7 +36,7 @@ try {
 } catch {
     (async () => {
         await fs.copyFile("../default-config.json", "../config.json");
-        db = require("../config.json");
+        config = require("../config.json");
         console.log("Config copied from default config file.")
     })();
 }
@@ -77,18 +77,24 @@ const excludedTags = {};
 /////////////////////////////////////////////////////////////
 //                  EXPRESS SERVER SETUP                   //
 /////////////////////////////////////////////////////////////
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, '../static'), {
-    index: false,
-    extensions: ['html']
-}));
+app.use((req, res, next) => {
+    const reqPath = urlUtils.normalizePath(req.path);
+    if (reqPath.endsWith('.html')) {
+        return next(); // Ignores all HTML requests and passes them along
+    }
+    express.static(path.join(__dirname, '../static'))(req, res, next);
+});
 
+// Parsers
+app.use(cookieParser());
 app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
     const sessionID = req.cookies.uid;
-    !Object.values(db.users).some(user => user.sessionID === sessionID) && res.cookie('uid', 'GUEST-ACCOUNT', { httpOnly: true, secure: true });
+    // Quickly change all GUEST-ACCOUNT UIDs (old system) to new system
+    if (req.cookies.uid === "GUEST-ACCOUNT") res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
+    !Object.values(db.users).some(user => user.sessionID === sessionID) && res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
     next();
 });
 
@@ -107,11 +113,11 @@ app.use(handleMainRequest);
 (async () => {
     try {
         await clearLogFile(logFilePath);
-        console.log("--NAME-START--");
-        console.log(logUtils.generateLogFileName());
-        console.log("--NAME-END--");
+        console.log("--NAME-START--" + logUtils.generateLogFileName() + "--NAME-END--");
         startDependencies();
         startServer();
+        // Don't need email for testing, so not starting it. 
+        // If anything one can manually look in the database.json file for the IDs that the email verification services use.
         if (!dev) emailUtils.startEmail();
     } catch (error) {
         console.error('Initialization failed:', error);
@@ -138,14 +144,7 @@ async function handleMainRequest(req, res, next) {
 
     if (isHtmlRequest(reqPath)) {
         await serveHtmlFile(reqPath, res);
-        const humanReadableDate = new Date().toLocaleString();
-        let body = {};
-        body['Path'] = reqPath;
-        body['Username'] = user;
-        body['UID'] = user !== 'guest' ? db.users[user].sessionID : 'GUEST-ACCOUNT';
-        body['Date'] = humanReadableDate;
-        const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
-        oldTable = await updateTable(body, csvFilePath, oldTable);
+        handleStatistics(req, res, user, sessionId);
     } else {
         next();
     }
@@ -175,6 +174,84 @@ async function handleGitHubWebhook(req, res) {
         // if a restart command is not needed then put it to something like 'dir', works across OSes and does nothing
         // a fork would work well with this
     }
+}
+
+async function handleStatistics(req, res, user, sessionID) {
+    const reqPath = urlUtils.normalizePath(req.path);
+    const fullURL = reqPath + '?' + req.url.split('?')[1]
+    // Add to CSV file
+    const humanReadableDate = new Date().toLocaleString();
+    let body = {};
+    body['Path'] = fullURL;
+    body['Username'] = user;
+    body['UID'] = sessionID;
+    body['Date'] = humanReadableDate;
+    const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
+    oldTable = await updateTable(body, csvFilePath, oldTable);
+    // Most popular games
+    const getStartOfMonth = () => {
+        let now = new Date();
+        return new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+    };
+    
+    const getStartOfWeek = () => {
+        let now = new Date();
+        let startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay()); // Move to Sunday
+        startOfWeek.setHours(0, 0, 0, 0); // Set to 12:00 AM
+        return startOfWeek;
+    };
+    
+    if (!db.gamePopularity?.updated) {
+        db.gamePopularity.updated = {
+            month: getStartOfMonth(),
+            week: getStartOfWeek()
+        };
+        await writeJSONChanges(db);
+    } else {
+        if (new Date(db.gamePopularity.updated.week).getTime() !== getStartOfMonth().getTime()) {
+            // Reset monthly and weekly counts
+            Object.keys(db.gamePopularity).forEach(key => {
+                if (key !== "updated") {
+                    db.gamePopularity[key].monthly = 0;
+                }
+            });
+            db.gamePopularity.updated.month = getStartOfMonth();
+        }
+    
+        if (new Date(db.gamePopularity.updated.week).getTime() !== getStartOfWeek().getTime()) {
+            // Reset only weekly counts
+            Object.keys(db.gamePopularity).forEach(key => {
+                if (key !== "updated") {
+                    db.gamePopularity[key].weekly = 0;
+                }
+            });
+            db.gamePopularity.updated.week = getStartOfWeek();
+        }
+    }
+    
+    if (reqPath.includes("/games")) {
+        const game = Object.entries(games.games).find(([_, v]) => v === fullURL);
+        
+        if (!game) return; // Exit early if no game is found
+    
+        const [name, url] = game;
+    
+        let gamePop = db.gamePopularity[name] || {
+            allTime: 0,
+            monthly: 0,
+            weekly: 0,
+            url: url
+        };
+    
+        gamePop.allTime += 1;
+        gamePop.monthly += 1;
+        gamePop.weekly += 1;
+    
+        db.gamePopularity[name] = gamePop;
+        await writeJSONChanges(db);
+    }
+    
 }
 
 function startServer() {
@@ -231,7 +308,7 @@ async function handleApiRequest(req, res) {
         if (!service) return res.status(400).send('Missing service parameter');
 
         const sessionId = req.cookies.uid;
-        const user = sessionId === 'GUEST-ACCOUNT' ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
+        const user = sessionId.includes('GUEST-ACCOUNT') ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
 
         // Validate user exists
         if (!user) return res.status(401).send('Unauthorized');
@@ -274,9 +351,9 @@ async function handleApiRequest(req, res) {
             'logout': async () => {
                 // Clear session cookie
                 res.clearCookie('uid');
-                delete db.users[user].sessionID;
+                db.users[user].sessionID = null;
                 await writeJSONChanges(db);
-                res.redirect('/');
+                res.redirect('/login');
             },
             // Messaging API
             'send-message': async () => {
@@ -429,6 +506,11 @@ async function handleApiRequest(req, res) {
                     res.end();
                 });
             },
+            'has-email': async () => {
+                if (user === "guest") return res.status(403).send("Guests do not have an email.")
+                const hasEmail = String(Boolean(emailUtils.isValidEmail(db.users[user].email)))
+                res.send(hasEmail);
+            }
         }[service];
 
         if (req.method === 'POST' && postHandler) {
@@ -469,7 +551,7 @@ async function serveHtmlFile(reqPath, res) {
         if (!html.includes('<body>')) {
             html += filteredTags.join('');
         } else {
-            html = html.replace('<body>', '</body>' + filteredTags.join(''));
+            html = html.replace('<body>', '<body>' + filteredTags.join(''));
         }
 
         res.set('Content-Type', 'text/html').send(html);
@@ -483,7 +565,7 @@ async function serveHtmlFile(reqPath, res) {
                 await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
                 res.sendFile(path.join(staticDir, '404.html'));
             } catch {
-                res.type('txt').send('Not found');
+                res.type('txt').send('HTTP ERROR 404: Page not found');
             }
         }
     }
