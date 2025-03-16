@@ -34,6 +34,7 @@
     },
     "name": "WebGFA",
     "login": true,
-    "email": "email@example.com"
+    "email": "email@example.com",
+    "interstellarURL": "https://inter.elaisveryfun.online"
   }
 }

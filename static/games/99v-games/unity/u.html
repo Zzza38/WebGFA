@@ -1,0 +1,29 @@
+<script src="TemplateData/UnityProgress.js"></script>
+<link rel="stylesheet" href="https://raw.githubusercontent.com/vanphonggiang/font-awesome-6-pro/main/css/all.css" />
+<link rel="stylesheet" href="TemplateData/style.css" />
+
+<body></body>
+
+<script type="text/javascript">
+
+    var gameInstance;
+
+    const params = new URLSearchParams(window.location.search);
+    var game = params.get('g');
+
+    let jsfile = document.createElement('script');
+    jsfile.src = "js/" + game + ".js";
+    document.body.appendChild(jsfile);
+
+    window.onload = function () {
+        gameInstance = UnityLoader.instantiate("gameContainer", "json/" + game + ".json", { onProgress: UnityProgress, Module: { onRuntimeInitialized: function () { UnityProgress(gameInstance, "complete") } } });
+    }
+</script>
+
+<div class="webgl-content">
+    <center>
+        <div id="gameContainer" style="width: 100%; height: 100%; margin: auto;"></div>
+        <div id="tag" class="tag">MC🌙</div>
+        <button onclick="gameInstance.SetFullscreen(1)"><i class="fa-solid fa-expand"></i></button>
+    </center>
+</div>

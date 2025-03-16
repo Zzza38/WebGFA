@@ -1,5 +1,6 @@
 {
     "messages": {},
+    "gamePopularity": {},
     "users": {
         "admin": {
             "permissions": "prem,admin",
