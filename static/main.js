@@ -1,4 +1,4 @@
-let username = localStorage.getItem("username"); 
+let username = localStorage.getItem("username");
 let hasEmail = localStorage.getItem("hasEmail");
 (async () => {
     username = await fetchUsername();
@@ -56,23 +56,26 @@ async function fetchHasEmail() {
         return data === "true" ? true : false;
     } catch (error) {
         console.error("Error fetching hasEmail:", error);
-    } 
+    }
 }
 
 // Game Link Loading Code
 let allGames = [];
 function localStorageLoad() {
     if (!localStorage.getItem('gameLinks-games')) return;
+    if (!localStorage.getItem('gameLinks-tools')) return;
+    if (!localStorage.getItem('gameLinks-popGames')) return;
     const games = JSON.parse(localStorage.getItem('gameLinks-games'));
     const tools = JSON.parse(localStorage.getItem('gameLinks-tools'));
+    const popularGames = JSON.parse(localStorage.getItem('gameLinks-popGames'));
+
     renderGames(games);
     renderTools(tools);
+    renderPopGames(popularGames);
 }
 async function loadGames() {
     try {
-        const response = await fetch('/api/getGames', {
-            method: 'POST'
-        });
+        const response = await fetch('/api/getGames');
 
         if (!response.ok) {  // Check if the response status is OK (2xx)
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -106,9 +109,7 @@ async function loadGames() {
 }
 async function loadTools() {
     try {
-        const response = await fetch('/api/getTools', {
-            method: 'POST'
-        });
+        const response = await fetch('/api/getTools');
 
         if (!response.ok) {  // Check if the response status is OK (2xx)
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -137,7 +138,41 @@ async function loadTools() {
         console.error(e);
     }
 }
+async function loadPopGames() {
+    try {
+        const response = await fetch('/api/getPopGames');
 
+        if (!response.ok) {  // Check if the response status is OK (2xx)
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Assuming the server returns a JSON response
+        const gamesDoc = await response.json();
+
+        // Get names and links
+        let names = Object.keys(gamesDoc);
+        let links = names.map(name => gamesDoc[name].url);
+
+        let allTime = names.map(name => gamesDoc[name].allTime);
+        let monthly = names.map(name => gamesDoc[name].monthly);
+        let weekly = names.map(name => gamesDoc[name].weekly);
+
+        // Combine names and links into a single array of objects
+        let allPopGames = names.map((name, index) => ({
+            name,
+            link: links[index],
+            allTime: allTime[index],
+            monthly: monthly[index],
+            weekly: weekly[index]
+        }));
+
+        // Render the tools
+        localStorage.setItem('gameLinks-popGames', JSON.stringify(allPopGames));
+        renderPopGames(allPopGames);
+    } catch (e) {
+        console.error(e);
+    }
+}
 function filterGames() {
     const searchInput = document.getElementById('searchG').value.toLowerCase();
     const filteredGames = allGames.filter(game => game.name.toLowerCase().includes(searchInput));
@@ -206,6 +241,51 @@ function renderTools(games) {
     });
     reloadCustomization();
 }
+function renderPopGames(games, sortBy = "monthly") {
+    const gameLinks = document.getElementById('pop-game-links');
+    gameLinks.innerHTML = ''; // Clear existing links
+
+    games.sort((a, b) => b[sortBy] - a[sortBy]);
+
+    if (games.length === 0) document.getElementById('popGames').style.display = 'none';
+    else document.getElementById('popGames').style.display = 'block';
+    
+    games.forEach(game => {
+        let nameArr = game.name.split('**');
+        let blockText;
+
+        // Improved bold formatting
+        if (nameArr.length === 1) {
+            blockText = nameArr[0]; // No bold part
+        } else if (nameArr.length === 2) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>'; // Bold the second part
+        } else if (nameArr.length === 3) {
+            blockText = nameArr[0] + '<b>' + nameArr[1] + '</b>' + nameArr[2]; // Bold the middle part
+        } else {
+            // Handle cases with more than 3 parts by bolding the middle parts
+            blockText = nameArr.map((part, index) => (index % 2 === 1 ? `<b>${part}</b>` : part)).join('');
+        }
+
+        let a = document.createElement('a');
+        a.innerHTML = blockText;
+        a.href = game.link;
+        a.className = 'game-link';
+        a.addEventListener("mouseenter", () => {
+            popGameStats.style.display = "block";
+            popGameStats.innerHTML = `
+                <div>Monthly Plays: ${game.monthly}</div>
+                <div>Weekly Plays: ${game.weekly}</div>
+                <div>All Time Plays: ${game.allTime}</div>
+            `;
+        });
+        a.addEventListener("mouseleave", () => {
+            popGameStats.style.display = "none";
+        });
+        if (game.link != '/404.html') {
+            gameLinks.appendChild(a);
+        }
+    });
+}
 
 function reloadCustomization() {
     let defaultColors = config.defaultColors;
@@ -248,12 +328,30 @@ document.querySelectorAll('.popup').forEach(popup => {
         popup.style.display = 'none';
     });
 });
+document.getElementById('sortMonth').addEventListener('click', () => {
+    renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "monthly");
+});
+document.getElementById('sortWeek').addEventListener('click', () => {
+    renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "weekly");
+});
+document.getElementById('sortAllTime').addEventListener('click', () => {
+    renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "allTime");
+}); 
+
+const popGameStats = document.getElementById("popGameStats");
+document.addEventListener("mousemove", (event) => {
+    if (popGameStats.style.display === "block") {
+        popGameStats.style.left = `${event.pageX + 5}px`;
+        popGameStats.style.top = `${event.pageY}px`;
+    }
+});
 
 // Run all the necessary functions to initialize
 if (username === "guest") document.getElementById('guestPopup').style.display = "";
 if (!hasEmail) document.getElementById('emailPopup').style.display = "";
-document.getElementById('searchG').addEventListener('input', filterGames); 
+document.getElementById('searchG').addEventListener('input', filterGames);
 reloadCustomization();
 localStorageLoad();
 loadTools();
 loadGames();
+loadPopGames();

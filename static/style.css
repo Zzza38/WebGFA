@@ -82,3 +82,16 @@ body {
   position: relative; /* Ensure positioning doesn't interfere */
   color: black;
 }
+
+.mouseMenu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 8px;
+  border-radius: 5px;
+  border: white 1px solid;
+  font-size: 14px;
+  pointer-events: none;
+}

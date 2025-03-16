@@ -209,7 +209,7 @@ async function handleStatistics(req, res, user, sessionID) {
         };
         await writeJSONChanges(db);
     } else {
-        if (new Date(db.gamePopularity.updated.week).getTime() !== getStartOfMonth().getTime()) {
+        if (new Date(db.gamePopularity.updated.month).getTime() !== getStartOfMonth().getTime()) {
             // Reset monthly and weekly counts
             Object.keys(db.gamePopularity).forEach(key => {
                 if (key !== "updated") {
@@ -329,24 +329,6 @@ async function handleApiRequest(req, res) {
                     }
                     throw error;
                 }
-            },
-            'getGames': async () => {
-                const base = games.games || {};
-                const premium = db.users[user].permissions?.includes('prem')
-                    ? games.premiumGames || {}
-                    : {};
-
-                res.json({ ...base, ...premium });
-
-            },
-            'getTools': async () => {
-                const base = games.tools || {};
-                const premium = db.users[user].permissions?.includes('prem')
-                    ? games.premiumGames || {}
-                    : {};
-
-                res.json({ ...base, ...premium });
-
             },
             'logout': async () => {
                 // Clear session cookie
@@ -491,6 +473,28 @@ async function handleApiRequest(req, res) {
             }
         }[service];
         const getHandler = {
+            'getGames': async () => {
+                const base = games.games || {};
+                const premium = db.users[user].permissions?.includes('prem')
+                    ? games.premiumGames || {}
+                    : {};
+
+                res.json({ ...base, ...premium });
+
+            },
+            'getTools': async () => {
+                const base = games.tools || {};
+                const premium = db.users[user].permissions?.includes('prem')
+                    ? games.premiumGames || {}
+                    : {};
+
+                res.json({ ...base, ...premium });
+
+            },
+            'getPopGames': async () => {
+                const { updated, ...gamePopularity } = db.gamePopularity;
+                res.json(gamePopularity);
+            },
             'updates': async () => {
                 res.set('Content-Type', 'text/event-stream');
                 res.set('Cache-Control', 'no-cache');
