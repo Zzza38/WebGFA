@@ -83,18 +83,23 @@ async function loadGames() {
 
         // Assuming the server returns a JSON response
         const gamesDoc = await response.json();
-
-        // Do something with the games data
-        console.log(gamesDoc); // Or whatever processing you need
+        const gamePopularity = JSON.parse(localStorage.getItem('gameLinks-popGames'));
 
         // Get names and links
         let names = Object.keys(gamesDoc);
         let links = Object.values(gamesDoc);
 
+        let allTime = names.map(name => gamePopularity[name] ? gamePopularity[name].allTime : 0);
+        let monthly = names.map(name => gamePopularity[name] ? gamePopularity[name].monthly : 0);
+        let weekly = names.map(name => gamePopularity[name] ? gamePopularity[name].weekly : 0);
+
         // Combine names and links into a single array of objects
         allGames = names.map((name, index) => ({
             name,
-            link: links[index]
+            link: links[index],
+            allTime: allTime[index],
+            monthly: monthly[index],
+            weekly: weekly[index]
         }));
 
         // Sort the combined array alphabetically by name
@@ -203,6 +208,17 @@ function renderGames(games) {
         a.innerHTML = blockText;
         a.href = game.link;
         a.className = 'game-link';
+        a.addEventListener("mouseenter", () => {
+            popGameStats.style.display = "block";
+            popGameStats.innerHTML = `
+                <div>Monthly Plays: ${game.monthly}</div>
+                <div>Weekly Plays: ${game.weekly}</div>
+                <div>All Time Plays: ${game.allTime}</div>
+            `;
+        });
+        a.addEventListener("mouseleave", () => {
+            popGameStats.style.display = "none";
+        });
         if (game.link != '/404.html') {
             gameLinks.appendChild(a);
         }
@@ -250,7 +266,8 @@ function renderPopGames(games, sortBy = "monthly") {
     if (games.length === 0) document.getElementById('popGames').style.display = 'none';
     else document.getElementById('popGames').style.display = 'block';
     
-    games.forEach(game => {
+    games.forEach((game, i) => {
+        if (i >= 10) return; // Only show the top 10 games
         let nameArr = game.name.split('**');
         let blockText;
 
