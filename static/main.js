@@ -75,33 +75,21 @@ function localStorageLoad() {
 }
 async function loadGames() {
     try {
-        const response = await fetch('/api/getGames');
+        const gamesDoc = await fetch('/api/getGames').then(res => res.json());
+        const gamePopularity = await fetch('/api/getPopGames').then(res => res.json());
 
-        if (!response.ok) {  // Check if the response status is OK (2xx)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        // Assuming the server returns a JSON response
-        const gamesDoc = await response.json();
-        const gamePopularity = JSON.parse(localStorage.getItem('gameLinks-popGames'));
-
-        // Get names and links
+        // Get names
         let names = Object.keys(gamesDoc);
-        let links = Object.values(gamesDoc);
 
-        let allTime = names.map(name => gamePopularity[name] ? gamePopularity[name].allTime : 0);
-        let monthly = names.map(name => gamePopularity[name] ? gamePopularity[name].monthly : 0);
-        let weekly = names.map(name => gamePopularity[name] ? gamePopularity[name].weekly : 0);
-
-        // Combine names and links into a single array of objects
-        allGames = names.map((name, index) => ({
+        allGames = names.map(name => ({
             name,
-            link: links[index],
-            allTime: allTime[index],
-            monthly: monthly[index],
-            weekly: weekly[index]
+            link: gamesDoc[name],
+            allTime: gamePopularity[name] ? gamePopularity[name].allTime : 0,
+            monthly: gamePopularity[name] ? gamePopularity[name].monthly : 0,
+            weekly: gamePopularity[name] ? gamePopularity[name].weekly : 0
         }));
 
+        console.log(gamesDoc, gamePopularity);
         // Sort the combined array alphabetically by name
         allGames.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -184,9 +172,12 @@ function filterGames() {
     renderGames(filteredGames);
 }
 // Game Link Rendering Code
-function renderGames(games) {
+function renderGames(games, sortBy = "alphabetical") {
     const gameLinks = document.getElementById('game-links');
     gameLinks.innerHTML = ''; // Clear existing links
+
+    if (sortBy == "alphabetical") games.sort((a, b) => a.name.localeCompare(b.name));
+    else games.sort((a, b) => b[sortBy] - a[sortBy]);
 
     games.forEach(game => {
         let nameArr = game.name.split('**');
@@ -261,7 +252,8 @@ function renderPopGames(games, sortBy = "monthly") {
     const gameLinks = document.getElementById('pop-game-links');
     gameLinks.innerHTML = ''; // Clear existing links
 
-    games.sort((a, b) => b[sortBy] - a[sortBy]);
+    if (sortBy == "alphabetical") games.sort((a, b) => a.name.localeCompare(b.name));
+    else games.sort((a, b) => b[sortBy] - a[sortBy]);
 
     if (games.length === 0) document.getElementById('popGames').style.display = 'none';
     else document.getElementById('popGames').style.display = 'block';
@@ -346,13 +338,20 @@ document.querySelectorAll('.popup').forEach(popup => {
     });
 });
 document.getElementById('sortMonth').addEventListener('click', () => {
+    renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "monthly");
     renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "monthly");
 });
 document.getElementById('sortWeek').addEventListener('click', () => {
+    renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "weekly");
     renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "weekly");
 });
 document.getElementById('sortAllTime').addEventListener('click', () => {
+    renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "allTime");
     renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "allTime");
+}); 
+document.getElementById('sortAlpha').addEventListener('click', () => {
+    renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "alphabetical");
+    renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "alphabetical");
 }); 
 
 const popGameStats = document.getElementById("popGameStats");
