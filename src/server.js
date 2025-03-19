@@ -19,7 +19,6 @@ process.chdir(__dirname);
 // custom imports
 const emailUtils = require('./functions/emailUtils.js');
 const urlUtils = require("./functions/urlUtils.js");
-const logUtils = require('./functions/logFileUtils.js');
 let db;
 try {
     db = require("../data/database.json");
@@ -47,19 +46,9 @@ const { handleError } = require('puppeteer');
 //                 CONSTANTS & CONFIGURATION               //
 /////////////////////////////////////////////////////////////
 
-// Log file handling
-fs.mkdir(path.resolve(__dirname, '../log'), { recursive: true }).catch(() => { });
-try {
-    logUtils.copyLogFile('../server.log', '../log/' + logUtils.getLogFileName('../server.log'));
-    console.log('Copied ../server.log to ../log/' + logUtils.getLogFileName('../server.log'));
-} catch (error) {
-    console.error('Error when copying log file:', error);
-}
-
 const app = express();
 const dev = process.argv.includes("--dev");
 const HTTP_PORT = process.env.PORT ? process.env.PORT : dev ? config.ports.development : config.ports.main;
-const logFilePath = path.resolve(__dirname, '../server.log');
 const messageEmitter = new EventEmitter();
 
 const extraTags = [
@@ -113,8 +102,6 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 (async () => {
     try {
-        await clearLogFile(logFilePath);
-        console.log("--NAME-START--" + logUtils.generateLogFileName() + "--NAME-END--");
         startDependencies();
         startServer();
         // Don't need email for testing, so not starting it. 
@@ -129,15 +116,6 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 //                     FUNCTIONS                           //
 /////////////////////////////////////////////////////////////
-async function clearLogFile(filePath) {
-    try {
-        await fs.writeFile(filePath, '');
-        console.log('Cleared log file');
-    } catch (err) {
-        console.error('Log clear error:', err);
-    }
-}
-
 async function handleMainRequest(req, res, next) {
     const reqPath = urlUtils.normalizePath(req.path);
     const sessionId = req.cookies.uid;
