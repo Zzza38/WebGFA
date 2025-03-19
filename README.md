@@ -15,3 +15,16 @@ npm i
 npm run build
 npm start
 ```
+
+If you are hosting this locally, then PM2 is highly recommended. This ensures zero downtime and a config file is already provided.
+
+To install and configure PM2, run
+```bash
+# Install and run pm2
+npm install pm2 -g
+pm2 start ecosystem.config.js
+
+# Have pm2 run on startup
+pm2 startup {YOUR STARTUP SYSTEM HERE (systemd, upstart, launchd, etc.)}
+pm2 save
+```

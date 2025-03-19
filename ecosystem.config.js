@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   apps: [{
-    name: "WebGFA",
+    name: "webgfa",
     script: "./src/server.js",
     instances: "max",
     exec_mode: "cluster",

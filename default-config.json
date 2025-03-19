@@ -7,17 +7,17 @@
   },
   "features": {
     "interstellar": true,
-    "interstellarURL": "https://inter.elaisveryfun.online",
+    "interstellarURL": "https://interstellar.example.com",
     "webssh": true,
-    "websshURL": "https://ssh.elaisveryfun.online",
+    "websshURL": "https://ssh.example.com",
     "githubAutoPull": {
       "pull": false,
-      "restartCommand": "dir"
+      "restartCommand": "pm2 reload webgfa"
     },
     "login": {
       "enabled": true,
       "email": "email@example.com",
-      "url": "https://elaisveryfun.online"
+      "url": "https://example.com"
     }
   },
   "installed": {
@@ -35,6 +35,6 @@
     "name": "WebGFA",
     "login": true,
     "email": "email@example.com",
-    "interstellarURL": "https://inter.elaisveryfun.online"
+    "interstellarURL": "https://interstellar.example.com"
   }
 }
