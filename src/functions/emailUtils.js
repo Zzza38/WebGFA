@@ -24,7 +24,6 @@ async function startEmail() {
         await page.click("#passwordNext");
     } catch (error) {
         console.error("❌ Error setting up email:", error);
-
     }
 }
 

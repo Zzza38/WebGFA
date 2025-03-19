@@ -3,7 +3,22 @@ particlesJS.load('particles-js', '/assets/json/particles.json', function () {
     console.log('callback - particles.js config loaded');
 });
 
+// there for vscode intellisense, should be removed / commented in production or the code breaks
+// let config = {};
+
 // Account Creation
+if (!config.email.enabled) {
+    document.getElementById("createAccount").disabled = true;
+    document.getElementById("resetPassword").disabled = true;
+    document.getElementById("emailPopup").style.display = "";
+}
+
+document.querySelectorAll('.popup').forEach(popup => {
+    popup.addEventListener('click', () => {
+        popup.style.display = 'none';
+    });
+});
+
 document.getElementById("createAccount").addEventListener("click", async (event) => {
     event.preventDefault();
 

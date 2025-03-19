@@ -81,8 +81,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
     const sessionID = req.cookies.uid;
-    // Quickly change all GUEST-ACCOUNT UIDs (old system) to new system
-    if (req.cookies.uid === "GUEST-ACCOUNT") res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
     !Object.values(db.users).some(user => user.sessionID === sessionID) && res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
     next();
 });
@@ -107,7 +105,14 @@ let server;
         server = startServer();
         // Don't need email for testing, so not starting it. 
         // If anything one can manually look in the database.json file for the IDs that the email verification services use.
-        if (!dev) emailUtils.startEmail();
+        try {
+            if (!dev) emailUtils.startEmail();
+        } catch (error) {
+            console.error('Email service failed:', error);
+            config["client-config"].email.enabled = false;
+            // Another try-catch to prevent the service from crashing the server
+            // Email service is not critical to the server's operation
+        }
     } catch (error) {
         console.error('Initialization failed:', error);
         process.exit(1);
@@ -245,13 +250,13 @@ async function startDependencies() {
     if (!config.running) config.running = {};
     let processes = [];
     let names = [];
-    if (config.installed.interstellar &! config.running.interstellar) {
+    if (config.installed.interstellar & !config.running.interstellar) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar } }));
         names.push("Interstellar");
         config.running.interstellar = true;
         await writeJSONChanges(config, "../config.json");
     }
-    if (config.installed.webssh &! config.running.interstellar) {
+    if (config.installed.webssh & !config.running.interstellar) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh } }));
         names.push("WebSSH");
         config.running.webssh = true;
@@ -598,11 +603,11 @@ process.on('SIGINT', async () => {
     config.running.webssh = false;
     await writeJSONChanges(config, "../config.json");
     server.close(() => {
-      process.exit(0);
+        process.exit(0);
     });
     // Force exit after 5 seconds
     setTimeout(() => {
-      console.error('Forcing shutdown');
-      process.exit(1);
+        console.error('Forcing shutdown');
+        process.exit(1);
     }, 5000);
-  });
+});

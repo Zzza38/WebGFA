@@ -34,7 +34,10 @@
     },
     "name": "WebGFA",
     "login": true,
-    "email": "email@example.com",
+    "email": {
+      "enabled": true,
+      "email": "email@example.com"
+    },
     "interstellarURL": "https://interstellar.example.com"
   }
 }
