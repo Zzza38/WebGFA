@@ -53,6 +53,8 @@ if (update) {
                 await runCommand('git fetch', { cwd: './Interstellar' });
                 await runCommand('git pull', { cwd: './Interstellar' });
                 await runCommand('npm install', { cwd: './Interstellar' });
+                config.installed.interstellar = true;
+                writeJSONChanges(config);
             } catch (error) {
                 console.error("Error updating Interstellar: ", error)
             }
@@ -62,6 +64,8 @@ if (update) {
                 await runCommand('git fetch', { cwd: './webssh2' });
                 await runCommand('git pull', { cwd: './webssh2' });
                 await runCommand('npm install', { cwd: './webssh2' });
+                config.installed.webssh = true;
+                writeJSONChanges(config);
             } catch (error) {
                 console.error("Error updating WebSSH: ", error)
             }

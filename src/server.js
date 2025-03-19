@@ -40,7 +40,6 @@ try {
     })();
 }
 const games = require("../games.json");
-const { handleError } = require('puppeteer');
 
 /////////////////////////////////////////////////////////////
 //                 CONSTANTS & CONFIGURATION               //
@@ -156,7 +155,6 @@ async function handleGitHubWebhook(req, res) {
 }
 
 async function handleStatistics(req, res, user, sessionID) {
-    throw new Error('Test error');
     const reqPath = urlUtils.normalizePath(req.path);
     const fullURL = reqPath + '?' + req.url.split('?')[1]
     // Add to CSV file
