@@ -101,6 +101,7 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 let server;
 (async () => {
+    if (config.installed.interstellar) games.tools["Interstellar"] = config.features.interstellarURL;
     try {
         startDependencies();
         server = startServer();
