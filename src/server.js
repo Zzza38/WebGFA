@@ -99,10 +99,11 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 //                   SERVER INITIALIZATION                 //
 /////////////////////////////////////////////////////////////
+let server;
 (async () => {
     try {
         startDependencies();
-        startServer();
+        server = startServer();
         // Don't need email for testing, so not starting it. 
         // If anything one can manually look in the database.json file for the IDs that the email verification services use.
         if (!dev) emailUtils.startEmail();
@@ -233,7 +234,7 @@ async function handleStatistics(req, res, user, sessionID) {
 }
 
 function startServer() {
-    http.createServer(app).listen(HTTP_PORT, () => {
+    return http.createServer(app).listen(HTTP_PORT, () => {
         console.log(`WebGFA running at port ${HTTP_PORT}`);
         console.log(`http://localhost:${HTTP_PORT}`);
     });
