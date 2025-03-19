@@ -6,15 +6,16 @@ module.exports = {
     script: "./src/server.js",
     instances: "max",
     exec_mode: "cluster",
-    // Log settings
-    out_file: path.join(__dirname, 'server.log'), // Same directory as config
-    error_file: path.join(__dirname, 'server.log'), // Combine into one file
-    merge_logs: true, // Merge stdout/stderr into one file
-    log_date_format: "YYYY-MM-DD HH:mm Z", // Add timestamps
-    // Other settings
+    out_file: path.join(__dirname, 'server.log'),
+    error_file: path.join(__dirname, 'server.log'), 
+    merge_logs: true,
+    log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
-    watch: false,
-    max_memory_restart: "1G",
+    watch: true, 
+    ignore_watch: [
+      "server.log",
+      "static"
+    ],    max_memory_restart: "1G",
     env: {
       NODE_ENV: "production"
     }
