@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   apps: [{
     name: "WebGFA",
-    script: "./server.js",
+    script: "./src/server.js",
     instances: "max",
     exec_mode: "cluster",
     // Log settings
