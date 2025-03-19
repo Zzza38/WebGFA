@@ -242,15 +242,20 @@ function startServer() {
 }
 
 async function startDependencies() {
+    if (!config.running) config.running = {};
     let processes = [];
     let names = [];
-    if (config.installed.interstellar) {
+    if (config.installed.interstellar &! config.running.interstellar) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar } }));
         names.push("Interstellar");
+        config.running.interstellar = true;
+        await writeJSONChanges(config, "../config.json");
     }
-    if (config.installed.webssh) {
+    if (config.installed.webssh &! config.running.interstellar) {
         processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh } }));
         names.push("WebSSH");
+        config.running.webssh = true;
+        await writeJSONChanges(config, "../config.json");
     }
     processes.forEach((proc, index) => {
         proc.on("exit", code => console.log(`${names[index]} exited with code ${code}`));
@@ -586,8 +591,12 @@ async function updateTable(jsonObject, filePath, oldTable = null) {
     return table;
 }
 
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
     console.log('Shutting down gracefully...');
+
+    config.running.interstellar = false;
+    config.running.webssh = false;
+    await writeJSONChanges(config, "../config.json");
     server.close(() => {
       process.exit(0);
     });
