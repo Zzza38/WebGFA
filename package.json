@@ -7,6 +7,7 @@
     "start": "node src/server.js",
     "build": "node packages/build.js",
     "update": "node packages/build.js --update",
+    "config": "node src/config.js",
     "dev": "node src/server.js --dev"
   },
   "author": "Zzza38",

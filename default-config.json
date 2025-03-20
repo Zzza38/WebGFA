@@ -12,10 +12,11 @@
     "websshURL": "https://ssh.example.com",
     "githubAutoPull": {
       "pull": false,
-      "restartCommand": "pm2 reload webgfa"
+      "restartCommand": "dir"
     },
     "login": {
       "enabled": true,
+      "emailEnabled": false,
       "email": "email@example.com",
       "url": "https://example.com"
     }

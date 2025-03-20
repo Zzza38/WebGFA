@@ -1,23 +1,59 @@
 const path = require('path');
+const config = require('./config.json');
 
-module.exports = {
-  apps: [{
+const apps = [
+  {
     name: "webgfa",
     script: "./src/server.js",
     instances: "max",
     exec_mode: "cluster",
-    out_file: path.join(__dirname, 'server.log'),
-    error_file: path.join(__dirname, 'server.log'), 
+    out_file: path.join(__dirname, 'webgfa.log'),
+    error_file: path.join(__dirname, 'webgfa.log'),
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
-    watch: true, 
+    watch: true,
     ignore_watch: [
-      "server.log",
+      "node_modules",
       "static"
-    ],    max_memory_restart: "1G",
+    ],
+    max_memory_restart: "1G",
     env: {
       NODE_ENV: "production"
     }
-  }]
-};
+  }
+];
+if (config.installed.interstellar) {
+  apps.push({
+    name: "interstellar",
+    script: "./packages/Interstellar/index.js",
+    instances: 1,
+    out_file: path.join(__dirname, 'interstellar.log'),
+    error_file: path.join(__dirname, 'interstellar.log'),
+    merge_logs: true,
+    log_date_format: "YYYY-MM-DD HH:mm Z",
+    autorestart: true,
+    watch: false,
+    env: {
+      NODE_ENV: "production"
+    }
+  });
+}
+if (config.installed.webssh) {
+  apps.push({
+    name: "webssh",
+    script: "./packages/webssh2/app/index.js",
+    instances: 1,
+    out_file: path.join(__dirname, 'webssh.log'),
+    error_file: path.join(__dirname, 'webssh.log'),
+    merge_logs: true,
+    log_date_format: "YYYY-MM-DD HH:mm Z",
+    autorestart: true,
+    watch: false,
+    env: {
+      NODE_ENV: "production"
+    }
+  });
+}
+
+module.exports = { apps };

@@ -101,7 +101,6 @@ let server;
 (async () => {
     if (config.installed.interstellar) games.tools["Interstellar"] = config.features.interstellarURL;
     try {
-        startDependencies();
         server = startServer();
         // Don't need email for testing, so not starting it. 
         // If anything one can manually look in the database.json file for the IDs that the email verification services use.
@@ -244,29 +243,6 @@ function startServer() {
         console.log(`WebGFA running at port ${HTTP_PORT}`);
         console.log(`http://localhost:${HTTP_PORT}`);
     });
-}
-
-async function startDependencies() {
-    if (!config.running) config.running = {};
-    let processes = [];
-    let names = [];
-    if (config.installed.interstellar & !config.running.interstellar) {
-        processes.push(spawn("npm", ["start"], { cwd: "../packages/Interstellar", shell: true, env: { ...process.env, PORT: config.ports.interstellar } }));
-        names.push("Interstellar");
-        config.running.interstellar = true;
-        await writeJSONChanges(config, "../config.json");
-    }
-    if (config.installed.webssh & !config.running.interstellar) {
-        processes.push(spawn("npm", ["start"], { cwd: "../packages/webssh2/app", shell: true, env: { ...process.env, PORT: config.ports.webssh } }));
-        names.push("WebSSH");
-        config.running.webssh = true;
-        await writeJSONChanges(config, "../config.json");
-    }
-    processes.forEach((proc, index) => {
-        proc.on("exit", code => console.log(`${names[index]} exited with code ${code}`));
-        proc.on("error", (err) => console.error(`${names[index]} failed:`, err));
-    });
-
 }
 
 function generateUID() {
@@ -598,10 +574,6 @@ async function updateTable(jsonObject, filePath, oldTable = null) {
 
 process.on('SIGINT', async () => {
     console.log('Shutting down gracefully...');
-
-    config.running.interstellar = false;
-    config.running.webssh = false;
-    await writeJSONChanges(config, "../config.json");
     server.close(() => {
         process.exit(0);
     });
