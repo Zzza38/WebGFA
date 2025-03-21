@@ -45,6 +45,9 @@ const games = require("../games.json");
 //                 CONSTANTS & CONFIGURATION               //
 /////////////////////////////////////////////////////////////
 
+// Make logs directory
+fs.existsSync(path.join(__dirname, '../logs')) || fs.mkdirSync(path.join(__dirname, '../logs'), { recursive: true });
+
 const app = express();
 const dev = process.argv.includes("--dev");
 const HTTP_PORT = process.env.PORT ? process.env.PORT : dev ? config.ports.development : config.ports.main;
@@ -170,7 +173,7 @@ async function handleStatistics(req, res, user, sessionID) {
     body['Username'] = user;
     body['UID'] = sessionID;
     body['Date'] = humanReadableDate;
-    const csvFilePath = path.resolve(__dirname, '../webgfa.csv');
+    const csvFilePath = path.resolve(__dirname, '../logs/webgfa.csv');
     oldTable = await updateTable(body, csvFilePath, oldTable);
     // Most popular games
     const getStartOfMonth = () => {

@@ -1,5 +1,7 @@
 const path = require('path');
 const config = require('./config.json');
+const fs = require('fs');
+fs.existsSync(path.join(__dirname, 'logs')) || fs.mkdirSync(path.join(__dirname, 'logs'), { recursive: true });
 
 const apps = [
   {
@@ -7,8 +9,8 @@ const apps = [
     script: "./src/server.js",
     instances: 2,
     exec_mode: "cluster",
-    out_file: path.join(__dirname, 'webgfa.log'),
-    error_file: path.join(__dirname, 'webgfa.log'),
+    out_file: path.join(__dirname, 'logs/webgfa.log'),
+    error_file: path.join(__dirname, 'logs/webgfa.log'),
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
@@ -16,9 +18,7 @@ const apps = [
     ignore_watch: [
       "node_modules",
       "static",
-      "server.log",
-      "interstellar.log",
-      "webssh.log"
+      "logs"
     ],
     max_memory_restart: "1G",
     env: {
@@ -31,8 +31,8 @@ if (config.installed.interstellar) {
     name: "interstellar",
     script: "./packages/Interstellar/index.js",
     instances: 1,
-    out_file: path.join(__dirname, 'interstellar.log'),
-    error_file: path.join(__dirname, 'interstellar.log'),
+    out_file: path.join(__dirname, 'logs/interstellar.log'),
+    error_file: path.join(__dirname, 'logs/interstellar.log'),
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
@@ -47,8 +47,8 @@ if (config.installed.webssh) {
     name: "webssh",
     script: "./packages/webssh2/app/index.js",
     instances: 1,
-    out_file: path.join(__dirname, 'webssh.log'),
-    error_file: path.join(__dirname, 'webssh.log'),
+    out_file: path.join(__dirname, 'logs/webssh.log'),
+    error_file: path.join(__dirname, 'logs/webssh.log'),
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
