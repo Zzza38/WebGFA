@@ -46,7 +46,7 @@ const games = require("../games.json");
 /////////////////////////////////////////////////////////////
 
 // Make logs directory
-fs.existsSync(path.join(__dirname, '../logs')) || fs.mkdirSync(path.join(__dirname, '../logs'), { recursive: true });
+fs.mkdir(path.join(__dirname, '../logs'), { recursive: true }).catch(console.error);
 
 const app = express();
 const dev = process.argv.includes("--dev");
