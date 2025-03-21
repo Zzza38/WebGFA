@@ -5,7 +5,7 @@ const apps = [
   {
     name: "webgfa",
     script: "./src/server.js",
-    instances: "max",
+    instances: 2,
     exec_mode: "cluster",
     out_file: path.join(__dirname, 'webgfa.log'),
     error_file: path.join(__dirname, 'webgfa.log'),
