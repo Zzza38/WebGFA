@@ -38,7 +38,8 @@ if (config.installed.interstellar) {
     autorestart: true,
     watch: false,
     env: {
-      NODE_ENV: "production"
+      NODE_ENV: "production",
+      "PORT": config.ports.interstellar
     }
   });
 }
@@ -54,7 +55,8 @@ if (config.installed.webssh) {
     autorestart: true,
     watch: false,
     env: {
-      NODE_ENV: "production"
+      NODE_ENV: "production",
+      "PORT": config.ports.webssh
     }
   });
 }
