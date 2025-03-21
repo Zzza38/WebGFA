@@ -14,7 +14,7 @@ const apps = [
     merge_logs: true,
     log_date_format: "YYYY-MM-DD HH:mm Z",
     autorestart: true,
-    watch: true,
+    watch: false,
     ignore_watch: [
       "node_modules",
       "static",
