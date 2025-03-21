@@ -15,7 +15,10 @@ const apps = [
     watch: true,
     ignore_watch: [
       "node_modules",
-      "static"
+      "static",
+      "server.log",
+      "interstellar.log",
+      "webssh.log"
     ],
     max_memory_restart: "1G",
     env: {
