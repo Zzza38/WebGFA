@@ -11,11 +11,28 @@ function insertChdir(filePath) {
 
     let content = fs.readFileSync(filePath, 'utf8');
 
-    if (!content.includes("process.chdir(__dirname);")) {
-        content = `process.chdir(__dirname);\n` + content;
-        fs.writeFileSync(filePath, content, 'utf8');
-4    }
+    // Check if it already has `process.chdir`
+    if (content.includes("process.chdir(__dirname);") || content.includes("process.chdir(dirname);")) {
+        console.log("process.chdir is already present.");
+        return;
+    }
+
+    // Detect module system
+    const isESM = content.includes("import") || content.includes("export") || content.includes("import.meta");
+
+    let insertStatement;
+    if (isESM) {
+        insertStatement = `import { dirname } from 'path';\nimport { fileURLToPath } from 'url';\nconst __dirname = dirname(fileURLToPath(import.meta.url));\nprocess.chdir(__dirname);\n\n`;
+    } else {
+        insertStatement = `process.chdir(__dirname);\n\n`;
+    }
+
+    // Prepend the new code
+    content = insertStatement + content;
+    fs.writeFileSync(filePath, content, 'utf8');
+    console.log("Inserted process.chdir handling at the beginning of", filePath);
 }
+
 const apps = [
   {
     name: "webgfa",
