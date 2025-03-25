@@ -3,6 +3,19 @@ const config = require('./config.json');
 const fs = require('fs');
 fs.existsSync(path.join(__dirname, 'logs')) || fs.mkdirSync(path.join(__dirname, 'logs'), { recursive: true });
 
+function insertChdir(filePath) {
+    if (!fs.existsSync(filePath)) {
+        console.error("File does not exist:", filePath);
+        return;
+    }
+
+    let content = fs.readFileSync(filePath, 'utf8');
+
+    if (!content.includes("process.chdir(__dirname);")) {
+        content = `process.chdir(__dirname);\n` + content;
+        fs.writeFileSync(filePath, content, 'utf8');
+4    }
+}
 const apps = [
   {
     name: "webgfa",
@@ -27,6 +40,7 @@ const apps = [
   }
 ];
 if (config.installed.interstellar) {
+  insertChdir("./packages/Interstellar/index.js");
   apps.push({
     name: "interstellar",
     script: "./packages/Interstellar/index.js",
