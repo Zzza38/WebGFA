@@ -7,7 +7,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs').promises;
 const http = require('http');
-const { exec, spawn } = require('child_process');
+const { exec } = require('child_process');
 const cookieParser = require('cookie-parser');
 const crypto = require("crypto");
 const EventEmitter = require('events');
@@ -55,7 +55,7 @@ const messageEmitter = new EventEmitter();
 
 const extraTags = [
     // module tags to prevent variable definitions overlapping
-    "<script src='/assets/js/aboutblankcloak.js' type='module'></script>",
+    "<script src='/assets/js/aboutBlankCloak.js' type='module'></script>",
     "<script src='/assets/js/autoSave.js' type='module'></script>",
     "<script src='/assets/js/particles.js'></script>",
     "<script async src=\"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8561781792679334\" crossorigin=\"anonymous\"></script>",
@@ -388,11 +388,13 @@ async function handleApiRequest(req, res) {
                 await writeJSONChanges(db);
                 const link = encodeURI(`https://${config.features.login.url}/account/create/?creationID=${db.users[username].creationID}&username=${username}`);
 
-                emailUtils.sendEmail(email, 'Create Account with WebGFA', `
+                if (config["client-config"].email.enabled) {
+                    emailUtils.sendEmail(email, 'Create Account with WebGFA', `
                     Hello ${email}! You have decided to create a WebGFA account.
                     To proceed, click on the link below!
                     ${link}
-                `)
+                `);
+                }
             },
             'create-account': async () => {
                 let { username, password, creationID, updatedUsername } = req.body;
@@ -426,11 +428,13 @@ async function handleApiRequest(req, res) {
 
                 const link = encodeURI(`https://${config.features.login.url}/account/reset/?resetID=${resetID}&username=${username}`);
 
-                emailUtils.sendEmail(email, "Change WebGFA Password", `
+                if (config["client-config"].email.enabled) {
+                    emailUtils.sendEmail(email, "Change WebGFA Password", `
                     Hello ${username}! The password reset button was clicked for your username.
                     To proceed, click on the link below. If you didn't ask for this, then just ignore it.
                     ${link}
-                `)
+                `);
+                }
                 return res.status(200).send('Password reset email sent.');
             },
             'reset-password': async () => {
