@@ -12,7 +12,7 @@ function insertChdir(filePath) {
     let content = fs.readFileSync(filePath, 'utf8');
 
     // Check if it already has `process.chdir`
-    if (content.includes("process.chdir(__dirname);") || content.includes("process.chdir(dirname);")) {
+    if (content.includes("process.chdir(__dirname);") || content.includes("process.chdir(dirname);" || content.includes("process.chdir(__currentDirectoryPath);")) {
         console.log("process.chdir is already present.");
         return;
     }
@@ -22,7 +22,7 @@ function insertChdir(filePath) {
 
     let insertStatement;
     if (isESM) {
-        insertStatement = `import { dirname } from 'path';\nimport { fileURLToPath } from 'url';\nconst __dirname = dirname(fileURLToPath(import.meta.url));\nprocess.chdir(__dirname);\n\n`;
+        insertStatement = `import { dirname } from 'path';\nimport { fileURLToPath } from 'url';\nconst __currentDirectoryPath = dirname(fileURLToPath(import.meta.url));\nprocess.chdir(__currentDirectoryPath);\n\n`;
     } else {
         insertStatement = `process.chdir(__dirname);\n\n`;
     }
