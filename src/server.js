@@ -459,7 +459,7 @@ async function handleApiRequest(req, res) {
             'getTools': async () => {
                 const base = games.tools || {};
                 const premium = db.users[user].permissions?.includes('prem')
-                    ? games.premiumGames || {}
+                    ? games.premiumTools || {}
                     : {};
 
                 res.json({ base, prem: premium });
