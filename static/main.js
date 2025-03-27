@@ -1,10 +1,12 @@
 let username = localStorage.getItem("username");
 let hasEmail = localStorage.getItem("hasEmail");
+let premium = localStorage.getItem("isPremium");
 (async () => {
     username = await fetchUsername();
     hasEmail = await fetchHasEmail();
+    premium = await fetchPremiumStatus();
 
-    // Keep the username in localStorage, for easy fetching. The client will then fetch the correct username.
+    // Keep the username in localStorage, to not wait until the request finishes
     localStorage.setItem("username", username);
     localStorage.setItem("hasEmail", hasEmail);
 })();
@@ -58,7 +60,18 @@ async function fetchHasEmail() {
         console.error("Error fetching hasEmail:", error);
     }
 }
-
+async function fetchPremiumStatus() {
+    try {
+        const response = await fetch("/api/is-premium");
+        if (response.status === 403) {
+            return true;
+        }
+        const data = await response.json();
+        return data.premium;
+    } catch (error) {
+        console.error("Error fetching isPremium:", error);
+    }
+}
 // Game Link Loading Code
 let allGames = [];
 function localStorageLoad() {
@@ -75,25 +88,19 @@ function localStorageLoad() {
 }
 async function loadGames() {
     try {
-        const gamesDoc = await fetch('/api/getGames').then(res => res.json());
+        const gamesJSON = await fetch('/api/getGames').then(res => res.json());
         const gamePopularity = await fetch('/api/getPopGames').then(res => res.json());
-
-        // Get names
-        let names = Object.keys(gamesDoc);
-
+        const games = { ...gamesJSON.base, ...gamesJSON.prem }
+        let names = Object.keys(games);
         allGames = names.map(name => ({
             name,
-            link: gamesDoc[name],
+            link: games[name],
             allTime: gamePopularity[name] ? gamePopularity[name].allTime : 0,
             monthly: gamePopularity[name] ? gamePopularity[name].monthly : 0,
-            weekly: gamePopularity[name] ? gamePopularity[name].weekly : 0
+            weekly: gamePopularity[name] ? gamePopularity[name].weekly : 0,
+            premium: gamesJSON.prem.hasOwnProperty(name) // Check if the game exists in `prem`
         }));
-
-        console.log(gamesDoc, gamePopularity);
-        // Sort the combined array alphabetically by name
         allGames.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Render the games
         localStorage.setItem('gameLinks-games', JSON.stringify(allGames));
         renderGames(allGames);
     } catch (e) {
@@ -103,28 +110,17 @@ async function loadGames() {
 async function loadTools() {
     try {
         const response = await fetch('/api/getTools');
-
-        if (!response.ok) {  // Check if the response status is OK (2xx)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        // Assuming the server returns a JSON response
-        const toolsDoc = await response.json();
-
-        // Get names and links
-        let names = Object.keys(toolsDoc);
-        let links = Object.values(toolsDoc);
-
-        // Combine names and links into a single array of objects
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const toolsJSON = await response.json();
+        const tools = { ...toolsJSON.base, ...toolsJSON.prem }
+        let names = Object.keys(tools);
+        let links = Object.values(tools);
         let allTools = names.map((name, index) => ({
             name,
-            link: links[index]
+            link: links[index],
+            premium: toolsJSON.prem.hasOwnProperty(name) // Check if the tool exists in `prem`
         }));
-
-        // Sort the combined array alphabetically by name
         allTools.sort((a, b) => a.name.localeCompare(b.name));
-
-        // Render the tools
         localStorage.setItem('gameLinks-tools', JSON.stringify(allTools));
         renderTools(allTools);
     } catch (e) {
@@ -134,32 +130,24 @@ async function loadTools() {
 async function loadPopGames() {
     try {
         const response = await fetch('/api/getPopGames');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        const games = await response.json();
 
-        if (!response.ok) {  // Check if the response status is OK (2xx)
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        let names = Object.keys(games);
+        let links = names.map(name => games[name].url);
+        let allTime = names.map(name => games[name].allTime);
+        let monthly = names.map(name => games[name].monthly);
+        let weekly = names.map(name => games[name].weekly);
+        let premium = names.map(name => games[name].premium);
 
-        // Assuming the server returns a JSON response
-        const gamesDoc = await response.json();
-
-        // Get names and links
-        let names = Object.keys(gamesDoc);
-        let links = names.map(name => gamesDoc[name].url);
-
-        let allTime = names.map(name => gamesDoc[name].allTime);
-        let monthly = names.map(name => gamesDoc[name].monthly);
-        let weekly = names.map(name => gamesDoc[name].weekly);
-
-        // Combine names and links into a single array of objects
         let allPopGames = names.map((name, index) => ({
             name,
             link: links[index],
             allTime: allTime[index],
             monthly: monthly[index],
-            weekly: weekly[index]
+            weekly: weekly[index],
+            premium: premium[index] 
         }));
-
-        // Render the tools
         localStorage.setItem('gameLinks-popGames', JSON.stringify(allPopGames));
         renderPopGames(allPopGames);
     } catch (e) {
@@ -202,6 +190,7 @@ function renderGames(games, sortBy = "alphabetical") {
         a.addEventListener("mouseenter", () => {
             popGameStats.style.display = "block";
             popGameStats.innerHTML = `
+                ${game.premium ? '<div class="rainbow-text" data-text="PREMIUM!">PREMIUM!</div>' : ""}
                 <div>Monthly Plays: ${game.monthly}</div>
                 <div>Weekly Plays: ${game.weekly}</div>
                 <div>All Time Plays: ${game.allTime}</div>
@@ -240,7 +229,7 @@ function renderTools(games) {
         a.innerHTML = blockText;
         a.href = game.link;
         a.className = 'game-link';
-        if (game.link == '/404.html') {
+        if (game.link === '/404.html') {
             a.style.display = 'none'
         }
         gameLinks.appendChild(a);
@@ -257,7 +246,7 @@ function renderPopGames(games, sortBy = "monthly") {
 
     if (games.length === 0) document.getElementById('popGames').style.display = 'none';
     else document.getElementById('popGames').style.display = 'block';
-    
+
     games.forEach((game, i) => {
         if (i >= 10) return; // Only show the top 10 games
         let nameArr = game.name.split('**');
@@ -298,7 +287,7 @@ function renderPopGames(games, sortBy = "monthly") {
 
 function reloadCustomization() {
     let defaultColors = config.defaultColors;
-    // glitch occured where all colors were set to 000, so to reset them we need to check if they are the same
+    // glitch occurred where all colors were set to 000, so to reset them we need to check if they are the same
     if (!localStorage.getItem('cus-mainColor') || localStorage.getItem('cus-mainColor') === localStorage.getItem('cus-bgColor')) {
         Object.values(defaultColors).forEach((color, i) => {
             const keyName = Object.keys(defaultColors)[i]
@@ -331,6 +320,21 @@ function reloadCustomization() {
         }
     });
 }
+let rainbowInterval;
+
+function rainbowText() {
+    let hue = 0;
+    function updateColors() {
+        const elements = document.querySelectorAll('.rainbow-text');
+        elements.forEach(element => {
+            element.style.color = `hsl(${hue}, 100%, 50%)`;
+        });
+        hue = (hue + 1) % 360;
+    }
+    if (rainbowInterval) clearInterval(rainbowInterval);
+    rainbowInterval = setInterval(updateColors, 1);
+}
+//rainbowText();
 
 document.querySelectorAll('.popup').forEach(popup => {
     popup.addEventListener('click', () => {
@@ -348,11 +352,11 @@ document.getElementById('sortWeek').addEventListener('click', () => {
 document.getElementById('sortAllTime').addEventListener('click', () => {
     renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "allTime");
     renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "allTime");
-}); 
+});
 document.getElementById('sortAlpha').addEventListener('click', () => {
     renderGames(JSON.parse(localStorage.getItem('gameLinks-games')), "alphabetical");
     renderPopGames(JSON.parse(localStorage.getItem('gameLinks-popGames')), "alphabetical");
-}); 
+});
 
 const popGameStats = document.getElementById("popGameStats");
 document.addEventListener("mousemove", (event) => {

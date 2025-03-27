@@ -83,11 +83,10 @@
   let gameId = params.get("id");
 
   if (gameId) {
-    // Fetch gs.json
     fetch("json/gs.json")
       .then(response => response.json())
       .then(data => {
-        // Check if the game is in gs.json
+        console.log(data);
         let game = data.find(game => game.id.toString() === gameId);
         if (game) {
           document.title = `${game.name}`;
@@ -96,34 +95,8 @@
           } else if (game.url === "u") {
             document.querySelector("#frame").src = `unity/${game.url}.html?g=${game.g}`;
           }
-          else if (game.url === "h") {
-            document.querySelector("#frame").src = proxyLink(game.gameurl);
-          }
-        } else {
-          // If not found in gs.json, check dog.json
-          fetch("json/dog.json")
-            .then(response => {
-              if (!response.ok) {
-                throw new Error('Network response was not ok');
-              }
-              return response.json();
-            })
-            .then(dogGames => {
-              // Log the dogGames response for debugging
-              console.log('dogGames response:', dogGames);
-              // Find the game in the dogGames array
-              let dogGame = dogGames.find(game => game.id.toString() === gameId);
-              if (dogGame) {
-                document.title = `${dogGame.name}`;
-                document.querySelector("#frame").src = proxyLink(dogGame.gameurl);
-              } else {
-                console.error('Game not found in dog.json for ID:', gameId);
-              }
-            })
-            .catch(error => console.error('Error fetching dog.json:', error));
-        }
-      })
-      .catch(error => console.error('Error fetching gs.json:', error));
+        }})
+        .catch(error => console.error('Error fetching gs.json:', error));
   }
 </script>
 </body>

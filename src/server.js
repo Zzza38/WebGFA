@@ -102,7 +102,9 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 let server;
 (async () => {
-    if (config.installed.interstellar) games.tools["Interstellar"] = config.features.interstellarURL;
+    if (config.installed.interstellar) {
+        games.tools["Interstellar"] = config.features.interstellarURL;
+    }
     try {
         server = startServer();
         // Don't need email for testing, so not starting it. 
@@ -130,7 +132,7 @@ async function handleMainRequest(req, res, next) {
     const user = !Object.keys(db.users).find(user => db.users[user].sessionID === sessionId) ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
 
     if (isHtmlRequest(reqPath)) {
-        await serveHtmlFile(reqPath, res);
+        await serveHtmlFile(reqPath, res, req);
         handleStatistics(req, res, user, sessionId);
     } else {
         next();
@@ -165,7 +167,7 @@ async function handleGitHubWebhook(req, res) {
 
 async function handleStatistics(req, res, user, sessionID) {
     const reqPath = urlUtils.normalizePath(req.path);
-    const fullURL = reqPath + '?' + req.url.split('?')[1]
+    const fullURL = reqPath + req.url.split('?') ? '?' + req.url.split('?')[1] : ""
     // Add to CSV file
     const humanReadableDate = new Date().toLocaleString();
     let body = {};
@@ -218,22 +220,21 @@ async function handleStatistics(req, res, user, sessionID) {
     }
 
     if (reqPath.includes("/games")) {
-        const game = Object.entries(games.games).find(([_, v]) => v === fullURL);
-
-        if (!game) return; // Exit early if no game is found
-
+        const allGames = Object.assign({}, games.games, games.premiumGames);
+        const game = Object.entries(allGames).find(([_, v]) => v === fullURL);
+        if (!game) return;
         const [name, url] = game;
-
         let gamePop = db.gamePopularity[name] || {
             allTime: 0,
             monthly: 0,
             weekly: 0,
-            url: url
+            url: url,
+            premium: games.premiumGames.includes(name)
         };
-
         gamePop.allTime += 1;
         gamePop.monthly += 1;
         gamePop.weekly += 1;
+        gamePop.premium = games.premiumGames.includes(name);
 
         db.gamePopularity[name] = gamePop;
         await writeJSONChanges(db);
@@ -452,7 +453,7 @@ async function handleApiRequest(req, res) {
                     ? games.premiumGames || {}
                     : {};
 
-                res.json({ ...base, ...premium });
+                res.json({ base, prem: premium });
 
             },
             'getTools': async () => {
@@ -461,7 +462,7 @@ async function handleApiRequest(req, res) {
                     ? games.premiumGames || {}
                     : {};
 
-                res.json({ ...base, ...premium });
+                res.json({ base, prem: premium });
 
             },
             'getPopGames': async () => {
@@ -487,6 +488,10 @@ async function handleApiRequest(req, res) {
                 if (user === "guest") return res.status(403).send("Guests do not have an email.")
                 const hasEmail = String(Boolean(emailUtils.isValidEmail(db.users[user].email)))
                 res.send(hasEmail);
+            },
+            'is-premium': async () => {
+                if (user === "guest") return res.json({ premium: false });
+                return res.json({ premium: db.users[user].permissions?.includes('prem') });
             }
         }[service];
 
@@ -504,19 +509,33 @@ async function handleApiRequest(req, res) {
     if (!res.headersSent) res.status(202).send('Status code not set, contact owner.');
 }
 
-async function serveHtmlFile(reqPath, res) {
+async function serveHtmlFile(reqPath, res, req) {
     const staticDir = path.resolve(__dirname, '../static');
     try {
         const normalizedPath = urlUtils.normalizePath(reqPath);
         const fullPath = path.resolve(staticDir, normalizedPath.slice(1));
 
+        const sessionId = String(req.cookies.uid);
+        const user = sessionId.includes('GUEST-ACCOUNT') ? 'guest' : Object.keys(db.users).find(user => db.users[user].sessionID === sessionId);
+
         // Security check
         if (!fullPath.startsWith(staticDir)) {
-            console.log(fullPath)
+            console.log(fullPath);
+            console.log(normalizedPath)
             throw new Error('Invalid path');
         }
-
-        let html = await fs.readFile(fullPath, 'utf8');
+        const fullURL = normalizedPath + req.url.split('?')[1] ? '?' + req.url.split('?')[1] : ""
+        const allGames = Object.assign({}, games.games, games.premiumGames);
+        const game = Object.entries(allGames).find(([_, v]) => v === fullURL);
+        
+        let html;
+        if (!game) {
+            html = await fs.readFile(fullPath, 'utf8');
+        } else if (games.premiumGames.includes(game) && !db.users[user].permissions?.includes('prem')) {
+            html = await fs.readFile(path.resolve(staticDir, "403.html"), 'utf8');
+        } else {
+            html = await fs.readFile(fullPath, 'utf8');
+        }
 
         const filteredTags = extraTags.filter(tag => {
             return !Object.entries(excludedTags).some(([pathKey, excludedTag]) => {

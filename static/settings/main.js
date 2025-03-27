@@ -136,167 +136,167 @@ document.addEventListener('DOMContentLoaded', () => {
             nameAB: 'WebGFA'
         },
         'Clever': {
-            icoAB: '/assets/media/images/clever.png',
+            icoAB: '/assets/media/images/icons/clever.png',
             nameAB: 'Clever | Portal'
         },
         'Canvas': {
-            icoAB: '/assets/media/images/canvas.png',
+            icoAB: '/assets/media/images/icons/canvas.png',
             nameAB: 'Dashboard'
         },
         'Edpuzzle': {
-            icoAB: '/assets/media/images/edpuzzle.png',
+            icoAB: '/assets/media/images/icons/edpuzzle.png',
             nameAB: 'Edpuzzle'
         },
         'Google': {
-            icoAB: '/assets/media/images/google.png',
+            icoAB: '/assets/media/images/icons/google.png',
             nameAB: 'Google'
         },
         'Google Meet': {
-            icoAB: '/assets/media/images/google-meet.png',
+            icoAB: '/assets/media/images/icons/google-meet.png',
             nameAB: 'Google Meet'
         },
         'Classroom': {
-            icoAB: '/assets/media/images/classroom.png',
+            icoAB: '/assets/media/images/icons/classroom.png',
             nameAB: 'Home'
         },
         'Drive': {
-            icoAB: '/assets/media/images/drive.png',
+            icoAB: '/assets/media/images/icons/drive.png',
             nameAB: 'My Drive - Google Drive'
         },
         'Google Docs': {
-            icoAB: '/assets/media/images/google-docs.ico',
+            icoAB: '/assets/media/images/icons/google-docs.ico',
             nameAB: 'Google Docs'
         },
         'Google Slides': {
-            icoAB: '/assets/media/images/google-slides.ico',
+            icoAB: '/assets/media/images/icons/google-slides.ico',
             nameAB: 'Google Slides'
         },
         'Gmail': {
-            icoAB: '/assets/media/images/gmail.png',
+            icoAB: '/assets/media/images/icons/gmail.png',
             nameAB: 'Gmail'
         },
         'Khan': {
-            icoAB: '/assets/media/images/khan.png',
+            icoAB: '/assets/media/images/icons/khan.png',
             nameAB: 'Dashboard | Khan Academy'
         },
         'Campus': {
-            icoAB: '/assets/media/images/campus.png',
+            icoAB: '/assets/media/images/icons/campus.png',
             nameAB: 'Infinite Campus'
         },
         'IXL': {
-            icoAB: '/assets/media/images/ixl.png',
+            icoAB: '/assets/media/images/icons/ixl.png',
             nameAB: 'IXL | Dashboard'
         },
         'LinkIt': {
-            icoAB: '/assets/media/images/linkit.ico',
+            icoAB: '/assets/media/images/icons/linkit.ico',
             nameAB: 'Test Taker'
         },
         'Schoology': {
-            icoAB: '/assets/media/images/schoology.png',
+            icoAB: '/assets/media/images/icons/schoology.png',
             nameAB: 'Home | Schoology'
         },
         'i-Ready Math': {
-            icoAB: '/assets/media/images/i-ready.ico',
+            icoAB: '/assets/media/images/icons/i-ready.ico',
             nameAB: 'Math To Do, i-Ready'
         },
         'i-Ready Reading': {
-            icoAB: '/assets/media/images/i-ready.ico',
+            icoAB: '/assets/media/images/icons/i-ready.ico',
             nameAB: 'Reading To Do, i-Ready'
         },
         'ClassLink Login': {
-            icoAB: '/assets/media/images/classlink-login.png',
+            icoAB: '/assets/media/images/icons/classlink-login.png',
             nameAB: 'Login'
         },
         'Wikipedia': {
-            icoAB: '/assets/media/images/wikipedia.png',
+            icoAB: '/assets/media/images/icons/wikipedia.png',
             nameAB: 'Wikipedia'
         },
         'Britannica': {
-            icoAB: '/assets/media/images/britannica.png',
+            icoAB: '/assets/media/images/icons/britannica.png',
             nameAB: 'Encyclopedia Britannica | Britannica'
         },
         'Ducksters': {
-            icoAB: '/assets/media/images/ducksters.png',
+            icoAB: '/assets/media/images/icons/ducksters.png',
             nameAB: 'Ducksters'
         },
         'Minga': {
-            icoAB: '/assets/media/images/minga.png',
+            icoAB: '/assets/media/images/icons/minga.png',
             nameAB: 'Minga – Creating Amazing Schools'
         },
         'i-Ready Learning Games': {
-            icoAB: '/assets/media/images/i-ready.ico',
+            icoAB: '/assets/media/images/icons/i-ready.ico',
             nameAB: 'Learning Games, i-Ready'
         },
         'NoRedInk Home': {
-            icoAB: '/assets/media/images/noredink.webp',
+            icoAB: '/assets/media/images/icons/noredink.webp',
             nameAB: 'Student Home | NoRedInk'
         },
         'Newsela Binder': {
-            icoAB: '/assets/media/images/newsela.png',
+            icoAB: '/assets/media/images/icons/newsela.png',
             nameAB: 'Newsela | Binder'
         },
         'Newsela Assignments': {
-            icoAB: '/assets/media/images/newsela.png',
+            icoAB: '/assets/media/images/icons/newsela.png',
             nameAB: 'Newsela | Assignments'
         },
         'Newsela Home': {
-            icoAB: '/assets/media/images/newsela.png',
+            icoAB: '/assets/media/images/icons/newsela.png',
             nameAB: 'Newsela | Instructional Content Platform'
         },
         'PowerSchool Sign In': {
-            icoAB: '/assets/media/images/powerschool.png',
+            icoAB: '/assets/media/images/icons/powerschool.png',
             nameAB: 'Student and Parent Sign In'
         },
         'PowerSchool Grades and Attendance': {
-            icoAB: '/assets/media/images/powerschool.png',
+            icoAB: '/assets/media/images/icons/powerschool.png',
             nameAB: 'Grades and Attendance'
         },
         'PowerSchool Teacher Comments': {
-            icoAB: '/assets/media/images/powerschool.png',
+            icoAB: '/assets/media/images/icons/powerschool.png',
             nameAB: 'Teacher Comments'
         },
         'PowerSchool Standards Grades': {
-            icoAB: '/assets/media/images/powerschool.png',
+            icoAB: '/assets/media/images/icons/powerschool.png',
             nameAB: 'Standards Grades'
         },
         'PowerSchool Attendance': {
-            icoAB: '/assets/media/images/powerschool.png',
+            icoAB: '/assets/media/images/icons/powerschool.png',
             nameAB: 'Attendance'
         },
         'Nearpod': {
-            icoAB: '/assets/media/images/nearpod.png',
+            icoAB: '/assets/media/images/icons/nearpod.png',
             nameAB: 'Nearpod'
         },
         'StudentVUE': {
-            icoAB: '/assets/media/images/studentvue.ico',
+            icoAB: '/assets/media/images/icons/studentvue.ico',
             nameAB: 'StudentVUE'
         },
         'Quizlet Home': {
-            icoAB: '/assets/media/images/quizlet.webp',
+            icoAB: '/assets/media/images/icons/quizlet.webp',
             nameAB: 'Flashcards, learning tools and textbook solutions | Quizlet'
         },
         'Google Forms Locked Mode': {
-            icoAB: '/assets/media/images/googleforms.png',
+            icoAB: '/assets/media/images/icons/googleforms.png',
             nameAB: 'Start your quiz'
         },
         'DeltaMath': {
-            icoAB: '/assets/media/images/deltamath.png',
+            icoAB: '/assets/media/images/icons/deltamath.png',
             nameAB: 'DeltaMath'
         },
         'Kami': {
-            icoAB: '/assets/media/images/kami.png',
+            icoAB: '/assets/media/images/icons/kami.png',
             nameAB: 'Kami'
         },
         'GoGuardian Admin Restricted': {
-            icoAB: '/assets/media/images/goguardian-lock.png',
+            icoAB: '/assets/media/images/icons/goguardian-lock.png',
             nameAB: 'Restricted'
         },
         'GoGuardian Teacher Block': {
-            icoAB: '/assets/media/images/goguardian.png',
+            icoAB: '/assets/media/images/icons/goguardian.png',
             nameAB: 'Uh oh!'
         },
         'World History Encyclopedia': {
-            icoAB: '/assets/media/images/worldhistoryencyclopedia.png',
+            icoAB: '/assets/media/images/icons/worldhistoryencyclopedia.png',
             nameAB: 'World History Encyclopedia'
         }
     };

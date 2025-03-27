@@ -9,10 +9,11 @@ function exportStorageData() {
         return cookieObj;
     }
 
+    const excludedLocalStorage = ["gameLinks-games", "gameLinks-popGames", "gameLinks-tools", "username", "hasEmail"]
     function getLocalStorage() {
         let localStorageObj = {};
         for (let key in localStorage) {
-            if (localStorage.hasOwnProperty(key)) {
+            if (localStorage.hasOwnProperty(key) &! excludedLocalStorage.includes(key)) {
                 localStorageObj[key] = localStorage.getItem(key);
             }
         }

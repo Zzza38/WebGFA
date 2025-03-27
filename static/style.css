@@ -95,3 +95,29 @@ body {
   font-size: 14px;
   pointer-events: none;
 }
+
+.rainbow-text {
+  background: linear-gradient(
+    135deg, /* Diagonal direction */
+    hsl(0, 100%, 50%),
+    hsl(30, 100%, 50%),
+    hsl(60, 100%, 50%),
+    hsl(120, 100%, 50%),
+    hsl(180, 100%, 50%),
+    hsl(240, 100%, 50%),
+    hsl(300, 100%, 50%),
+    hsl(330, 100%, 50%),
+    hsl(0, 100%, 50%) /* Match first color for seamless loop */
+  );
+  background-size: 400% 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+  animation: flowing-diagonal 8s linear infinite;
+}
+
+@keyframes flowing-diagonal {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
