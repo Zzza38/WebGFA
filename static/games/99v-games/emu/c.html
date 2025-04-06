@@ -1,0 +1,81 @@
+<!-- 
+          _____                    _____                _____                    _____          
+         /\    \                  /\    \              /\    \                  /\    \         
+        /::\    \                /::\    \            /::\    \                /::\    \        
+        \:::\    \              /::::\    \           \:::\    \              /::::\    \       
+         \:::\    \            /::::::\    \           \:::\    \            /::::::\    \      
+          \:::\    \          /:::/\:::\    \           \:::\    \          /:::/\:::\    \     
+           \:::\    \        /:::/__\:::\    \           \:::\    \        /:::/__\:::\    \    
+           /::::\    \      /::::\   \:::\    \          /::::\    \      /::::\   \:::\    \   
+  _____   /::::::\    \    /::::::\   \:::\    \        /::::::\    \    /::::::\   \:::\    \  
+ /\    \ /:::/\:::\    \  /:::/\:::\   \:::\____\      /:::/\:::\    \  /:::/\:::\   \:::\____\ 
+/::\    /:::/  \:::\____\/:::/  \:::\   \:::|    |    /:::/  \:::\____\/:::/  \:::\   \:::|    |
+\:::\  /:::/    \::/    /\::/    \:::\  /:::|____|   /:::/    \::/    /\::/   |::::\  /:::|____|
+ \:::\/:::/    / \/____/  \/_____/\:::\/:::/    /   /:::/    / \/____/  \/____|:::::\/:::/    / 
+  \::::::/    /                    \::::::/    /   /:::/    /                 |:::::::::/    /  
+   \::::/    /                      \::::/    /   /:::/    /                  |::|\::::/    /   
+    \::/    /                        \::/____/    \::/    /                   |::| \::/____/    
+     \/____/                          ~~           \/____/                    |::|  ~|          
+                                                                              |::|   |          
+                                                                              \::|   |          
+                                                                               \:|   |          
+                                                                                \|___|          
+                                                                                                
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>emulator</title>
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            background-color: var(--text);
+        }
+
+        #game {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width: 100%; height: 100%; text-align:center">
+        <div id="game"></div>
+    </div>
+    <script src="data/loader.js" defer></script>
+    <script>
+        var style = getComputedStyle(document.body)
+        console.log(style.getPropertyValue('--text')) // #336699
+
+        const params = new URLSearchParams(window.location.search);
+        let game = params.get('g');
+        let id = params.get('id');
+        let sys = params.get('sys');
+        let EJS_player = "#game";
+        let EJS_core = sys;
+        let EJS_gameID = id;
+        let EJS_gameUrl;
+        let EJS_biosUrl;
+        if (sys == "psx") {
+            EJS_gameUrl = "https://storage.googleapis.com/imadejptr-v2/old/" + sys + "/" + game + ".zip";
+            EJS_biosUrl = "https://cdn.glitch.me/390c93a7-960a-46dc-86c4-e2c242f9dcc8/scph5501.bin"; // this is for arcade games :>
+        } else if (sys == "arcade" || sys == "mame" || sys == "mame2003" || sys == "atari2600") {
+            EJS_gameUrl = "https://cdn.glitch.me/e9e21b58-be83-4e9b-bb62-3d95285f3628/" + game + ".zip";
+            EJS_biosUrl = "https://cdn.glitch.me/390c93a7-960a-46dc-86c4-e2c242f9dcc8/arcade.7z";
+        } else {
+            EJS_gameUrl = "https://cdn.glitch.me/e9e21b58-be83-4e9b-bb62-3d95285f3628/" + game + "-" + sys + ".zip";
+        }
+        let EJS_pathtodata = "data/";
+        let EJS_oldCores = true;
+        let EJS_mameCore = params.get('mc'); // mame core options
+    </script>
+</body>
+
+</html>

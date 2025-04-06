@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+		<link rel="stylesheet" href="game.css">
+        <title>Block_Blast</title>
+        </head>
+
+    <body>
+        <div id="gameContainer"></div>
+        <div id="loader">
+            <div class="container">
+                <img class="logo" src="image/logo.png">
+                <div class="pos_spinner">
+                    <div class="spinner"></div>
+                </div>
+                 <div class="progress">
+					<div class="flexCenter" >
+						<div class="posfull">
+							<img alt="process_full" class="full" src="image/time line_1.png">
+						</div>
+						<div class="posfull1">
+							<img alt="process_full" class="" src="image/time line_2.png">
+						</div>
+						<div class="posbox">
+							<img alt="box_process" class="box_process" src="image/time line_3.png">
+						</div>
+					</div>
+	  </div>
+            </div>           
+         </div>
+    </body>
+	<script>
+	function UnityCallPlayJs (){
+		console.log("unity call Play game");
+		
+	}
+	
+	function UnityCallAgainJs(){
+		console.log("unity call Again");
+	}
+	
+	function UnityCallLeaderboardJs (){
+		console.log("unity call On Leaderboard");
+	}
+	
+
+	function UnityCallEndGameJs(){
+		console.log("unity call End Game");
+	}
+	
+	function UnityCallBackHomeJs(){
+		console.log("unity call BackHome");
+	}
+	
+	function UnityCallChangeDayLeaderboardJs(){
+		console.log("unity Call Change Day Leaderboard");
+	}
+	
+	</script>
+    <script src="Build/UnityLoader.js"></script>
+  <script>
+     UnityLoader.compatibilityCheck=function(e,t,r){t();};
+	
+   var gameInstance = UnityLoader.instantiate("gameContainer", "Build/BlockBlast.json", {onProgress: UnityProgress});
+
+   function UnityProgress(gameInstance, progress) {
+    if (!gameInstance.Module) {
+        return;
+    }
+    const loader = document.querySelector("#loader");
+    if (!gameInstance.progress) {
+        const progress = document.querySelector("#loader .progress");
+        progress.style.display = "block";
+        gameInstance.progress = progress.querySelector(".full");
+
+        gameInstance.box_process = progress.querySelector(".box_process");
+
+        gameInstance.posfull = progress.querySelector(".posfull");
+
+        loader.querySelector(".spinner").style.display = "none";
+    }
+gameInstance.progress.style.transform = `scaleX(${progress})`;
+    if (progress === 1 && !gameInstance.removeTimeout) {
+        gameInstance.removeTimeout = setTimeout(function () {
+            loader.style.display = "none";
+        }, 2000);
+    }
+}
+
+</script>
+
+</html>

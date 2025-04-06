@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./style.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <title>Game Save Data Retrieval</title>
+</head>
+
+<body>
+  <h2>Game Save Data Retrieval</h2>
+  <h3 id="message"></h3>
+  <button id="saveButton">Restore Save Data</button>
+  <p>Your save data is stored in a small file on your computer. If you change computers, then the file changes and you lose the game save data. You might think, how can I restore the file if I never exported it in the first place? Well, as WebGFA runs, a script uploads that file once a minute. Here, it gets that file and lets you get your game save data back. This will overwrite any existing save data, so if you were level 3 in a game now and in the save you were level 2, the level 2 would be put in. But, if you were level 5 in a game and there is no entry for the game (you never played it before), then the save would stay since it doesn't delete data, only overwrites.</p>
+  <script src="main.js"></script>
+</body>
+</html>

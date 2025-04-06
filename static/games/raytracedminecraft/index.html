@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap');
+
+        body {
+            background-color: black;
+            color: white;
+            font-family: 'Ubuntu', sans-serif;
+            text-align: center;
+        }
+
+        h2 {
+            color: white;
+        }
+
+        #headerLogin {
+            align-items: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            padding: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button[type="submit"],
+        #guestLogin {
+            margin-bottom: 5px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+
+        #alertText {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="headerLogin">
+        <h2>Login</h2>
+    </div>
+    <script type="module">
+        const apiURL = 'https://api.' + location.host + '/api?service='
+        const apiService = 'firebaseGetDoc'
+        const permissionRef = '&col=users&doc=permissions'
+        let permissionsDoc = {};
+        fetch(requestURL + apiService + permissionRef)
+            .then(response => {
+                if (response.ok) {
+                    return response.json()
+                } else {
+                    throw new Error('API Request failed');
+                }
+            })
+            .then(data => { permissionsDoc = data })
+            
+        if (permissionsDoc[localStorage.getItem("username")].includes("prem")) {
+            location.href = 'game.html'
+        }
+    </script>
+</body>
+
+</html>

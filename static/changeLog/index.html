@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <link rel="icon" href="/favicon.ico">
+  <title>Change Log</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <h1>Change Log</h1>
+  <div id="message" style = "display: none;">
+    <h3>Hey! This is currently disabled.</h3>
+    <p>I have someone working on adding a full changelog, complete with explanations and my programming crashouts.
+    </p>
+    <a href="/">Return to the main menu...</a>
+  </div>
+  <div id="commits">
+    <p>Sammy, after you finish working on a section press the push commit to server button. It will auto load them after.</p>
+    <p>The first line is the title. To add bullet points, write '-' and then the text.</p>
+    <p>To make another box, add "--||--" and another box will appear after you type in something under it.</p>
+    <br>
+    <p>Example:</p> 
+    <p>v1.0.1 - 1/2/24 @ 6:39 PM</p> 
+    <p>- Added something here</p>
+    <p> -Added something there</p>
+    <p>-Removed that</p> 
+    <p>--||--</p> 
+    <p>v1.0.0 - 1/1/24 @ 4:12 PM</p>
+    <p>- Added something here</p>
+    <p> -Added something there</p>
+    <p>-Removed that</p>
+    <br>
+    <a href="https://inter.learnis.site/a/hvtrs8%2F-gktju%60.aoo%2FXzxa18-WgbEFC%2Faoomktq" target="_blank">Link to commits...</a>
+    <p>Go from top to bottom, and go forwards in the commits.</p>
+    <textarea id="commitText" placeholder="Enter commit messages here..."></textarea> <br>
+    <button id="pushCommitText">Push Commit Text to Server</button>
+    <div id="commitContainer"></div>
+    <script src="main.js"></script>
+  </div>
+</body>
+
+</html>

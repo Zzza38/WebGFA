@@ -1,0 +1,28 @@
+{
+  "name": "webgfa",
+  "version": "3.2.4",
+  "description": "This is a game site made to play games! If you want to add any games, just use to form in the /gameselect code and submit. The website linked to this github is https://webgfa.com with other links being https://webgfa.org and https://webgfa.online",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "build": "node packages/build.js",
+    "update": "node packages/build.js --update",
+    "config": "node src/config.js",
+    "dev": "node src/server.js --dev"
+  },
+  "author": "Zzza38",
+  "license": "ISC",
+  "dependencies": {
+    "@genkit-ai/googleai": "^1.0.5",
+    "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "genkit": "^1.0.5",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^3.0.3",
+    "nodemailer": "^6.10.0",
+    "puppeteer": "^24.2.1"
+  }
+}

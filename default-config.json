@@ -1,0 +1,44 @@
+{
+  "ports": {
+    "main": 8000,
+    "development": 5000,
+    "interstellar": 3000,
+    "webssh": 2222
+  },
+  "features": {
+    "interstellar": true,
+    "interstellarURL": "https://interstellar.example.com",
+    "webssh": true,
+    "websshURL": "https://ssh.example.com",
+    "githubAutoPull": {
+      "pull": false,
+      "restartCommand": "dir"
+    },
+    "login": {
+      "enabled": true,
+      "emailEnabled": false,
+      "email": "email@example.com",
+      "url": "https://example.com"
+    }
+  },
+  "installed": {
+    "MESSAGE": "DO NOT EDIT THIS SECTION! THIS WILL BE AUTOMATICALLY HANDLED BY NPM RUN BUILD!!!",
+    "interstellar": false,
+    "webssh": false
+  },
+  "client-config": {
+    "defaultColors": {
+      "main": "#007bff",
+      "mainText": "#ffffff",
+      "buttonText": "#ffffff",
+      "bg": "#000000"
+    },
+    "name": "WebGFA",
+    "login": true,
+    "email": {
+      "enabled": true,
+      "email": "email@example.com"
+    },
+    "interstellarURL": "https://interstellar.example.com"
+  }
+}
