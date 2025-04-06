@@ -11,7 +11,7 @@ data/firestore_backup.json
 
 # Ignore server log files
 server.log
-log/
+logs/
 webgfa.csv
 
 # Ignore packages that are cloned from GitHub by npm run build

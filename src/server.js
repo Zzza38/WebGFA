@@ -83,8 +83,12 @@ app.use(express.json({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-    const sessionID = req.cookies.uid;
-    !Object.values(db.users).some(user => user.sessionID === sessionID) && res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
+    const sessionID = String(req.cookies.uid);
+    const isGuest = sessionID.includes("GUEST-ACCOUNT-");
+    const isUser = Boolean(Object.values(db.users).some(user => user.sessionID === sessionID));
+    if (dev) console.log(sessionID, isGuest, isUser)
+    if (isGuest) next();
+    if (!isUser) res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
     next();
 });
 
@@ -102,6 +106,7 @@ app.use(handleMainRequest);
 /////////////////////////////////////////////////////////////
 let server;
 (async () => {
+    // If Interstellar is installed, then put it into the tools category
     if (config.installed.interstellar) {
         games.tools["Interstellar"] = config.features.interstellarURL;
     }
