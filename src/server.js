@@ -147,7 +147,7 @@ async function handleMainRequest(req, res, next) {
 async function handleLogin(req, res) {
     const { username, password } = req.body;
 
-    if (!db.users[username]) res.status(403).send("User doesn't exist")
+    if (!db.users[username]) return res.status(403).send("User doesn't exist")
     if (db.users[username]?.password === password) {
         // Set login cookies
         const uid = username === 'guest' ? 'GUEST-ACCOUNT' : generateUID();
@@ -157,7 +157,7 @@ async function handleLogin(req, res) {
         return res.status(200).send('Login successful');
     }
 
-    res.status(401).send('Invalid credentials');
+    return res.status(401).send('Invalid credentials');
 }
 
 async function handleGitHubWebhook(req, res) {
@@ -493,7 +493,7 @@ async function handleApiRequest(req, res) {
             'has-email': async () => {
                 if (user === "guest") return res.status(403).send("Guests do not have an email.")
                 const hasEmail = String(Boolean(emailUtils.isValidEmail(db.users[user].email)))
-                res.send(hasEmail);
+                return res.status(200).send(hasEmail);
             },
             'is-premium': async () => {
                 if (user === "guest") return res.json({ premium: false });
@@ -510,13 +510,13 @@ async function handleApiRequest(req, res) {
         } else if (req.method === 'GET' && getHandler) {
             await getHandler();
         } else {
-            res.status(400).send('Invalid service / method for service');
+            return res.status(400).send('Invalid service / method for service');
         }
     } catch (error) {
         console.error('API error:', error);
-        res.status(500).send('Server error');
+        return res.status(500).send('Server error');
     }
-    if (!res.headersSent) res.status(202).send('Status code not set, contact owner.');
+    if (!res.headersSent) return res.status(202).send('Status code not set, contact owner.');
 }
 
 async function serveHtmlFile(reqPath, res, req) {
@@ -566,14 +566,13 @@ async function serveHtmlFile(reqPath, res, req) {
             console.error('File serve error:', error);
         }
         if (!res.headersSent) {
-            res.status(404);
             try {
                 await fs.access(path.join(staticDir, '404.html'), fs.constants.F_OK);
-                res.sendFile(path.join(staticDir, '404.html'));
+                return res.status(404).sendFile(path.join(staticDir, '404.html'));
             } catch {
-                res.type('txt').send('HTTP ERROR 404: Page not found');
+                return res.status(404).type('txt').send('HTTP ERROR 404: Page not found');
             }
-        }
+        }        
     }
 }
 
