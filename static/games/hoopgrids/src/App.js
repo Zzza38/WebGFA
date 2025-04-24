@@ -26,7 +26,7 @@ function encodeUrl(url) {
       for (const season of seasons) {
         const encodedUrl = encodeUrl(`https://www.balldontlie.io/api/v1/stats?player_ids[]=${playerId}&seasons[]=${season}`);
 
-        const proxyUrl = `https://learn.webgfa.com/a/${encodedUrl}`;
+        const proxyUrl = `/a/${encodedUrl}`;
         const statsResponse = await fetch(proxyUrl);
   
         if (!statsResponse.ok) {
