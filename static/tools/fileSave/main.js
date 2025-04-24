@@ -53,7 +53,7 @@ async function initializePage() {
 
     if (username === 'guest') {
         document.getElementById('saveData').disabled = true;
-        document.getElementById('message').innerText = `Hello, guest. You don't have saved data as a guest account cannot get save data. Make a free WebGFA account today!`;
+        document.getElementById('message').innerText = `Hello, guest. You don't have saved data as a guest account cannot get save data. Make a free account today!`;
     }
 }
 
