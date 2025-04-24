@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cloakPresets = {
         'Default': {
             icoAB: '/favicon.ico',
-            nameAB: 'WebGFA'
+            nameAB: 'The Site'
         },
         'Clever': {
             icoAB: '/assets/media/images/icons/clever.png',
