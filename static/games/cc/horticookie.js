@@ -1,5 +1,5 @@
 if(Horticookie === undefined) var Horticookie = {};
-if(typeof CCSE == 'undefined') Game.LoadMod('https://webgfa.com/games/cc/ccse.js');
+if(typeof CCSE == 'undefined') Game.LoadMod(window.location.origin + '/games/cc/ccse.js');
 Horticookie.name = 'Horticookie';
 Horticookie.version = '4.2';
 Horticookie.GameVersion = '2.052';
