@@ -15,7 +15,7 @@ function insertChdir(filePath) {
 
     console.log(content); // DEBUG 
     // Check if it already has `process.chdir`
-    if (content.includes("process.chdir(__dirname);") || content.includes("process.chdir(dirname);" || content.includes("__currentDirectoryPath"))) {
+    if (content.includes("process.chdir(__dirname);") || content.includes("process.chdir(dirname);") || content.includes("__currentDirectoryPath")) {
         console.log("process.chdir is already present.");
         return;
     }
