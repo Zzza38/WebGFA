@@ -24,7 +24,7 @@ function AB() {
         name = localStorage.getItem("nameAB");
       }
       else {
-        name = 'WebGFA';
+        name = 'The Site';
       }
       if (localStorage.getItem("icoAB") !== null) {
         icon = localStorage.getItem("icoAB");
