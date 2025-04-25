@@ -86,8 +86,7 @@ app.use((req, res, next) => {
     const sessionID = String(req.cookies.uid);
     const isGuest = sessionID.includes("GUEST-ACCOUNT-");
     const isUser = Boolean(Object.values(db.users).some(user => user.sessionID === sessionID));
-    if (dev) console.log(sessionID, isGuest, isUser)
-    if (isGuest) next();
+    if (isGuest) return next();
     if (!isUser) res.cookie('uid', 'GUEST-ACCOUNT-' + generateUID(), { httpOnly: true, secure: true });
     next();
 });
