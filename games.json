@@ -1,5 +1,14 @@
 {
     "games": {
+        "Achievement Unlocked": "/games/flash/?game=achievement-unlocked",
+        "Achievement Unlocked 2": "/games/flash/?game=achievement-unlocked-2",
+        "Achievement Unlocked 3": "/games/flash/?game=achievement-unlocked-3",
+        "Age of War": "/games/flash/?game=age-of-war",
+        "Age of War **HACKED**": "/games/flash/?game=age-of-war-hacked",
+        "Run 3 ": "/games/flash/?game=run3",
+        "Papa's Freezeria": "/games/flash/?game=papas-freezeria",
+        "The Binding of Issac": "/games/flash/?game=the_binding_of_issac",
+
         "2048": "/games/2048",
         "1v1.lol": "/games/1v1-lol",
         "Baldi's Basics": "/404.html",
@@ -19,6 +28,7 @@
         "Vex 8": "/games/vex8",
         "Slope": "/games/slope/",
         "Cookie Clicker": "/games/cc/",
+        "Ragdoll Hit": "/games/ragdoll-hit",
         "10 Minutes Till Dawn": "/games/10-minutes-till-dawn",
         "Abandoned": "/games/abandoned",
         "Abandoned 2": "/games/abandoned-2",
@@ -82,7 +92,6 @@
         "Rift Shift": "/games/rift-shift",
         "Rooftop Snipers": "/games/rooftop-snipers",
         "Rookie Bowman": "/games/rookie-bowman",
-        "Run 3 ": "/games/flash/?game=run3",
         "Sandspiel": "/games/sandspiel",
         "Scuba Bear": "/games/scuba-bear",
         "Smart Ball": "/games/smart-ball",
@@ -105,7 +114,6 @@
         "Vex 6": "/games/vex-6",
         "Vex 7": "/games/vex-7",
         "Osu": "/games/web-osu",
-        "W-Flash": "/games/w-flash",
         "Where is the water": "/games/where-is-the-water",
         "X Trench Run": "/games/x-trench-run",
         "Yohoho": "/games/yohoho",
@@ -114,8 +122,6 @@
         "Hole.io": "/games/hole-io",
         "Drift Hunters": "/games/drift-hunters/",
         "Wheelie Bike": "/games/WheelieBike",
-        "The Binding of Issac": "/games/flash/?game=the_binding_of_issac",
-        "Achievement Unlocked": "/games/flash/?game=achievement-unlocked&a=/",
         "Paper.io 2": "/games/paper-io-2"
     },
     "premiumGames": {
@@ -673,7 +679,9 @@
         "Cloaker": "/tools/cloakselect/",
         "Soundboard": "/tools/soundboard",
         "Messaging": "/tools/messages/",
-        "Save Data Manager": "/tools/fileSave"
+        "Save Data Manager": "/tools/fileSave",
+        "WebGPT": "/tools/webgpt/",
+        "Admin Panel": "/admin/"
     },
     "premiumTools": {}
 }

@@ -28,9 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchCurrentUser() {
     try {
-        const response = await fetch('/api/get-user', {
-            method: 'POST'
-        });
+        const response = await fetch('/api/get-user');
         if (response.ok) currentUser = await response.json(); currentUser = currentUser['user']
     } catch (error) {
         console.error('Error fetching user:', error);

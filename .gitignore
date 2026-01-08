@@ -23,3 +23,6 @@ src/sites
 
 # Ignore Custom config.json
 config.json
+
+# Ignore tests
+test

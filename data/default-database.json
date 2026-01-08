@@ -7,14 +7,18 @@
             "password": "admin",
             "save": {},
             "sessionID": "",
-            "email": ""
+            "email": "",
+            "coins": 100,
+            "coinHistory": []
         },
         "guest": {
             "permissions": "",
             "password": "guest",
             "save": {},
             "sessionID": "guests have their own check for sessionIDs",
-            "email": ""
+            "email": "",
+            "coins": 0,
+            "coinHistory": []
         }
     }
 }

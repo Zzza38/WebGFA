@@ -2,27 +2,41 @@
   "name": "webgfa",
   "version": "3.2.4",
   "description": "This is a game site made to play games! If you want to add any games, just use to form in the /gameselect code and submit. The website linked to this github is https://webgfa.com with other links being https://webgfa.org and https://webgfa.online",
-  "main": "src/server.js",
+  "main": "dist/server.js",
+  "type": "module",
   "scripts": {
-    "start": "node src/server.js",
-    "build": "node packages/build.js",
-    "update": "node packages/build.js --update",
-    "config": "node src/config.js",
-    "dev": "node src/server.js --dev"
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "postinstall": "node packages/build.cjs",
+    "prestart": "node packages/build.cjs --update",
+    "config": "tsx src/config.ts",
+    "dev": "tsx watch src/server.ts --dev"
   },
   "author": "Zzza38",
   "license": "ISC",
   "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/formbody": "^8.0.2",
+    "@fastify/multipart": "^9.3.0",
+    "@fastify/static": "^8.3.0",
     "@genkit-ai/googleai": "^1.0.5",
-    "axios": "^1.7.9",
+    "axios": "^1.12.0",
     "cheerio": "^1.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "fastify": "^5.6.1",
     "genkit": "^1.0.5",
     "http-proxy": "^1.18.1",
     "http-proxy-middleware": "^3.0.3",
-    "nodemailer": "^6.10.0",
-    "puppeteer": "^24.2.1"
+    "openai": "^6.9.1",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.5",
+    "@types/pdf-parse": "^1.1.5",
+    "pino-pretty": "^13.1.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   }
 }

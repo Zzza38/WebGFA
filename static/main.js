@@ -40,7 +40,6 @@ async function logout() {
 async function fetchUsername() {
     try {
         const response = await fetch("/api/get-user", {
-            method: "POST",
             headers: {
                 "Content-Type": "application/json"
             }

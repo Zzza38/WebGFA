@@ -1,6 +1,6 @@
 async function fetchUsername() {
     try {
-        const response = await fetch('/api/get-user', { method: 'POST' });
+        const response = await fetch('/api/get-user');
         if (!response.ok) throw new Error('Failed to get username');
 
         const data = await response.json();
