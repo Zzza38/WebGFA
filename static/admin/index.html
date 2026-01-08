@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - WebGFA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <h1>Admin Panel</h1>
+            <div class="admin-info">
+                <span id="admin-username">Loading...</span>
+                <a href="/" class="back-link">← Back to Site</a>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="users">Users</button>
+            <button class="tab-btn" data-tab="messages">Messages</button>
+            <button class="tab-btn" data-tab="stats">Game Stats</button>
+            <button class="tab-btn" data-tab="system">System</button>
+        </nav>
+
+        <!-- Tab Content Areas -->
+        <div class="tab-content">
+            <!-- Users Tab -->
+            <div id="users-tab" class="tab-panel active">
+                <div class="panel-header">
+                    <h2>User Management</h2>
+                    <button id="create-user-btn" class="primary-btn">+ Create User</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" id="user-search" placeholder="Search users...">
+                </div>
+
+                <div class="users-table-container">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Permissions</th>
+                                <th>Coins</th>
+                                <th>Email</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody">
+                            <tr><td colspan="7" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div id="messages-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Message Moderation</h2>
+                    <button id="refresh-messages-btn" class="secondary-btn">Refresh</button>
+                </div>
+
+                <div class="messages-container" id="messages-container">
+                    <p style="text-align: center; padding: 20px; color: #888;">Loading messages...</p>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="stats-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>Game Popularity Statistics</h2>
+                </div>
+
+                <div class="stats-table-container">
+                    <table id="stats-table">
+                        <thead>
+                            <tr>
+                                <th>Game Name</th>
+                                <th>All-Time</th>
+                                <th>Monthly</th>
+                                <th>Weekly</th>
+                                <th>Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stats-tbody">
+                            <tr><td colspan="5" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- System Tab -->
+            <div id="system-tab" class="tab-panel">
+                <div class="panel-header">
+                    <h2>System Management</h2>
+                </div>
+
+                <div class="system-actions">
+                    <div class="action-card">
+                        <h3>Database Backup</h3>
+                        <p>Export the entire database as JSON</p>
+                        <button id="export-db-btn" class="primary-btn">Export Database</button>
+                    </div>
+
+                    <div class="action-card">
+                        <h3>System Logs</h3>
+                        <p>Download CSV logs of all page visits</p>
+                        <button id="download-logs-btn" class="primary-btn">Download Logs</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="create-user-modal" class="modal">
+        <div class="modal-content">
+            <h2>Create New User</h2>
+            <form id="create-user-form">
+                <input type="text" id="new-username" placeholder="Username" required>
+                <input type="password" id="new-password" placeholder="Password" required>
+                <input type="email" id="new-email" placeholder="Email (optional)">
+                <select id="new-permissions">
+                    <option value="">Regular User</option>
+                    <option value="prem">Premium User</option>
+                    <option value="admin">Admin</option>
+                    <option value="prem,admin">Premium + Admin</option>
+                </select>
+                <input type="number" id="new-coins" placeholder="Initial Coins" value="100">
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Create</button>
+                    <button type="button" class="cancel-btn modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-user-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit User: <span id="edit-username-display"></span></h2>
+            <form id="edit-user-form">
+                <input type="hidden" id="edit-username">
+
+                <label>Permissions:</label>
+                <select id="edit-permissions">
+                    <option value="">Regular User</option>
+                    <option value="prem">Premium User</option>
+                    <option value="admin">Admin</option>
+                    <option value="prem,admin">Premium + Admin</option>
+                </select>
+
+                <label>New Password (leave blank to keep current):</label>
+                <input type="password" id="edit-password" placeholder="New password (optional)">
+
+                <label>Current Coins: <span id="current-coins-display">0</span></label>
+
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Save Changes</button>
+                    <button type="button" class="cancel-btn modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="manage-coins-modal" class="modal">
+        <div class="modal-content">
+            <h2>Manage Coins: <span id="coins-username-display"></span></h2>
+            <form id="manage-coins-form">
+                <input type="hidden" id="coins-username">
+
+                <label>Current Balance: <span id="coins-balance-display">0</span></label>
+
+                <label>Amount to Add/Remove:</label>
+                <input type="number" id="coins-amount" placeholder="Enter amount (positive to add, negative to remove)" required>
+
+                <label>Reason:</label>
+                <input type="text" id="coins-reason" placeholder="Reason for adjustment (optional)">
+
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Update Coins</button>
+                    <button type="button" class="cancel-btn modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="edit-message-modal" class="modal">
+        <div class="modal-content">
+            <h2>Edit Message</h2>
+            <form id="edit-message-form">
+                <input type="hidden" id="edit-message-id">
+
+                <label>Message Content:</label>
+                <textarea id="edit-message-content" rows="4" required></textarea>
+
+                <div class="modal-actions">
+                    <button type="submit" class="primary-btn">Save Message</button>
+                    <button type="button" class="cancel-btn modal-close">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

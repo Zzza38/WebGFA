@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGPT - AI Homework Helper</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside id="chat-sidebar" class="chat-sidebar">
+            <div class="sidebar-header">
+                <h2>Chats</h2>
+                <button id="new-chat-btn" class="new-chat-btn" title="New Chat">+</button>
+            </div>
+            <div id="chat-list" class="chat-list">
+                <!-- Chat items dynamically inserted here -->
+            </div>
+        </aside>
+
+        <!-- Sidebar toggle button for mobile -->
+        <button id="sidebar-toggle" class="sidebar-toggle" title="Toggle sidebar">
+            <span class="toggle-icon">☰</span>
+        </button>
+
+        <!-- Overlay for mobile sidebar -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- Main content wrapper -->
+        <div class="main-content">
+            <div id="guestPopup" style="display: none;">
+            <div id="guestPopupBox">
+                <p>Hey! Since you're on a guest account, you can't use WebGPT.
+                    <a href="/login">Login</a> to access WebGPT.
+                    If you don't have an account, you can get one for free.
+                    Just ask an admin!
+                </p> <br>
+                <p>Click anywhere to close...</p>
+            </div>
+        </div>
+        <header>
+            <div class="header-left">
+                <h1 id="chat-title">WebGPT</h1>
+                <div class="chat-controls">
+                    <button id="rename-chat-btn" class="icon-btn" title="Rename chat">✏️</button>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="delete-chat-btn" class="icon-btn danger-btn" title="Delete chat">🗑️</button>
+                <div class="coin-display">
+                    <span class="coin-icon">🪙</span>
+                    <span id="coin-balance">Loading...</span> coins
+                </div>
+            </div>
+        </header>
+
+        <div class="mode-selector">
+            <button class="mode-btn active" data-mode="answer">Answer</button>
+            <button class="mode-btn" data-mode="explain">Explain</button>
+            <button class="mode-btn" data-mode="study">Study</button>
+            <button class="mode-btn" data-mode="chat">Chat</button>
+        </div>
+
+        <div class="settings-row">
+            <div class="setting-group">
+                <label for="personality-select">Personality:</label>
+                <select id="personality-select">
+                    <option value="">Default</option>
+                    <option value="sarcastic">Sarcastic</option>
+                    <option value="emotional">Emotional</option>
+                    <option value="caring">Caring</option>
+                    <option value="nonchalant">Nonchalant</option>
+                    <option value="oppressive">Oppressive</option>
+                    <option value="brat">Brat</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="length-select">Response Length:</label>
+                <select id="length-select">
+                    <option value="normal" selected>Normal</option>
+                    <option value="detailed">Detailed</option>
+                    <option value="comprehensive">Comprehensive</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="chat-container" class="chat-container"></div>
+
+        <div id="study-mode-form" class="study-form hidden">
+            <input type="text" id="subject" placeholder="Subject (e.g., Calculus, Biology, History)">
+            <textarea id="questioning-style" placeholder="Questioning Style (e.g., 'Ask me step-by-step questions', 'Test me on key concepts')"></textarea>
+
+            <div class="file-upload-section">
+                <label for="file-input" class="file-upload-label">
+                    <span class="upload-icon">📎</span>
+                    Upload Documents (PDFs/Images, max 5MB each, 10 files max)
+                </label>
+                <input type="file" id="file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.gif" style="display: none;">
+                <div id="file-list" class="file-list"></div>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <textarea id="user-input" placeholder="Ask a question..."></textarea>
+            <button id="send-btn">Send</button>
+        </div>
+
+        <div class="info-text">
+            <small>Exact billing based on tokens used. No minimum charge.</small>
+        </div>
+
+        <div class="billing-toggle-container">
+            <label class="billing-toggle-label">
+                <input type="checkbox" id="show-billing-toggle">
+                <span class="toggle-text">Show Billing</span>
+            </label>
+        </div>
+        </div> <!-- End of main-content -->
+    </div> <!-- End of container -->
+
+    <script src="main.js"></script>
+</body>
+</html>
