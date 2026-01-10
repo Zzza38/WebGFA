@@ -13,21 +13,23 @@ function AB() {
             // alert('Please allow popups and redirects.')
         } else {
             const doc = popup.document
-            // Creates an iframe to the website.
+            // Creates a iframe to the website.
             const iframe = doc.createElement('iframe');
-            const {style} = iframe;
+            const { style } = iframe;
             const link = doc.createElement('link');
             const script = doc.createElement('script');
             let name;
             let icon;
             if (localStorage.getItem("nameAB") !== null) {
                 name = localStorage.getItem("nameAB");
-            } else {
+            }
+            else {
                 name = 'The Site';
             }
             if (localStorage.getItem("icoAB") !== null) {
                 icon = localStorage.getItem("icoAB");
-            } else {
+            }
+            else {
                 icon = '/favicon.ico';
             }
             doc.title = name;
@@ -42,8 +44,7 @@ function AB() {
             doc.head.appendChild(link);
             doc.body.appendChild(iframe);
             doc.body.appendChild(script);
-            // Universal Redirect URL that works for everyone
-            location.replace('https://google.com');
+            location.replace('https://hwps.schoology.com');
         }
     }
 }
