@@ -2,5 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/test/BlockBlast" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/test/hd_fnaf" vcs="Git" />
   </component>
 </project>

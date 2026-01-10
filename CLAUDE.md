@@ -35,7 +35,7 @@ pm2 save
 The codebase is **actively migrating from JS to TypeScript**:
 - **Migrated**: `src/server.ts`, `src/config.ts`, `src/functions/classes.ts`
 - **Build output**: TypeScript compiles from `src/` to `dist/` (ES2022 + ESNext modules)
-- **Legacy**: `packages/build.cjs` remains CommonJS for npm lifecycle hooks
+- **Legacy**: `packages/build.js` remains CommonJS for npm lifecycle hooks
 - The server runs from `dist/server.js` after build, PM2 configuration points to compiled output
 
 ### Server Architecture (src/server.ts)
@@ -88,7 +88,7 @@ RESTful-style routing with POST/GET handlers in `handleApiRequest()`:
 - **User Data**: `/api/get-user`, `/api/get-save`, `/api/save-data`, `/api/is-premium`
 
 ### Optional Services (packages/)
-The build system (`packages/build.cjs`) conditionally clones and manages:
+The build system (`packages/build.js`) conditionally clones and manages:
 - **Interstellar** (proxy): Port configured via `config.ports.interstellar`, managed by PM2 if `config.installed.interstellar` is true
 - **WebSSH2** (SSH terminal): Port configured via `config.ports.webssh`, managed by PM2 if `config.installed.webssh` is true
 
