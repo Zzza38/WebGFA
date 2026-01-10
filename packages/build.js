@@ -1,8 +1,8 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import path from 'path';
-import config from '../config.json';
 
+const config = (await import(`../config.json`, { with: { type: "json" } })).default;
 const update = process.argv.includes("--update");
 
 // chatgpt made a cool command so imma use it
