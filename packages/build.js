@@ -1,7 +1,7 @@
 import { spawn } from 'child_process';
 import * as fs from 'fs';
 import path from 'path';
-import config from '../config';
+import config from '../config.json';
 
 const update = process.argv.includes("--update");
 
