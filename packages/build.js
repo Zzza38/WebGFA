@@ -2,12 +2,12 @@ import { spawn } from 'child_process';
 import * as fs from 'fs';
 import path from 'path';
 
-if (!fs.existsSync("../config.json")) {
-    fs.copyFileSync("../default-config.json", "../config.json");
-    console.log("Created config file at '../config.json'");
+if (!fs.existsSync("./config.json")) {
+    fs.copyFileSync("./default-config.json", "./config.json");
+    console.log("Created config file at './config.json'");
 }
 
-const config = (await import(`../config.json`, { with: { type: "json" } })).default;
+const config = (await import(`./config.json`, { with: { type: "json" } })).default;
 const update = process.argv.includes("--update");
 
 // chatgpt made a cool command so imma use it
