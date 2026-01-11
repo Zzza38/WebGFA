@@ -24,7 +24,7 @@ npm run dev                    # Run development server with tsx watch mode
 ### PM2 Deployment (Recommended for Production)
 ```bash
 npm install pm2 -g
-pm2 start ecosystem.config.js  # Start WebGFA and optional services (Interstellar, WebSSH)
+pm2 start ecosystem.config.cjs  # Start WebGFA and optional services (Interstellar, WebSSH)
 pm2 startup systemd            # Replace systemd with your init system
 pm2 save
 ```

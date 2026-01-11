@@ -21,7 +21,7 @@ To install and configure PM2, run
 ```bash
 # Install and run pm2
 npm install pm2 -g
-pm2 start ecosystem.config.js
+pm2 start ecosystem.config.cjs
 
 # Have pm2 run on startup
 pm2 startup {YOUR STARTUP SYSTEM HERE (systemd, upstart, launchd, etc.)}
