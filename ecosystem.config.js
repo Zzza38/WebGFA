@@ -1,6 +1,8 @@
-const path = require('path');
-const config = require('./config.json');
-const fs = require('fs');
+import * as path from 'path';
+import * as fs from 'fs';
+
+const config = (await import(`../config.json`, { with: { type: "json" } })).default;
+
 fs.existsSync(path.join(__dirname, 'logs')) || fs.mkdirSync(path.join(__dirname, 'logs'), {
     recursive: true
 });
