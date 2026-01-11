@@ -9,7 +9,7 @@
     "build": "tsc",
     "postinstall": "node packages/build.js",
     "prestart": "node packages/build.js --update",
-    "config": "tsx src/config.ts",
+    "config": "node dist/config.js",
     "dev": "tsx watch src/server.ts --dev"
   },
   "author": "Zzza38",

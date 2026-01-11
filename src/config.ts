@@ -2,6 +2,12 @@ import path from "path";
 import config from "../default-config.json" with {type: "json"};
 import fs from "fs";
 import readline from "readline";
+import {fileURLToPath} from "url";
+
+// needed to have the directory be at /src, not / (relative to the package.json)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+process.chdir(__dirname);
 
 const newConfig = structuredClone(config); // Deep copy to avoid modifying the original config
 
@@ -25,8 +31,6 @@ async function writeJSONChanges(json: Object, jsonPath: string = "../config.json
         console.error('Error writing database changes:', error);
     }
 }
-
-process.chdir(__dirname);
 
 (async () => {
     console.log("=====================================");
