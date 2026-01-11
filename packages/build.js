@@ -37,7 +37,7 @@ function runCommand(command, options = {}) {
 }
 async function writeJSONChanges(json, jsonPath = "../config.json") {
     try {
-        await fs.writeFile(path.resolve(__dirname, jsonPath), JSON.stringify(json, null, 2));
+        fs.writeFileSync(path.resolve(__dirname, jsonPath), JSON.stringify(json, null, 2));
     } catch (error) {
         console.error('Error writing database changes:', error);
     }
