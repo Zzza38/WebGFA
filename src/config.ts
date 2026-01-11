@@ -4,7 +4,7 @@ import fs from "fs";
 import readline from "readline";
 import {fileURLToPath} from "url";
 
-// needed to have the directory be at /src, not / (relative to the package.json)
+// needed to have the directory be at /dist, not / (relative to the package.json)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 process.chdir(__dirname);
