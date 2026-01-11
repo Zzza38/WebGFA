@@ -8,9 +8,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 process.chdir(__dirname);
 
-if (!fs.existsSync("./config.json")) {
-    fs.copyFileSync("./default-config.json", "./config.json");
-    console.log("Created config file at './config.json'");
+if (!fs.existsSync("../config.json")) {
+    fs.copyFileSync("../default-config.json", "../config.json");
+    console.log("Created config file at '../config.json'");
 }
 
 const config = (await import(`../config.json`, { with: { type: "json" } })).default;
