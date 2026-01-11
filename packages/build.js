@@ -45,7 +45,7 @@ async function writeJSONChanges(json, jsonPath = "../config.json") {
 
 async function cleanupDirectory() {
     const currentFile = path.basename(__filename);
-    const files = await fs.readdir(process.cwd());
+    const files = fs.readdirSync(process.cwd());
     await Promise.all(files.map(async file => {
         if (file !== currentFile) {
             const targetPath = path.join(process.cwd(), file);
