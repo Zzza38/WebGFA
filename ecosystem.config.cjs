@@ -36,7 +36,7 @@ function insertChdir(filePath) {
 
 const apps = [{
     name: "webgfa",
-    script: "./dist/server.ts",
+    script: "./dist/server.js",
     instances: 2,
     exec_mode: "cluster",
     out_file: path.join(__dirname, 'logs/webgfa.log'),
