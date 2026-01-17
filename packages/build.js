@@ -89,7 +89,7 @@ if (update) {
         // Interstellar
         if (config.features.interstellar) {
             try {
-                await runCommand('git clone --branch main https://github.com/UseInterstellar/Interstellar.git');
+                await runCommand('git clone --branch Ad-Free https://github.com/UseInterstellar/Interstellar.git');
                 await runCommand('npm install', { cwd: './Interstellar' });
                 config.installed.interstellar = true;
                 await writeJSONChanges(config);
