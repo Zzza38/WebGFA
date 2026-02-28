@@ -1,11 +1,18 @@
 # Ignore Node.js modules directory
 node_modules
 
+# Ignore lock files
+package-lock.json
+pnpm-lock.yaml
+
 # Ignore sensitive files
 data/firebasePrivateKey.json
 data/database.json
 data/database-copy.json
 data/firestore_backup.json
+data/webgfa.db
+data/webgfa.db-shm
+data/webgfa.db-wal
 
 .env
 
@@ -26,3 +33,7 @@ config.json
 
 # Ignore tests
 test
+
+# Ignore tsc output
+dist/*
+dist

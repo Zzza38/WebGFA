@@ -10,20 +10,21 @@ WebGFA is a game hosting website built with Fastify (TypeScript) that serves sta
 
 ### Installation & Configuration
 ```bash
-npm install                    # Install dependencies and run postinstall build script
-npm run config                 # Interactive configuration wizard for ports, features, and client settings
+pnpm install                   # Install dependencies and run postinstall build script
+pnpm run config                # Interactive configuration wizard for ports, features, and client settings
+pnpm run migrate               # Migrate existing JSON database to SQLite (run once after upgrading)
 ```
 
 ### Building & Running
 ```bash
-npm run build                  # Compile TypeScript to dist/ directory
-npm start                      # Run production server from dist/server.js (runs prestart build hook)
-npm run dev                    # Run development server with tsx watch mode
+pnpm run build                 # Compile TypeScript to dist/ directory
+pnpm start                     # Run production server from dist/server.js (runs prestart build hook)
+pnpm run dev                   # Run development server with tsx watch mode
 ```
 
 ### PM2 Deployment (Recommended for Production)
 ```bash
-npm install pm2 -g
+pnpm add -g pm2
 pm2 start ecosystem.config.cjs  # Start WebGFA and optional services (Interstellar, WebSSH)
 pm2 startup systemd            # Replace systemd with your init system
 pm2 save
@@ -32,8 +33,8 @@ pm2 save
 ## Architecture
 
 ### TypeScript Migration Status
-The codebase is **actively migrating from JS to TypeScript**:
-- **Migrated**: `src/server.ts`, `src/config.ts`, `src/functions/classes.ts`
+The codebase is **fully TypeScript**:
+- **Core**: `src/server.ts`, `src/config.ts`, `src/database.ts`, `src/functions/classes.ts`
 - **Build output**: TypeScript compiles from `src/` to `dist/` (ES2022 + ESNext modules)
 - **Legacy**: `packages/build.js` remains CommonJS for npm lifecycle hooks
 - The server runs from `dist/server.js` after build, PM2 configuration points to compiled output
@@ -53,13 +54,22 @@ Fastify-based server with several key systems:
 
 **HTML Injection**: The server automatically injects extra tags (particles, client config, cloaking scripts) into the `<body>` tag when serving HTML files.
 
-### Database System (data/database.json)
-Schema defined in `src/functions/classes.ts` (`DatabaseSchema` interface):
-- **users**: User accounts with permissions, passwords, sessionIDs, save data
+### Database System (data/webgfa.db)
+SQLite database using `better-sqlite3`. Schema defined in `src/database.ts`:
+- **users**: User accounts with permissions, passwords, session_id, save_data, coins
+- **coin_history**: Transaction history for the coins system (normalized from users)
 - **messages**: Real-time messaging system with SSE updates via EventEmitter
-- **gamePopularity**: Tracks all-time, monthly, and weekly game plays
+- **game_popularity**: Tracks all-time, monthly, and weekly game plays
+- **metadata**: Key-value store for system state (e.g., popularity reset timestamps)
 
-The database is a JSON file with manual writes via `writeJSONChanges()`. No external database is used.
+Database access is through helper functions exported from `src/database.ts`:
+- `users.get()`, `users.create()`, `users.setSessionId()`, etc.
+- `messages.get()`, `messages.create()`, `messages.update()`, `messages.delete()`
+- `gamePopularity.get()`, `gamePopularity.upsert()`, `gamePopularity.increment()`
+- `coinHistory.get()`, `coinHistory.add()`
+- `metadata.get()`, `metadata.set()`
+
+WAL mode is enabled for better concurrent access from PM2 cluster instances.
 
 ### Configuration System
 Two-tier configuration with auto-generation:
@@ -73,6 +83,19 @@ Two-tier configuration with auto-generation:
 - Guest sessions: `GUEST-ACCOUNT-{UUID}` cookies for anonymous users
 - User sessions: UUID cookies set on login, stored in `db.users[username].sessionID`
 - Premium games: Restricted to users with `'prem'` in permissions string (403 HTML served otherwise)
+
+### AI Homework Helper (OpenAI Integration)
+When `config.features.openai.enabled` is true, the server provides an AI-powered homework assistant:
+- **Coins System**: Users have a `coins` balance and `coinHistory` array tracking transactions
+- **Usage Modes**: `answer` (direct answers), `explain` (step-by-step), `study` (interactive learning), `chat` (casual texting style)
+- **Personalities**: Configurable AI personalities (sarcastic, caring, nonchalant, etc.) with a Gen-Z slang dictionary
+- **File Uploads**: Supports image and PDF uploads for homework questions (via `@fastify/multipart` and `pdf-parse`)
+- **Token Pricing**: Coins are deducted based on input/output tokens with configurable rates and profit margin
+
+### Environment Variables
+- `PORT`: Overrides the configured port (takes precedence over config.json)
+- `.env` file: Loaded via `dotenv` at server startup
+- `--dev` flag: When running with `npm run dev`, uses `config.ports.development` instead of `config.ports.main`
 
 ### Statistics & Logging
 - CSV logging: All HTML requests logged to `logs/webgfa.csv` with path, username, UID, date
@@ -92,7 +115,7 @@ The build system (`packages/build.js`) conditionally clones and manages:
 - **Interstellar** (proxy): Port configured via `config.ports.interstellar`, managed by PM2 if `config.installed.interstellar` is true
 - **WebSSH2** (SSH terminal): Port configured via `config.ports.webssh`, managed by PM2 if `config.installed.webssh` is true
 
-These are git submodules cloned during `npm install` postinstall hook. The build script auto-inserts `process.chdir(__dirname)` into their entry files to ensure correct working directory.
+These are git submodules cloned during `pnpm install` postinstall hook. The build script auto-inserts `process.chdir(__dirname)` into their entry files to ensure correct working directory.
 
 ### Games Catalog (games.json)
 Flat key-value maps:
@@ -111,7 +134,8 @@ If enabled, listens on `/webhook/github` for push events:
 - **Static files**: All served from `static/` directory (games, assets, HTML pages)
 - **TypeScript config**: Strict mode enabled, targets ES2022 with NodeNext resolution
 - **Logs**: Output to `logs/` directory (created automatically)
-- **Data persistence**: `data/database.json` (auto-created from `default-database.json` on first run)
+- **Data persistence**: `data/webgfa.db` (SQLite, auto-created on first run)
+- **Migration**: Run `pnpm run migrate` to import existing `data/database.json` into SQLite
 
 ## TypeScript Considerations
 
@@ -119,4 +143,4 @@ When modifying code:
 - Replace `any` types with proper interfaces (many TODOs exist for this)
 - Use type guards instead of `as any` casts
 - Add interfaces for request body types (currently using `request.body as any`)
-- Run `npm run build` to verify TypeScript compilation before committing
+- Run `pnpm run build` to verify TypeScript compilation before committing
