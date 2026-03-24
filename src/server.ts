@@ -151,11 +151,15 @@ try {
 /////////////////////////////////////////////////////////////
 async function handleMainRequest(request: FastifyRequest, reply: FastifyReply) {
   const reqPath = normalizePath(request.url.split("?")[0]);
-  const sessionId = request.cookies.uid
-    ? request.cookies.uid
-    : "GUEST-ACCOUNT-" + generateUID();
-  if (!sessionId) {
-    reply.cookie("uid", sessionId, { httpOnly: true, secure: true });
+  const existingSessionId = request.cookies.uid;
+  const sessionId = existingSessionId || "GUEST-ACCOUNT-" + generateUID();
+  if (!existingSessionId) {
+    reply.cookie("uid", sessionId, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
   }
   const foundUser = users.getBySessionId(sessionId);
   const user = foundUser?.username || "guest";
@@ -447,7 +451,9 @@ function serveHtmlFile(
     const normalizedPath = normalizePath(reqPath);
     const fullPath = path.resolve(staticDir, normalizedPath.slice(1));
 
-    const sessionId = String(request.cookies.uid);
+    const sessionId = String(
+      request.cookies.uid || `GUEST-ACCOUNT-${generateUID()}`,
+    );
     const dbUser = sessionId.includes("GUEST-ACCOUNT")
       ? null
       : users.getBySessionId(sessionId);
