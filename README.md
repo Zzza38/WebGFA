@@ -1,3 +1,5 @@
+This project has been archived. 
+
 A games site made for my school. I own and operate this website independently, hoping for someone to help me. Because I don't want to leak all of the data when my school admins find this, no personal information that can help shut this website down is posted. This also helps you adopt it for yourself a lot easier. I'm currently working on converting this to be easily deployed with people outside of my school and without my help, but that isn't the case yet.
 
 ### Configuration
